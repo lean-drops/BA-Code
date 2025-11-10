@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 authors_network.py
-Reines Netzwerk-Modul + Canvas für Autoren-/Chroniken-Netze.
+Kompaktes Netzwerk-Modul für Autoren-/Chroniken-Netze. Keine UI-Logik, nur Scene/Canvas.
 
 API (für dein GUI):
   load_mentions_csv(path) -> pd.DataFrame
@@ -10,25 +10,25 @@ API (für dein GUI):
   build_graph_edges(df, src_col, tgt_col, weight_col|None) -> nx.DiGraph
   compute_layout(G, mode='bipartite'|'spring'|'kamada_kawai'|'forceatlas2', bip_gap=4.0) -> Dict[node,(x,y)]
   make_scene(G, positions, min_edge_weight, show_labels, theme, direction, arrow_scale, high_contrast) -> QGraphicsScene
-  GraphCanvas(QtWidgets.QGraphicsView) mit:
+  GraphCanvas(QtWidgets.QGraphicsView):
       set_graph_scene(scene)
       highlight(term, show_labels)
-      set_focus_direction('out'|'in')  (Tastenkürzel: O = out, I = in)
+      set_focus_direction('out'|'in')    # O/I
+      # Hotkeys: A=alle Kanten, F=Fit, +/-=Zoom, Esc=Reset
 
-Neues Verhalten (auf Klick/Sticky):
-  • Es werden NUR die Kanten in einer Richtung gezeigt: ausgehend ODER eingehend (umschalten mit O/I).
-  • Knoten werden mitgefärbt: Fokus, Nachbarn (Richtungsspezifisch), alle anderen gedimmt.
-  • Labels sind größer, kontrastreicher, sofort sichtbar für Fokus + Nachbarn.
-
-Abhängigkeiten: PyQt5, pandas, numpy, networkx
+Hinweise:
+- Pfeile/Halos sind im Neutralzustand unsichtbar. Sie erscheinen nur im Fokus (O/I).
+- Edges werden vor dem Zeichnen ausgedünnt (Top-K pro Knoten, Top-N global). Steuerung via ENV:
+    FBNE_TOPK_PER_NODE (Default 6), FBNE_TOPN_GLOBAL (Default 300), FBNE_LABEL_TOPN (Default 10)
+- Labels: Wenn show_labels=False, werden Labels für die Top-N Knoten (Degree gewichtet) gezeigt.
+- Modul ist zum Import gedacht. Der main() führt nichts aus.
 """
 from __future__ import annotations
 
 import math
 import os
-import sys
 from dataclasses import dataclass
-from typing import Dict, Tuple, Optional, List
+from typing import Dict, Tuple, Optional, List, Iterable, Set
 
 import numpy as np
 import pandas as pd
@@ -209,41 +209,45 @@ def _forceatlas2(G: nx.Graph,
 
 def _relax_positions(G: nx.Graph, pos: Dict[str, Tuple[float, float]],
                      iterations: int = 140, base_dist: float = 0.35, step: float = 0.05) -> Dict[str, Tuple[float, float]]:
-    nodes = list(pos.keys());
-    if len(nodes) <= 1: return pos
+    nodes = list(pos.keys())
+    if len(nodes) <= 1:
+        return pos
     radius = {n: 0.05 + 0.02 * math.sqrt(_node_mass(G, n)) for n in nodes}
-    p = {n: [float(x), float(y)] for n,(x,y) in pos.items()}
+    p = {n: [float(x), float(y)] for n, (x, y) in pos.items()}
     for _ in range(iterations):
         moved = 0
-        for i,n1 in enumerate(nodes):
-            x1,y1 = p[n1]; fx=fy=0.0
-            for j,n2 in enumerate(nodes):
-                if i==j: continue
-                x2,y2=p[n2]; dx,dy=x1-x2,y1-y2; dist=math.hypot(dx,dy)+1e-6
+        for i, n1 in enumerate(nodes):
+            x1, y1 = p[n1]; fx = fy = 0.0
+            for j, n2 in enumerate(nodes):
+                if i == j:
+                    continue
+                x2, y2 = p[n2]; dx, dy = x1 - x2, y1 - y2; dist = math.hypot(dx, dy) + 1e-6
                 want = base_dist + radius[n1] + radius[n2]
                 if dist < want:
-                    f=(want-dist)/want; fx+=(dx/dist)*f; fy+=(dy/dist)*f
+                    f = (want - dist) / want; fx += (dx / dist) * f; fy += (dy / dist) * f
             if fx or fy:
-                p[n1]=[x1+fx*step, y1+fy*step]; moved+=1
-        if moved==0: break
-    return {n:(float(x),float(y)) for n,(x,y) in p.items()}
+                p[n1] = [x1 + fx * step, y1 + fy * step]; moved += 1
+        if moved == 0:
+            break
+    return {n: (float(x), float(y)) for n, (x, y) in p.items()}
 
 
 def compute_layout(G: nx.Graph, mode: str = "bipartite", bip_gap: float = 4.0) -> Dict[str, Tuple[float, float]]:
-    if G.number_of_nodes()==0: return {}
-    if mode=="bipartite" and G.graph.get("kind")=="mentions":
-        pos0=_bipartite_ordered_layout(G, x_gap=bip_gap)
+    if G.number_of_nodes() == 0:
+        return {}
+    if mode == "bipartite" and G.graph.get("kind") == "mentions":
+        pos0 = _bipartite_ordered_layout(G, x_gap=bip_gap)
         return _relax_positions(G, pos0, iterations=160, base_dist=0.35, step=0.06)
-    if mode=="kamada_kawai":
-        pos0=nx.kamada_kawai_layout(G, weight="weight")
-        return _relax_positions(G, {str(n):(float(x),float(y)) for n,(x,y) in pos0.items()},
+    if mode == "kamada_kawai":
+        pos0 = nx.kamada_kawai_layout(G, weight="weight")
+        return _relax_positions(G, {str(n): (float(x), float(y)) for n, (x, y) in pos0.items()},
                                 iterations=120, base_dist=0.3, step=0.05)
-    if mode=="forceatlas2":
-        init=_bipartite_ordered_layout(G, x_gap=1.2) if G.graph.get("kind")=="mentions" else None
-        pos0=_forceatlas2(G, init_pos=init, iterations=350, gravity=0.06, scaling=1.2, dt=0.08)
+    if mode == "forceatlas2":
+        init = _bipartite_ordered_layout(G, x_gap=1.2) if G.graph.get("kind") == "mentions" else None
+        pos0 = _forceatlas2(G, init_pos=init, iterations=350, gravity=0.06, scaling=1.2, dt=0.08)
         return _relax_positions(G, pos0, iterations=140, base_dist=0.32, step=0.05)
-    pos0=nx.spring_layout(G, weight="weight", iterations=350, seed=42)
-    return _relax_positions(G, {str(n):(float(x),float(y)) for n,(x,y) in pos0.items()},
+    pos0 = nx.spring_layout(G, weight="weight", iterations=350, seed=42)
+    return _relax_positions(G, {str(n): (float(x), float(y)) for n, (x, y) in pos0.items()},
                             iterations=140, base_dist=0.32, step=0.05)
 
 
@@ -257,10 +261,10 @@ class Theme:
     chronik_fill: str = "#1fb6ff"; chronik_stroke: str = "#073a53"
     work_fill: str = "#fbbf24";  work_stroke: str = "#3a2c0b"
     author_fill: str = "#a78bfa"; author_stroke: str = "#2b1e52"
-    edge_neutral: str = "#8b93a5"
-    dir_out: str = "#22d3ee"    # ausgehend
-    dir_in:  str = "#f43f5e"    # eingehend
-    dir_neutral_dim: str = "#374151"
+    edge_neutral: str = "#c5ccdd"      # heller, sichtbarer
+    dir_out: str = "#22d3ee"           # ausgehend
+    dir_in:  str = "#f43f5e"           # eingehend
+    dir_neutral_dim: str = "#3b4252"
 
 
 def _qcolor(hex_code: str, alpha: Optional[int] = None) -> QtGui.QColor:
@@ -279,52 +283,56 @@ except Exception:
 
 
 def _is_dead(obj: object) -> bool:
-    if obj is None: return True
+    if obj is None:
+        return True
     if sip is not None:
-        try: return sip.isdeleted(obj)  # type: ignore[attr-defined]
-        except Exception: return True
-    try: return getattr(obj, "scene", None) is None and False
-    except Exception: return True
+        try:
+            return sip.isdeleted(obj)  # type: ignore[attr-defined]
+        except Exception:
+            return True
+    return False
 
 
 def _node_radius_px(item: QtWidgets.QGraphicsItem) -> float:
-    r = item.boundingRect(); return 0.5 * max(r.width(), r.height())
+    r = item.boundingRect()
+    return 0.5 * max(r.width(), r.height())
 
 
 def _bezier_point(p0: QtCore.QPointF, p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF, t: float) -> QtCore.QPointF:
-    u=1.0-t
+    u = 1.0 - t
     return QtCore.QPointF((u**3)*p0.x()+3*u*u*t*p1.x()+3*u*t*t*p2.x()+(t**3)*p3.x(),
                           (u**3)*p0.y()+3*u*u*t*p1.y()+3*u*t*t*p2.y()+(t**3)*p3.y())
 
 
 def _bezier_tangent(p0: QtCore.QPointF, p1: QtCore.QPointF, p2: QtCore.QPointF, p3: QtCore.QPointF, t: float) -> QtCore.QPointF:
-    u=1.0-t
+    u = 1.0 - t
     return QtCore.QPointF(3*u*u*(p1.x()-p0.x())+6*u*t*(p2.x()-p1.x())+3*t*t*(p3.x()-p2.x()),
                           3*u*u*(p1.y()-p0.y())+6*u*t*(p2.y()-p1.y())+3*t*t*(p3.y()-p2.y()))
 
 
 class EdgeItem(QtWidgets.QGraphicsPathItem):
-    """Kante mit stark sichtbarer Richtung: Halo, Schaft, Spitze, Chevrons."""
+    """Kante mit klarer Richtung im Fokus; neutral ohne Pfeile/Halos."""
     def __init__(self, a: QtWidgets.QGraphicsItem, b: QtWidgets.QGraphicsItem,
                  src_item: QtWidgets.QGraphicsItem, dst_item: QtWidgets.QGraphicsItem,
                  weight: float, theme: Theme, arrow_to_b: bool,
                  arrow_scale: float = 1.6, high_contrast: bool = True):
         super().__init__()
-        self.a=a; self.b=b; self.src_item=src_item; self.dst_item=dst_item
-        self.weight=max(1.0, float(weight)); self._theme=theme
-        self._arrow_to_b=bool(arrow_to_b); self._arrow_scale=float(arrow_scale)
-        self._high_contrast=bool(high_contrast)
+        self.a = a; self.b = b; self.src_item = src_item; self.dst_item = dst_item
+        self.weight = max(1.0, float(weight)); self._theme = theme
+        self._arrow_to_b = bool(arrow_to_b); self._arrow_scale = float(arrow_scale)
+        self._high_contrast = bool(high_contrast)
         self.setZValue(-101); self.setCacheMode(QtWidgets.QGraphicsItem.DeviceCoordinateCache)
 
         # Halo
         self.halo = QtWidgets.QGraphicsPathItem(self); self.halo.setZValue(-103)
-        self.halo.setPen(QtGui.QPen(_qcolor(theme.edge_neutral, 200 if high_contrast else 140),
-                                    10.0, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+        self.halo.setPen(QtGui.QPen(_qcolor(theme.edge_neutral, 170 if high_contrast else 140),
+                                    12.0, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
         self.halo.setBrush(QtGui.QBrush(Qt.NoBrush))
 
-        # Schaft
-        pen = QtGui.QPen(_qcolor(theme.edge_neutral, 240 if high_contrast else 220),
-                         max(2.0, 1.2+math.sqrt(self.weight)), Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin)
+        # Schaft: Breite/Alpha nach Gewicht
+        base_alpha = 200 if high_contrast else 170
+        pen = QtGui.QPen(_qcolor(theme.edge_neutral, min(255, base_alpha + int(min(self.weight, 40)*1.2))),
+                         max(2.2, 1.2 + 0.9*math.sqrt(self.weight)), Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin)
         pen.setCosmetic(True); self.setPen(pen)
 
         # Spitzen
@@ -338,81 +346,92 @@ class EdgeItem(QtWidgets.QGraphicsPathItem):
         self.chev2.setPen(QtGui.QPen(_qcolor("#0b0f14", 220), 1))
         self.chev2.setBrush(QtGui.QBrush(_qcolor(theme.edge_neutral, 255)))
 
-        self.mode="neutral"
+        self.mode = "neutral"
         self.update_position()
+        self._set_arrow_visible(False)
+        self.setVisible(True)
 
-    def _apply_color(self, hx: str) -> None:
-        pen=self.pen(); pen.setColor(_qcolor(hx, 255 if self._high_contrast else 230))
-        pen.setWidthF(max(2.0, 1.2+math.sqrt(self.weight))); self.setPen(pen)
-        hpen=self.halo.pen(); hpen.setColor(_qcolor(hx, 180 if self._high_contrast else 130))
+    def _set_arrow_visible(self, on: bool) -> None:
+        self.arrow.setVisible(on); self.chev1.setVisible(on); self.chev2.setVisible(on)
+        self.halo.setVisible(on)
+
+    def _apply_color(self, hx: str, show_arrows: bool) -> None:
+        pen = self.pen(); pen.setColor(_qcolor(hx, 250 if self._high_contrast else 230))
+        pen.setWidthF(max(2.6, 1.4 + 1.0*math.sqrt(self.weight))); self.setPen(pen)
+        hpen = self.halo.pen(); hpen.setColor(_qcolor(hx, 190 if self._high_contrast else 150))
         hpen.setWidth(12 if self._high_contrast else 10); self.halo.setPen(hpen)
         self.arrow.setBrush(QtGui.QBrush(_qcolor(hx, 255)))
         self.chev1.setBrush(QtGui.QBrush(_qcolor(hx, 255)))
         self.chev2.setBrush(QtGui.QBrush(_qcolor(hx, 255)))
+        self._set_arrow_visible(show_arrows)
 
     def set_mode(self, mode: str) -> None:
-        self.mode=mode
-        if mode=="in": self._apply_color(self._theme.dir_in)
-        elif mode=="out": self._apply_color(self._theme.dir_out)
-        else: self._apply_color(self._theme.edge_neutral)
+        self.mode = mode
+        if mode == "in":
+            self._apply_color(self._theme.dir_in, True)
+        elif mode == "out":
+            self._apply_color(self._theme.dir_out, True)
+        else:
+            # neutral: kein Pfeil, Halo gedimmt
+            self._apply_color(self._theme.edge_neutral, False)
 
     def update_position(self) -> None:
-        if _is_dead(self.a) or _is_dead(self.b): return
-        p1=self.a.pos(); p2=self.b.pos(); dx=p2.x()-p1.x(); k=0.18*abs(dx)
-        c1=QtCore.QPointF(p1.x()+0.25*dx, p1.y()-k); c2=QtCore.QPointF(p2.x()-0.25*dx, p2.y()+k)
-        path=QtGui.QPainterPath(p1); path.cubicTo(c1,c2,p2); self.setPath(path); self.halo.setPath(path)
+        if _is_dead(self.a) or _is_dead(self.b):
+            return
+        p1 = self.a.pos(); p2 = self.b.pos(); dx = p2.x() - p1.x(); k = 0.18 * abs(dx)
+        c1 = QtCore.QPointF(p1.x() + 0.25 * dx, p1.y() - k); c2 = QtCore.QPointF(p2.x() - 0.25 * dx, p2.y() + k)
+        path = QtGui.QPainterPath(p1); path.cubicTo(c1, c2, p2); self.setPath(path); self.halo.setPath(path)
         if self._arrow_to_b:
-            tip,unit=self._offset_tip_tangent(p1,c1,c2,p2,self.b)
+            tip, unit = self._offset_tip_tangent(p1, c1, c2, p2, self.b)
         else:
-            tip,unit=self._offset_tip_tangent(p2,c2,c1,p1,self.a)
+            tip, unit = self._offset_tip_tangent(p2, c2, c1, p1, self.a)
         self._place_arrow_polys(tip, unit, self._arrow_scale)
-        self._place_chevrons(p1,c1,c2,p2,self._arrow_scale)
+        self._place_chevrons(p1, c1, c2, p2, self._arrow_scale)
 
-    def _offset_tip_tangent(self, p0,p1,p2,p3,target)->tuple[QtCore.QPointF,QtCore.QPointF]:
-        t=0.98; tip_raw=_bezier_point(p0,p1,p2,p3,t); tan=_bezier_tangent(p0,p1,p2,p3,t)
-        L=max(1e-9, math.hypot(tan.x(),tan.y())); ux,uy=tan.x()/L, tan.y()/L
-        tip=QtCore.QPointF(tip_raw.x()-ux*(_node_radius_px(target)+6.0),
-                           tip_raw.y()-uy*(_node_radius_px(target)+6.0))
-        return tip, QtCore.QPointF(ux,uy)
+    def _offset_tip_tangent(self, p0, p1, p2, p3, target) -> tuple[QtCore.QPointF, QtCore.QPointF]:
+        t = 0.98; tip_raw = _bezier_point(p0, p1, p2, p3, t); tan = _bezier_tangent(p0, p1, p2, p3, t)
+        L = max(1e-9, math.hypot(tan.x(), tan.y())); ux, uy = tan.x() / L, tan.y() / L
+        tip = QtCore.QPointF(tip_raw.x() - ux * (_node_radius_px(target) + 6.0),
+                             tip_raw.y() - uy * (_node_radius_px(target) + 6.0))
+        return tip, QtCore.QPointF(ux, uy)
 
-    def _place_arrow_polys(self, tip, unit, scale)->None:
-        L=max(20.0, 12.0+4.0*math.sqrt(self.weight))*scale; W=0.66*L
-        bx=tip.x()-unit.x()*L; by=tip.y()-unit.y()*L; px,py=-unit.y(), unit.x()
-        left=QtCore.QPointF(bx+px*(W/2.0), by+py*(W/2.0))
-        right=QtCore.QPointF(bx-px*(W/2.0), by-py*(W/2.0))
-        self.arrow.setPolygon(QtGui.QPolygonF([tip,left,right]))
+    def _place_arrow_polys(self, tip, unit, scale) -> None:
+        L = max(20.0, 12.0 + 4.0 * math.sqrt(self.weight)) * scale; W = 0.66 * L
+        bx = tip.x() - unit.x() * L; by = tip.y() - unit.y() * L; px, py = -unit.y(), unit.x()
+        left = QtCore.QPointF(bx + px * (W / 2.0), by + py * (W / 2.0))
+        right = QtCore.QPointF(bx - px * (W / 2.0), by - py * (W / 2.0))
+        self.arrow.setPolygon(QtGui.QPolygonF([tip, left, right]))
 
-    def _place_chevrons(self, p0,p1,p2,p3, scale)->None:
-        for t,obj in ((0.35,self.chev1),(0.65,self.chev2)):
-            pt=_bezier_point(p0,p1,p2,p3,t); tan=_bezier_tangent(p0,p1,p2,p3,t)
-            L=max(1e-9, math.hypot(tan.x(),tan.y())); ux,uy=tan.x()/L, tan.y()/L
-            Lc=max(12.0,8.0+2.5*math.sqrt(self.weight))*(scale*0.55); Wc=0.58*Lc
-            bx=pt.x()-ux*Lc; by=pt.y()-uy*Lc; px,py=-uy, ux
-            left=QtCore.QPointF(bx+px*(Wc/2.0), by+py*(Wc/2.0))
-            right=QtCore.QPointF(bx-px*(Wc/2.0), by-py*(Wc/2.0))
-            obj.setPolygon(QtGui.QPolygonF([pt,left,right]))
+    def _place_chevrons(self, p0, p1, p2, p3, scale) -> None:
+        for t, obj in ((0.35, self.chev1), (0.65, self.chev2)):
+            pt = _bezier_point(p0, p1, p2, p3, t); tan = _bezier_tangent(p0, p1, p2, p3, t)
+            L = max(1e-9, math.hypot(tan.x(), tan.y())); ux, uy = tan.x() / L, tan.y() / L
+            Lc = max(12.0, 8.0 + 2.5 * math.sqrt(self.weight)) * (scale * 0.55); Wc = 0.58 * Lc
+            bx = pt.x() - ux * Lc; by = pt.y() - uy * Lc; px, py = -uy, ux
+            left = QtCore.QPointF(bx + px * (Wc / 2.0), by + py * (Wc / 2.0))
+            right = QtCore.QPointF(bx - px * (Wc / 2.0), by - py * (Wc / 2.0))
+            obj.setPolygon(QtGui.QPolygonF([pt, left, right]))
 
 
 class NodeItem(QtWidgets.QGraphicsEllipseItem):
-    def __init__(self, name: str, pos: Tuple[float,float], size: float,
+    def __init__(self, name: str, pos: Tuple[float, float], size: float,
                  fill: str, stroke: str, show_label: bool, theme: Theme):
-        super().__init__(-size, -size, 2*size, 2*size)
-        self.name=name
+        super().__init__(-size, -size, 2 * size, 2 * size)
+        self.name = name
         self._fill_base = QtGui.QColor(fill)
         self._stroke_base = QtGui.QColor(stroke)
         self._theme = theme
 
         self.setAcceptHoverEvents(True)
-        self.setPos(pos[0]*300.0, pos[1]*300.0)
+        self.setPos(pos[0] * 300.0, pos[1] * 300.0)
         self.setBrush(QtGui.QBrush(self._fill_base))
-        pen=QtGui.QPen(self._stroke_base); pen.setWidth(1); pen.setCosmetic(True); self.setPen(pen)
+        pen = QtGui.QPen(self._stroke_base); pen.setWidth(1); pen.setCosmetic(True); self.setPen(pen)
         self.setCacheMode(QtWidgets.QGraphicsItem.DeviceCoordinateCache)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, True)
         self.setFlag(QtWidgets.QGraphicsItem.ItemSendsGeometryChanges, True)
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable, True)
-        self.edges: List[EdgeItem]=[]
+        self.edges: List[EdgeItem] = []
 
-        # Label: größer, besser lesbar
         self._label_bg = QtWidgets.QGraphicsRectItem(self)
         self._label_bg.setBrush(QtGui.QBrush(_qcolor(theme.label_bg, 210)))
         self._label_bg.setPen(QtGui.QPen(Qt.NoPen))
@@ -420,23 +439,18 @@ class NodeItem(QtWidgets.QGraphicsEllipseItem):
         self._label_bg.setVisible(show_label)
 
         self.label = QtWidgets.QGraphicsSimpleTextItem(name if show_label else "", self)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        font.setBold(True)
+        font = QtGui.QFont(); font.setPointSize(12); font.setBold(True)
         self.label.setFont(font)
         self.label.setBrush(QtGui.QBrush(QtGui.QColor(theme.label)))
         self.label.setFlag(QtWidgets.QGraphicsItem.ItemIgnoresTransformations, True)
-        self.label.setPos(size+10, -12)
-        br=self.label.boundingRect(); pad=4.0
-        self._label_bg.setRect(QtCore.QRectF(br.x()-pad, br.y()-pad, br.width()+2*pad, br.height()+2*pad))
+        self.label.setPos(size + 10, -12)
+        br = self.label.boundingRect(); pad = 4.0
+        self._label_bg.setRect(QtCore.QRectF(br.x() - pad, br.y() - pad, br.width() + 2 * pad, br.height() + 2 * pad))
 
     def set_style(self, role: str) -> None:
-        """
-        role: 'focus'|'neighbor_out'|'neighbor_in'|'muted'|'base'
-        """
         if role == "focus":
             fill = QtGui.QColor(self._fill_base).lighter(130)
-            pen = QtGui.QPen(_qcolor("#ffffff", 180)); pen.setWidth(2); pen.setCosmetic(True)
+            pen = QtGui.QPen(_qcolor("#ffffff", 200)); pen.setWidth(2); pen.setCosmetic(True)
         elif role == "neighbor_out":
             fill = _qcolor(self._theme.dir_out, 220)
             pen = QtGui.QPen(_qcolor(self._theme.dir_out, 255)); pen.setWidth(2); pen.setCosmetic(True)
@@ -444,30 +458,69 @@ class NodeItem(QtWidgets.QGraphicsEllipseItem):
             fill = _qcolor(self._theme.dir_in, 220)
             pen = QtGui.QPen(_qcolor(self._theme.dir_in, 255)); pen.setWidth(2); pen.setCosmetic(True)
         elif role == "muted":
-            fill = _qcolor(self._theme.dir_neutral_dim, 120)
-            pen = QtGui.QPen(_qcolor(self._theme.dir_neutral_dim, 180)); pen.setWidth(1); pen.setCosmetic(True)
+            fill = _qcolor(self._theme.dir_neutral_dim, 130)
+            pen = QtGui.QPen(_qcolor(self._theme.dir_neutral_dim, 190)); pen.setWidth(1); pen.setCosmetic(True)
         else:
             fill = self._fill_base
             pen = QtGui.QPen(self._stroke_base); pen.setWidth(1); pen.setCosmetic(True)
+        self.setBrush(QtGui.QBrush(fill)); self.setPen(pen)
 
-        self.setBrush(QtGui.QBrush(fill))
-        self.setPen(pen)
-
-    def toggle_label(self, show: bool)->None:
+    def toggle_label(self, show: bool) -> None:
         self.label.setText(self.name if show else "")
         self._label_bg.setVisible(show)
         if show:
-            br=self.label.boundingRect(); pad=4.0
-            self._label_bg.setRect(QtCore.QRectF(br.x()-pad, br.y()-pad, br.width()+2*pad, br.height()+2*pad))
+            br = self.label.boundingRect(); pad = 4.0
+            self._label_bg.setRect(QtCore.QRectF(br.x() - pad, br.y() - pad, br.width() + 2 * pad, br.height() + 2 * pad))
 
     def itemChange(self, change, value):
-        if change==QtWidgets.QGraphicsItem.ItemPositionHasChanged:
+        if change == QtWidgets.QGraphicsItem.ItemPositionHasChanged:
             for e in list(self.edges):
-                if not _is_dead(e): e.update_position()
+                if not _is_dead(e):
+                    e.update_position()
         return super().itemChange(change, value)
 
 
 # ---------------------------- Scene / Canvas ----------------------------
+
+def _rank_nodes_for_labels(G: nx.Graph, topn: int) -> Set[str]:
+    if G.number_of_nodes() == 0 or topn <= 0:
+        return set()
+    # gewichteter Degree
+    s = {n: float(sum(float(ed.get("weight", 1.0)) for _, _, ed in G.edges(n, data=True))) for n in G.nodes()}
+    return set([k for k, _ in sorted(s.items(), key=lambda kv: kv[1], reverse=True)[:topn]])
+
+
+def _edge_key(u: str, v: str) -> tuple[str, str]:
+    return (u, v)
+
+
+def _select_edges_to_draw(G: nx.Graph,
+                          min_edge_weight: float,
+                          topk_per_node: int,
+                          topn_global: int) -> Set[tuple[str, str]]:
+    """Undirektionale Auswahl-Logik zur Ausdünnung."""
+    edges = []
+    for u, v, ed in G.edges(data=True):
+        w = float(ed.get("weight", 1.0))
+        if w >= min_edge_weight:
+            edges.append((u, v, w))
+    if not edges:
+        return set()
+
+    edges.sort(key=lambda t: t[2], reverse=True)
+
+    keep: Set[tuple[str, str]] = set()
+    deg_limit: Dict[str, int] = {}
+    for u, v, w in edges:
+        if 0 < topn_global <= len(keep):
+            break
+        if deg_limit.get(u, 0) >= topk_per_node and deg_limit.get(v, 0) >= topk_per_node:
+            continue
+        keep.add(_edge_key(u, v))
+        deg_limit[u] = 1 + deg_limit.get(u, 0)
+        deg_limit[v] = 1 + deg_limit.get(v, 0)
+    return keep
+
 
 def make_scene(
     G: nx.Graph,
@@ -487,51 +540,62 @@ def make_scene(
     scene._kind = G.graph.get("kind", "edges")
     scene.setBackgroundBrush(QtGui.QBrush(QtGui.QColor(theme.bg)))
 
-    node_items: Dict[str, NodeItem] = {}
+    # Ausdünnung konfigurieren
+    topk_per_node = int(os.getenv("FBNE_TOPK_PER_NODE", "6"))
+    topn_global = int(os.getenv("FBNE_TOPN_GLOBAL", "300"))
+    label_topn = int(os.getenv("FBNE_LABEL_TOPN", "10"))
+    scene._label_top_set = _rank_nodes_for_labels(G, label_topn if not show_labels else 0)
 
+    # Edges auswählen
+    keep_edges = _select_edges_to_draw(G, float(min_edge_weight), topk_per_node, topn_global)
+
+    node_items: Dict[str, NodeItem] = {}
     for n, d in G.nodes(data=True):
         label = d.get("label", str(n))
         pos = positions.get(n, (0.0, 0.0))
         role = d.get("role", "author")
         if role == "chronik":
             size = 7.0 + 2.8 * math.sqrt(max(1, int(d.get("mentions", 1))))
-            it = NodeItem(label, pos, size, theme.chronik_fill, theme.chronik_stroke, show_labels, theme)
+            it = NodeItem(label, pos, size, theme.chronik_fill, theme.chronik_stroke,
+                          show_labels or (n in scene._label_top_set), theme)
         elif role == "work":
             size = 11.0 + 3.2 * math.sqrt(max(1, int(d.get("items", 1))))
-            it = NodeItem(label, pos, size, theme.work_fill, theme.work_stroke, show_labels, theme)
+            it = NodeItem(label, pos, size, theme.work_fill, theme.work_stroke,
+                          show_labels or (n in scene._label_top_set), theme)
         else:
             size = 9.0 + 2.0 * math.sqrt(1 + G.degree(n))
-            it = NodeItem(label, pos, size, theme.author_fill, theme.author_stroke, show_labels, theme)
+            it = NodeItem(label, pos, size, theme.author_fill, theme.author_stroke,
+                          show_labels or (n in scene._label_top_set), theme)
         node_items[n] = it; scene.addItem(it)
 
     kept = 0
     for u, v, ed in G.edges(data=True):
-        w = float(ed.get("weight", 1.0))
-        if w < float(min_edge_weight):
+        if _edge_key(u, v) not in keep_edges:
             continue
+        w = float(ed.get("weight", 1.0))
         a = node_items[u]; b = node_items[v]
         if scene._kind == "mentions":
-            # Logik: work → chronik
             src_item = a if G.nodes[u].get("role") == "work" else b
             dst_item = b if src_item is a else a
             arrow_to_b = (scene._direction == "citing")
-            if src_item is b: arrow_to_b = not arrow_to_b
+            if src_item is b:
+                arrow_to_b = not arrow_to_b
         else:
-            # Autor→Autor: u→v als Logik
             src_item, dst_item = a, b
             arrow_to_b = (scene._direction == "citing")
         e = EdgeItem(a, b, src_item, dst_item, w, theme, arrow_to_b,
                      arrow_scale=arrow_scale, high_contrast=high_contrast)
-        e.set_mode("neutral")
+        e.set_mode("neutral"); e.setVisible(True)
         a.edges.append(e); b.edges.append(e)
         scene.addItem(e); kept += 1
 
-    debug(f"Scene erstellt: nodes={len(node_items)} edges_visible={kept} dir={scene._direction} kind={scene._kind}")
+    debug(f"Scene erstellt: nodes={len(node_items)} edges_visible={kept} dir={scene._direction} kind={scene._kind} "
+          f"(min_w={min_edge_weight} topk={topk_per_node} topn={topn_global})")
     return scene
 
 
 class GraphCanvas(QtWidgets.QGraphicsView):
-    """Zoom, Pan, Klick-Fokus. Zeigt EITHER ausgehende ODER eingehende Kanten; färbt verbundene Knoten; Labels gut lesbar."""
+    """Zoom, Pan, Klick-Fokus. Startet mit allen sichtbaren Kanten; Fokus blendet gegengerichtete aus."""
     def __init__(self):
         super().__init__()
         self.setRenderHint(QtGui.QPainter.Antialiasing, True)
@@ -544,17 +608,10 @@ class GraphCanvas(QtWidgets.QGraphicsView):
         self._sticky: Optional[NodeItem] = None
         self._nav: List[NodeItem] = []
         self._nav_idx = -1
-        self._focus_dir: str = "out"  # 'out' oder 'in'
+        self._focus_dir: str = "out"
 
     # ---------- Public API ----------
     def set_graph_scene(self, scene: QtWidgets.QGraphicsScene) -> None:
-        prev = self.scene()
-        if prev is not None:
-            try:
-                for it in prev.items():
-                    if isinstance(it, EdgeItem): it.set_mode("neutral")
-            except Exception:
-                pass
         super().setScene(scene)
         self._nodes.clear()
         for it in scene.items():
@@ -562,33 +619,30 @@ class GraphCanvas(QtWidgets.QGraphicsView):
                 self._nodes[it.name] = it
         self._theme = getattr(scene, "_theme", Theme())
         self.setStyleSheet(f"QGraphicsView {{ background:{self._theme.bg}; }}")
+        self._initialize_scene_visibility()
         try:
             self.fitInView(scene.itemsBoundingRect(), Qt.KeepAspectRatio)
         except Exception:
             pass
-        self._sticky = None; self._nav.clear(); self._nav_idx = -1
         debug(f"Neu gezeichnet: nodes={len(self._nodes)}")
 
     def highlight(self, term: str, show_labels: bool) -> int:
         term = term.strip().lower(); hits = 0
         for name, node in self._nodes.items():
             hit = term and term in name.lower()
-            node.toggle_label(show_labels or bool(hit))
+            keep = show_labels or bool(hit) or (getattr(self.scene(), "_show_labels", False) is False and
+                                                name in getattr(self.scene(), "_label_top_set", set()))
+            node.toggle_label(keep)
             hits += int(bool(hit))
         return hits
 
     def set_focus_direction(self, mode: str) -> None:
         mode = (mode or "").lower().strip()
         self._focus_dir = "in" if mode.startswith("in") else "out"
-        # Re-apply current focus if any
         if self._sticky:
             self._apply_focus(self._sticky, sticky=True)
 
     # ---------- Intern ----------
-    def _belongs_here(self, it: QtWidgets.QGraphicsItem) -> bool:
-        try: return not _is_dead(it) and it.scene() is self.scene()
-        except Exception: return False
-
     def _collect_edges(self) -> List[EdgeItem]:
         scn = self.scene()
         return [it for it in scn.items() if isinstance(it, EdgeItem)] if scn else []
@@ -596,66 +650,61 @@ class GraphCanvas(QtWidgets.QGraphicsView):
     def _cluster(self, node: NodeItem) -> tuple[List[EdgeItem], List[EdgeItem]]:
         incoming: List[EdgeItem] = []; outgoing: List[EdgeItem] = []
         for e in getattr(node, "edges", []):
-            if _is_dead(e): continue
-            if e.dst_item is node: incoming.append(e)
-            if e.src_item is node: outgoing.append(e)
+            if _is_dead(e):
+                continue
+            if e.dst_item is node:
+                incoming.append(e)
+            if e.src_item is node:
+                outgoing.append(e)
         return incoming, outgoing
 
     def _reset_nodes(self) -> None:
+        show_all = bool(getattr(self.scene(), "_show_labels", False))
+        top_set = getattr(self.scene(), "_label_top_set", set())
         for node in self._nodes.values():
             node.set_style("base")
-            node.toggle_label(False)
+            node.toggle_label(show_all or (node.name in top_set))
+
+    def _initialize_scene_visibility(self) -> None:
+        self._sticky = None; self._nav.clear(); self._nav_idx = -1
+        for e in self._collect_edges():
+            e.setVisible(True); e.set_mode("neutral")
+        self._reset_nodes()
+        self.viewport().update()
 
     def _apply_focus(self, node: NodeItem, sticky: bool) -> None:
         scn = self.scene()
-        if not scn or not self._belongs_here(node): return
-        if sticky and self._sticky and self._sticky is not node: self._clear_sticky()
-
+        if not scn or node is None:
+            return
         incoming, outgoing = self._cluster(node)
         show_edges = outgoing if self._focus_dir == "out" else incoming
-        hide_edges = incoming+outgoing
-        # 1) Kanten-Sichtbarkeit global
         for e in self._collect_edges():
-            is_on = (e in show_edges)
-            e.setVisible(is_on)
-            if is_on:
+            on = (e in show_edges)
+            e.setVisible(on)
+            if on:
                 e.set_mode("out" if self._focus_dir == "out" else "in")
-
-        # 2) Knoten-Stil
+        # Knoten
         self._reset_nodes()
         node.set_style("focus"); node.toggle_label(True)
-
-        # Nachbarn bestimmen (nur sichtbare Richtung)
         neighbors: List[NodeItem] = []
         for e in show_edges:
             nbr = e.dst_item if self._focus_dir == "out" else e.src_item
             if isinstance(nbr, NodeItem) and nbr not in neighbors:
                 neighbors.append(nbr)
-
         for nbr in neighbors:
             nbr.set_style("neighbor_out" if self._focus_dir == "out" else "neighbor_in")
             nbr.toggle_label(True)
-
-        # alle anderen dimmen
         dimmed = set(self._nodes.values()) - {node} - set(neighbors)
         for n in dimmed:
             n.set_style("muted")
-
         if sticky:
             self._sticky = node
             self._nav = sorted(neighbors, key=lambda x: x.name.lower())
             self._nav_idx = -1
-
         self.viewport().update()
 
     def _clear_sticky(self) -> None:
-        self._sticky = None; self._nav.clear(); self._nav_idx = -1
-        # Alles wieder sichtbar machen und auf neutral setzen
-        for e in self._collect_edges():
-            e.setVisible(True)
-            e.set_mode("neutral")
-        self._reset_nodes()
-        self.viewport().update()
+        self._initialize_scene_visibility()
 
     # ---------- Events ----------
     def mousePressEvent(self, e: QtGui.QMouseEvent) -> None:
@@ -663,22 +712,42 @@ class GraphCanvas(QtWidgets.QGraphicsView):
         if scn and e.button() == Qt.LeftButton:
             pos = self.mapToScene(e.pos()); clicked = scn.items(pos)
             node = next((it for it in clicked if isinstance(it, NodeItem)), None)
-            if node: self._apply_focus(node, sticky=True)
-            else: self._clear_sticky()
+            if node:
+                self._apply_focus(node, sticky=True)
+            else:
+                self._clear_sticky()
         super().mousePressEvent(e)
 
     def keyPressEvent(self, e: QtGui.QKeyEvent) -> None:
         k = e.key()
-        if k in (Qt.Key_Plus, Qt.Key_Equal): self.scale(1.15, 1.15); return
-        if k == Qt.Key_Minus: self.scale(1/1.15, 1/1.15); return
+        if k in (Qt.Key_Plus, Qt.Key_Equal):
+            self.scale(1.15, 1.15); return
+        if k == Qt.Key_Minus:
+            self.scale(1/1.15, 1/1.15); return
         if k == Qt.Key_F and self.scene():
-            try: self.fitInView(self.scene().itemsBoundingRect(), Qt.KeepAspectRatio)
-            except Exception: pass
+            try:
+                self.fitInView(self.scene().itemsBoundingRect(), Qt.KeepAspectRatio)
+            except Exception:
+                pass
             return
-        if k == Qt.Key_Escape: self._clear_sticky(); return
-        if k == Qt.Key_O: self.set_focus_direction("out"); return
-        if k == Qt.Key_I: self.set_focus_direction("in"); return
+        if k == Qt.Key_Escape:
+            self._clear_sticky(); return
+        if k == Qt.Key_O:
+            self.set_focus_direction("out"); return
+        if k == Qt.Key_I:
+            self.set_focus_direction("in"); return
+        if k == Qt.Key_A:
+            self._clear_sticky(); return
         if k in (Qt.Key_Up, Qt.Key_Down) and self._sticky and self._nav:
             self._nav_idx = (self._nav_idx + (1 if k == Qt.Key_Down else -1)) % len(self._nav)
             self._apply_focus(self._nav[self._nav_idx], sticky=True); return
         super().keyPressEvent(e)
+
+
+def main() -> None:
+    # Modul zum Import in der GUI.
+    debug("authors_network.py bereit (Modul).")
+
+
+if __name__ == "__main__":
+    main()

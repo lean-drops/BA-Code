@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-11-10T17:09:09",
+  "project_root": "/Users/programming/PycharmProjects/Find_Bibliography_NEw",
+  "pdf_dir": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf",
+  "num_pdfs": 6,
+  "pdfs": [
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf/Basler_Chronik.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf/Edlibach.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf/Fründ.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf/Bullinger.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf/Wüest.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf/Tschudi.pdf"
+  ],
+  "config_file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken.sqlite3",
+  "weights": {
+    "work": 1.0,
+    "series": 1.0,
+    "generic": 1.0
+  },
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

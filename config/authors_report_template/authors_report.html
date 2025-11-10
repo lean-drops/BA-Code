@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Autor↔Autor Referenznetz</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- Platzhalter wird in Python auf ../../config/authors_report_template gesetzt -->
+  <link rel="stylesheet" href="{{ASSET_REL}}/style.css">
+  <script defer src="{{ASSET_REL}}/script.js"></script>
+  <!--
+    Ersetze die Platzhalter serverseitig:
+      {{ASSET_REL}}
+      {{COUNT_AUTHORS}}
+      {{COUNT_EDGES}}
+      {{TOP_CITERS_ROWS}}   -> <tr><td>Autor</td><td>Score</td></tr>...
+      {{TOP_CITED_ROWS}}    -> <tr><td>Autor</td><td>Score</td></tr>...
+      {{EDGES_ROWS}}        -> <tr>
+                                 <td>Quelle</td><td>Ziel</td>
+                                 <td>total</td><td>bib_hits</td><td>text_hits</td>
+                                 <td>Beispiele</td>
+                               </tr>...
+  -->
+</head>
+<body class="authors_report-body">
+  <header class="authors_report-hero">
+    <div class="authors_report-frame"></div>
+    <h1 class="authors_report-title">Autor↔Autor Referenznetz</h1>
+    <p class="authors_report-sub">Kanten: <b id="edge-count">{{COUNT_EDGES}}</b> · Autoren: <b id="author-count">{{COUNT_AUTHORS}}</b></p>
+  </header>
+
+  <main class="authors_report-main">
+    <section class="authors_report-panels">
+      <article class="authors_report-card">
+        <h2 class="authors_report-h2">Top Zitierende</h2>
+        <table class="authors_report-table authors_report-sortable" id="authors_report-top-citers">
+          <thead><tr><th data-sort="text">Autor</th><th data-sort="num">Score</th></tr></thead>
+          <tbody>
+            {{TOP_CITERS_ROWS}}
+          </tbody>
+        </table>
+      </article>
+
+      <article class="authors_report-card">
+        <h2 class="authors_report-h2">Top Zitierte</h2>
+        <table class="authors_report-table authors_report-sortable" id="authors_report-top-cited">
+          <thead><tr><th data-sort="text">Autor</th><th data-sort="num">Score</th></tr></thead>
+          <tbody>
+            {{TOP_CITED_ROWS}}
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="authors_report-card">
+      <div class="authors_report-toolbar">
+        <h2 class="authors_report-h2">Alle Kanten</h2>
+        <div class="authors_report-controls">
+          <label class="authors_report-field">
+            <span>Filter</span>
+            <input id="authors_report-filter" type="search" placeholder="Quelle, Ziel oder Beispiel">
+          </label>
+          <label class="authors_report-check"><input type="checkbox" id="authors_report-only-text"> nur Text</label>
+          <label class="authors_report-check"><input type="checkbox" id="authors_report-only-bib"> nur Bibliographie</label>
+          <button type="button" id="authors_report-reset" class="authors_report-btn">Zurücksetzen</button>
+        </div>
+      </div>
+
+      <div class="authors_report-tablewrap">
+        <table class="authors_report-table authors_report-sortable" id="authors_report-edges">
+          <thead>
+            <tr>
+              <th data-sort="text">Quelle</th>
+              <th data-sort="text">Ziel</th>
+              <th data-sort="num">Total</th>
+              <th data-sort="num">Bibliographie</th>
+              <th data-sort="num">Text</th>
+              <th data-sort="text">Beispiele</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{EDGES_ROWS}}
+          </tbody>
+        </table>
+      </div>
+      <p class="authors_report-footnote">Klick auf Spaltenkopf sortiert. Filter wirkt live. “nur Text” zeigt Kanten mit Text&gt;0, “nur Bibliographie” mit Bib&gt;0.</p>
+    </section>
+  </main>
+
+  <button class="authors_report-top" id="authors_report-top" aria-label="Nach oben">▲</button>
+</body>
+</html>
+

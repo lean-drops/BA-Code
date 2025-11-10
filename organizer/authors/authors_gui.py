@@ -106,7 +106,7 @@ class ControlPanel(QtWidgets.QWidget):
         self.combo_weight = QtWidgets.QComboBox(); self.combo_weight.setVisible(False)
 
         # Darstellung
-        self.combo_layout = QtWidgets.QComboBox(); self.combo_layout.addItems(["forceatlas2","spring","kamada_kawai","bipartite"])
+        self.combo_layout = QtWidgets.QComboBox(); self.combo_layout.addItems(["spring","spring","kamada_kawai","bipartite"])
         self.spin_gap = QtWidgets.QDoubleSpinBox(); self.spin_gap.setRange(1.0, 10.0); self.spin_gap.setSingleStep(0.5); self.spin_gap.setValue(4.0)
         self.spin_minw = QtWidgets.QSpinBox(); self.spin_minw.setRange(1, 10**9); self.spin_minw.setValue(1)
         self.chk_labels = QtWidgets.QCheckBox("Labels anzeigen"); self.chk_labels.setChecked(True)
@@ -213,7 +213,7 @@ class NetworkTab(QtWidgets.QWidget):
             # Verwende vorhandene API
             self.G = build_bipartite_graph(self.df[[doc, work]].dropna(), doc, work)
             self.panel.combo_layout.setEnabled(True); self.panel.spin_gap.setEnabled(True); self.panel.combo_weight.setVisible(False)
-            if self.panel.combo_layout.currentText() == "forceatlas2":
+            if self.panel.combo_layout.currentText() == "spring":
                 self.panel.combo_layout.setCurrentText("bipartite")
         else:
             src, tgt, w = mapping["src"], mapping["tgt"], mapping.get("w")
@@ -225,7 +225,7 @@ class NetworkTab(QtWidgets.QWidget):
             else:
                 self.panel.combo_weight.setVisible(False)
             self.G = build_graph_edges(self.df, src, tgt, self.panel.combo_weight.currentText() or w)
-            self.panel.combo_layout.setCurrentText("forceatlas2"); self.panel.spin_gap.setEnabled(False)
+            self.panel.combo_layout.setCurrentText("spring"); self.panel.spin_gap.setEnabled(False)
 
         self.positions = compute_layout(self.G, self.panel.combo_layout.currentText(), bip_gap=float(self.panel.spin_gap.value()))
         self._csv_path = path; self._save_last()
@@ -292,7 +292,7 @@ class NetworkTab(QtWidgets.QWidget):
         if self._kind == "mentions":
             self.panel.combo_layout.setCurrentText("bipartite"); self.panel.spin_gap.setValue(4.0)
         else:
-            self.panel.combo_layout.setCurrentText("forceatlas2")
+            self.panel.combo_layout.setCurrentText("spring")
         self.panel.edit_search.clear(); self._fit(); self._rebuild_scene()
 
     def _do_search(self) -> None:

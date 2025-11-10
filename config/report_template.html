@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="de" class="{{DARK_CLASS}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{TITLE}}</title>
+  <style>{{INLINE_CSS}}</style>
+</head>
+<body>
+  <header class="hdr">
+    <div class="hdr__crest"><div class="crest crest--zh" aria-hidden="true"></div><div class="crest crest--sz" aria-hidden="true"></div></div>
+    <h1 class="hdr__title">{{TITLE}}</h1>
+    <div class="hdr__meta small">Stand: {{STAMP}} · Treffer: <b>{{TOTAL_HITS}}</b> · Labels: <b>{{TOTAL_LABELS}}</b> · Dateien: <b>{{TOTAL_FILES}}</b></div>
+  </header>
+
+  <section class="toolbar">
+    <input id="fltAgg" class="filter" placeholder="Suche Labels/Werke/Serien …  z. B.  label:tschudi  group:work">
+    <div class="groups" id="groups"><span class="small">Gruppen:</span>{{GROUP_BUTTONS}}<button class="chip clear" id="clearGroups" title="Gruppenfilter löschen">Alle</button></div>
+    <button id="dark" class="toggle" title="Dark-Mode">Dark</button>
+  </section>
+
+  <section class="chips" id="labelChips">
+    <span class="small">Dateien:</span>{{LABEL_CHIPS}}
+    <button class="chip clear" id="clearLabels" title="Auswahl löschen">Alle</button>
+  </section>
+
+  <main class="container">
+    <section class="col">
+      <!-- Aggregat einklappbar -->
+      <details id="aggPanel" class="card" open>
+        <summary class="collapsible">Aggregat <span class="small rightpad">Sichtbar: <b id="aggCount">0</b></span></summary>
+        <table id="agg" class="table">
+          <thead>
+            <tr>
+              <th>Gruppe</th>
+              <th>Label</th>
+              <th class="n">Mentions</th>
+              <th class="n">Dokumente</th>
+              <th class="n">Weighted</th>
+              <th>∎</th>
+            </tr>
+          </thead>
+          <tbody>{{AGG_ROWS}}</tbody>
+        </table>
+      </details>
+
+      <!-- UNTERE SUCHLEISTE: nur Details -->
+      <div class="toolbar toolbar--sub">
+        <input id="fltDet" class="filter" placeholder="Suche in Details …  z. B.  file:jucker  group:work  pattern:chronik">
+        <button class="toggle" id="clearDet" title="Detail-Filter löschen">Clear</button>
+        <span class="small">Sichtbar: <b id="detCount">0</b></span>
+      </div>
+
+      <h2>Details</h2>
+      <table id="det" class="table">
+        <thead>
+          <tr>
+            <th>Datei</th><th class="n">Seite</th><th>Gruppe</th><th>Label</th><th>Muster</th><th>Kontext</th>
+          </tr>
+        </thead>
+        <tbody>{{DETAIL_ROWS}}</tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- PDF-Modal -->
+  <dialog id="pdfModal">
+    <div class="modal__head">
+      <span id="pdfTitle" class="small"></span>
+      <button id="pdfClose" class="toggle" aria-label="schliessen">×</button>
+    </div>
+    <iframe id="pdfFrame" title="PDF-Ansicht"></iframe>
+  </dialog>
+
+  <footer class="ftr small"><span>Report-Template · Zürich–Schwyz Stil · Zwei Suchleisten. CSVs bleiben unverändert.</span></footer>
+
+  <script>
+    // Persistenz für Aggregat-Panel
+    (function(){
+      const p=document.getElementById('aggPanel');
+      if(!p) return;
+      try{ const s=localStorage.getItem('chronik_agg_open'); if(s!==null) p.open=(s==='1'); }catch(e){}
+      p.addEventListener('toggle',()=>{ try{ localStorage.setItem('chronik_agg_open', p.open?'1':'0'); }catch(e){} });
+    })();
+
+    // PDF-Modal: klick auf "Kontext" (Spalte 6) öffnet PDF#page=N
+    (function(){
+      const table=document.getElementById('det');
+      const dlg=document.getElementById('pdfModal');
+      const frame=document.getElementById('pdfFrame');
+      const title=document.getElementById('pdfTitle');
+      const btn=document.getElementById('pdfClose');
+      if(!table || !dlg || !frame) return;
+
+      const PDF_BASE = ""; // ggf. anpassen, z.B. "../pdfs/"
+      function openPDF(file,page){
+        const url = PDF_BASE + encodeURIComponent(file) + "#page=" + (parseInt(page,10)||1);
+        frame.src = url;
+        if(title) title.textContent = file + " · Seite " + page;
+        if(typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','');
+      }
+      function closePDF(){
+        frame.src = "about:blank";
+        if(typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open');
+      }
+      table.addEventListener('click', (ev)=>{
+        const td = ev.target.closest('td'); if(!td) return;
+        const tr = ev.target.closest('tr'); if(!tr) return;
+        const colIndex = Array.prototype.indexOf.call(tr.children, td);
+        if(colIndex !== 5) return; // nur "Kontext"-Spalte
+        const file = tr.children[0]?.innerText.trim();
+        const page = tr.children[1]?.innerText.trim();
+        if(file) openPDF(file,page||"1");
+      });
+      btn?.addEventListener('click', closePDF);
+      dlg.addEventListener('click', (e)=>{ if(e.target===dlg) closePDF(); });
+      window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && dlg.hasAttribute('open')) closePDF(); });
+    })();
+  </script>
+
+  <script>
+    window.LABEL_STATS={{JSON_LABEL_STATS}};
+    window.LABEL_EXAMPLES={{JSON_LABEL_EXAMPLES}};
+    window.GROUPS={{JSON_GROUPS}};
+    window.LABELS_SORTED={{JSON_LABELS_SORTED}};
+  </script>
+  <script>{{INLINE_JS}}</script>
+</body>
+</html>

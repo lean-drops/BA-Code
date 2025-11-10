@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2025-11-10">
+    <creator>NetworkX 3.1</creator>
+  </meta>
+  <graph defaultedgetype="undirected" mode="static" name="">
+    <nodes>
+      <node id="Berner Chronik (allgemein)" label="Berner Chronik (allgemein)" />
+      <node id="Edlibach (Gerold Edlibach, Zürcher Chronik)" label="Edlibach (Gerold Edlibach, Zürcher Chronik)" />
+      <node id="Etterlin (Petermann Etterlin, Kronika)" label="Etterlin (Petermann Etterlin, Kronika)" />
+      <node id="Fründ (Hans Fründ)" label="Fründ (Hans Fründ)" />
+      <node id="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" label="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" />
+      <node id="Justinger (Konrad Justinger, Berner Chronik)" label="Justinger (Konrad Justinger, Berner Chronik)" />
+      <node id="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" label="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" />
+      <node id="Schilling (ungenau)" label="Schilling (ungenau)" />
+      <node id="Tschachtlan (Benedikt Tschachtlan)" label="Tschachtlan (Benedikt Tschachtlan)" />
+      <node id="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" label="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" />
+      <node id="Wurstisen (Christian Wurstisen, Baselische Chronik)" label="Wurstisen (Christian Wurstisen, Baselische Chronik)" />
+      <node id="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" label="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" />
+      <node id="Bullinger (Heinrich Bullinger, historiographische Werke)" label="Bullinger (Heinrich Bullinger, historiographische Werke)" />
+      <node id="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" label="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" />
+      <node id="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" label="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" />
+      <node id="Schodoler (Werner Schodoler, Eidgenössische Chronik)" label="Schodoler (Werner Schodoler, Eidgenössische Chronik)" />
+      <node id="Stumpf (Johannes Stumpf, Schweizerchronik)" label="Stumpf (Johannes Stumpf, Schweizerchronik)" />
+      <node id="Vadian (Joachim Vadianus, St. Galler Chronik)" label="Vadian (Joachim Vadianus, St. Galler Chronik)" />
+      <node id="Zürcher Stadtchronik (allgemein)" label="Zürcher Stadtchronik (allgemein)" />
+      <node id="Anonyme Basler Fortsetzung der Königshofen-Chronik („Von den von Zürich“)" label="Anonyme Basler Fortsetzung der Königshofen-Chronik („Von den von Zürich“)" />
+      <node id="Anshelm (Valerius Anshelm, Berner Chronik)" label="Anshelm (Valerius Anshelm, Berner Chronik)" />
+      <node id="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" label="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" />
+      <node id="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" label="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" />
+      <node id="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" label="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" />
+    </nodes>
+    <edges>
+      <edge source="Berner Chronik (allgemein)" target="Edlibach (Gerold Edlibach, Zürcher Chronik)" id="0" weight="1.0" />
+      <edge source="Berner Chronik (allgemein)" target="Etterlin (Petermann Etterlin, Kronika)" id="1" weight="2.0" />
+      <edge source="Berner Chronik (allgemein)" target="Fründ (Hans Fründ)" id="2" weight="3.0" />
+      <edge source="Berner Chronik (allgemein)" target="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" id="3" weight="3.0" />
+      <edge source="Berner Chronik (allgemein)" target="Justinger (Konrad Justinger, Berner Chronik)" id="4" weight="3.0" />
+      <edge source="Berner Chronik (allgemein)" target="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" id="5" weight="1.0" />
+      <edge source="Berner Chronik (allgemein)" target="Schilling (ungenau)" id="6" weight="3.0" />
+      <edge source="Berner Chronik (allgemein)" target="Tschachtlan (Benedikt Tschachtlan)" id="7" weight="3.0" />
+      <edge source="Berner Chronik (allgemein)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="8" weight="3.0" />
+      <edge source="Berner Chronik (allgemein)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="9" weight="1.0" />
+      <edge source="Berner Chronik (allgemein)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="10" weight="1.0" />
+      <edge source="Berner Chronik (allgemein)" target="Anshelm (Valerius Anshelm, Berner Chronik)" id="11" weight="1.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Etterlin (Petermann Etterlin, Kronika)" id="12" weight="1.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Fründ (Hans Fründ)" id="13" weight="2.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" id="14" weight="2.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Justinger (Konrad Justinger, Berner Chronik)" id="15" weight="1.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" id="16" weight="1.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Schilling (ungenau)" id="17" weight="1.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Tschachtlan (Benedikt Tschachtlan)" id="18" weight="1.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="19" weight="2.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="20" weight="1.0" />
+      <edge source="Edlibach (Gerold Edlibach, Zürcher Chronik)" target="Anonyme Basler Fortsetzung der Königshofen-Chronik („Von den von Zürich“)" id="21" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Fründ (Hans Fründ)" id="22" weight="3.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" id="23" weight="3.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Justinger (Konrad Justinger, Berner Chronik)" id="24" weight="2.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" id="25" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Schilling (ungenau)" id="26" weight="3.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Tschachtlan (Benedikt Tschachtlan)" id="27" weight="2.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="28" weight="3.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="29" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" id="30" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="31" weight="2.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" id="32" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" id="33" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="34" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="35" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="36" weight="1.0" />
+      <edge source="Etterlin (Petermann Etterlin, Kronika)" target="Zürcher Stadtchronik (allgemein)" id="37" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" id="38" weight="5.0" />
+      <edge source="Fründ (Hans Fründ)" target="Justinger (Konrad Justinger, Berner Chronik)" id="39" weight="4.0" />
+      <edge source="Fründ (Hans Fründ)" target="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" id="40" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Schilling (ungenau)" id="41" weight="5.0" />
+      <edge source="Fründ (Hans Fründ)" target="Tschachtlan (Benedikt Tschachtlan)" id="42" weight="3.0" />
+      <edge source="Fründ (Hans Fründ)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="43" weight="6.0" />
+      <edge source="Fründ (Hans Fründ)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="44" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" id="45" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="46" weight="3.0" />
+      <edge source="Fründ (Hans Fründ)" target="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" id="47" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" id="48" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="49" weight="2.0" />
+      <edge source="Fründ (Hans Fründ)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="50" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="51" weight="2.0" />
+      <edge source="Fründ (Hans Fründ)" target="Zürcher Stadtchronik (allgemein)" id="52" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Anonyme Basler Fortsetzung der Königshofen-Chronik („Von den von Zürich“)" id="53" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Anshelm (Valerius Anshelm, Berner Chronik)" id="54" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" id="55" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" id="56" weight="1.0" />
+      <edge source="Fründ (Hans Fründ)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="57" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Justinger (Konrad Justinger, Berner Chronik)" id="58" weight="3.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" id="59" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Schilling (ungenau)" id="60" weight="4.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Tschachtlan (Benedikt Tschachtlan)" id="61" weight="3.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="62" weight="5.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="63" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" id="64" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="65" weight="2.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" id="66" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" id="67" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="68" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="69" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="70" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Zürcher Stadtchronik (allgemein)" id="71" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Anonyme Basler Fortsetzung der Königshofen-Chronik („Von den von Zürich“)" id="72" weight="1.0" />
+      <edge source="Johann Jakob Leu (Allgemeines Helvetisches Lexikon)" target="Anshelm (Valerius Anshelm, Berner Chronik)" id="73" weight="1.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" id="74" weight="1.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Schilling (ungenau)" id="75" weight="4.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Tschachtlan (Benedikt Tschachtlan)" id="76" weight="3.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="77" weight="4.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="78" weight="1.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="79" weight="2.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Anshelm (Valerius Anshelm, Berner Chronik)" id="80" weight="1.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" id="81" weight="1.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" id="82" weight="1.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="83" weight="1.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="84" weight="1.0" />
+      <edge source="Justinger (Konrad Justinger, Berner Chronik)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="85" weight="1.0" />
+      <edge source="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" target="Schilling (ungenau)" id="86" weight="1.0" />
+      <edge source="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" target="Tschachtlan (Benedikt Tschachtlan)" id="87" weight="1.0" />
+      <edge source="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="88" weight="1.0" />
+      <edge source="Knebel (Johannes Knebel, Basler Jahrzeitbuch/Chronik)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="89" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Tschachtlan (Benedikt Tschachtlan)" id="90" weight="3.0" />
+      <edge source="Schilling (ungenau)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="91" weight="5.0" />
+      <edge source="Schilling (ungenau)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="92" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" id="93" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="94" weight="3.0" />
+      <edge source="Schilling (ungenau)" target="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" id="95" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" id="96" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="97" weight="2.0" />
+      <edge source="Schilling (ungenau)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="98" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="99" weight="2.0" />
+      <edge source="Schilling (ungenau)" target="Zürcher Stadtchronik (allgemein)" id="100" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Anshelm (Valerius Anshelm, Berner Chronik)" id="101" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" id="102" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" id="103" weight="1.0" />
+      <edge source="Schilling (ungenau)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="104" weight="1.0" />
+      <edge source="Tschachtlan (Benedikt Tschachtlan)" target="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" id="105" weight="3.0" />
+      <edge source="Tschachtlan (Benedikt Tschachtlan)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="106" weight="1.0" />
+      <edge source="Tschachtlan (Benedikt Tschachtlan)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="107" weight="1.0" />
+      <edge source="Tschachtlan (Benedikt Tschachtlan)" target="Anshelm (Valerius Anshelm, Berner Chronik)" id="108" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Wurstisen (Christian Wurstisen, Baselische Chronik)" id="109" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" id="110" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="111" weight="3.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" id="112" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" id="113" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="114" weight="2.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="115" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="116" weight="2.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Zürcher Stadtchronik (allgemein)" id="117" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Anonyme Basler Fortsetzung der Königshofen-Chronik („Von den von Zürich“)" id="118" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Anshelm (Valerius Anshelm, Berner Chronik)" id="119" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" id="120" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" id="121" weight="1.0" />
+      <edge source="Tschudi (Aegidius/Gilg Tschudi, Chronicon Helveticum)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="122" weight="1.0" />
+      <edge source="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" target="Bullinger (Heinrich Bullinger, historiographische Werke)" id="123" weight="1.0" />
+      <edge source="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" target="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" id="124" weight="1.0" />
+      <edge source="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" target="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" id="125" weight="1.0" />
+      <edge source="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="126" weight="1.0" />
+      <edge source="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="127" weight="1.0" />
+      <edge source="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="128" weight="1.0" />
+      <edge source="Brennwald (Heinrich/Johannes Brennwald, Schweizerchronik)" target="Zürcher Stadtchronik (allgemein)" id="129" weight="1.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" id="130" weight="1.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" id="131" weight="1.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="132" weight="2.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="133" weight="1.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="134" weight="2.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Zürcher Stadtchronik (allgemein)" id="135" weight="1.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" id="136" weight="1.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" id="137" weight="1.0" />
+      <edge source="Bullinger (Heinrich Bullinger, historiographische Werke)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="138" weight="1.0" />
+      <edge source="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" target="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" id="139" weight="1.0" />
+      <edge source="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="140" weight="1.0" />
+      <edge source="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="141" weight="1.0" />
+      <edge source="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="142" weight="1.0" />
+      <edge source="Hottinger (Johann Jakob Hottinger, Helvetische Kirchengeschichte)" target="Zürcher Stadtchronik (allgemein)" id="143" weight="1.0" />
+      <edge source="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" target="Schodoler (Werner Schodoler, Eidgenössische Chronik)" id="144" weight="1.0" />
+      <edge source="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="145" weight="1.0" />
+      <edge source="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="146" weight="1.0" />
+      <edge source="Kopp (Joseph Eutych Kopp, Geschichte der Eidgenossen)" target="Zürcher Stadtchronik (allgemein)" id="147" weight="1.0" />
+      <edge source="Schodoler (Werner Schodoler, Eidgenössische Chronik)" target="Stumpf (Johannes Stumpf, Schweizerchronik)" id="148" weight="1.0" />
+      <edge source="Schodoler (Werner Schodoler, Eidgenössische Chronik)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="149" weight="2.0" />
+      <edge source="Schodoler (Werner Schodoler, Eidgenössische Chronik)" target="Zürcher Stadtchronik (allgemein)" id="150" weight="1.0" />
+      <edge source="Schodoler (Werner Schodoler, Eidgenössische Chronik)" target="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" id="151" weight="1.0" />
+      <edge source="Schodoler (Werner Schodoler, Eidgenössische Chronik)" target="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" id="152" weight="1.0" />
+      <edge source="Schodoler (Werner Schodoler, Eidgenössische Chronik)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="153" weight="1.0" />
+      <edge source="Stumpf (Johannes Stumpf, Schweizerchronik)" target="Vadian (Joachim Vadianus, St. Galler Chronik)" id="154" weight="1.0" />
+      <edge source="Stumpf (Johannes Stumpf, Schweizerchronik)" target="Zürcher Stadtchronik (allgemein)" id="155" weight="1.0" />
+      <edge source="Vadian (Joachim Vadianus, St. Galler Chronik)" target="Zürcher Stadtchronik (allgemein)" id="156" weight="1.0" />
+      <edge source="Vadian (Joachim Vadianus, St. Galler Chronik)" target="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" id="157" weight="1.0" />
+      <edge source="Vadian (Joachim Vadianus, St. Galler Chronik)" target="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" id="158" weight="1.0" />
+      <edge source="Vadian (Joachim Vadianus, St. Galler Chronik)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="159" weight="1.0" />
+      <edge source="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" target="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" id="160" weight="1.0" />
+      <edge source="Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="161" weight="1.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik (Eberhard Wüest, ed.)" target="Rüeger (Johann Jakob Rüeger, Schaffhauser Chronik)" id="162" weight="1.0" />
+    </edges>
+  </graph>
+</gexf>

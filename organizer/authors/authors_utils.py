@@ -1,9 +1,9 @@
 """
-Utility-Funktionen und Modelle für Autor↔Autor-Referenznetz.
+authors_utils.py — Utility-Funktionen und Modelle für Autor↔Autor-Referenznetz.
 
 Usage:
-  Wird von authors_search.py und authors_gui.py importiert.
-  Nicht direkt ausführen.
+  - Wird von authors_search.py und authors_gui.py importiert.
+  - Nicht direkt ausführen. Ein kleines __main__ dient nur zum Selbsttest.
 
 Benötigt:
   - Python 3.9+
@@ -11,6 +11,10 @@ Benötigt:
   - pandas (für Aggregation/Export)
   - optional: pytesseract (+ Tesseract), pillow
   - optional: networkx
+
+Environment:
+  - FBNE_PROJECT_DIR (optional): Absoluter Projektpfad, der 'config/authors_report_template' enthält.
+    Fallback: automatische Erkennung oder Default '/Users/programming/PycharmProjects/Find_Bibliography_NEw'.
 """
 from __future__ import annotations
 
@@ -21,7 +25,7 @@ import json
 import html
 import hashlib
 import unicodedata
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Dict, List, Tuple, Optional, Iterable, Set
 from datetime import datetime
 
@@ -64,6 +68,11 @@ BIB_HEADINGS = [
 ]
 LOG_TS_FMT = "%H:%M:%S"
 
+# Projekt-Defaults
+PROJECT_DIR_DEFAULT = "/Users/programming/PycharmProjects/Find_Bibliography_NEw"
+TEMPLATE_SUBDIR = os.path.join("config", "authors_report_template")
+DATA_SUBDIR = os.path.join("data", "authors_data")
+
 # ---------------------- Modelle ----------------------
 @dataclass(frozen=True)
 class Author:
@@ -97,6 +106,57 @@ def log_warn(msg: str) -> None:
 
 def log_error(msg: str) -> None:
     print(f"[{_ts()}][ERROR] {msg}", flush=True)
+
+
+# ---------------------- Projektpfad-Erkennung ----------------------
+def _looks_like_project(p: str) -> bool:
+    return os.path.isdir(os.path.join(p, TEMPLATE_SUBDIR))
+
+def detect_project_dir(hint: Optional[str] = None) -> str:
+    """
+    Ermittelt den Projektpfad, der das Template-Verzeichnis enthält.
+    Reihenfolge: ENV(FBNE_PROJECT_DIR) -> heuristische Suche (hint, __file__) -> Default.
+    """
+    env = os.environ.get("FBNE_PROJECT_DIR")
+    if env and _looks_like_project(env):
+        log_info(f"Projektpfad aus ENV: {env}")
+        return os.path.abspath(env)
+
+    # Heuristik: von hint aus aufwärts
+    def ascend(start: str) -> Optional[str]:
+        cur = os.path.abspath(start)
+        for _ in range(6):
+            if _looks_like_project(cur):
+                return cur
+            parent = os.path.dirname(cur)
+            if parent == cur:
+                break
+            cur = parent
+        return None
+
+    if hint:
+        cand = ascend(hint)
+        if cand:
+            log_info(f"Projektpfad erkannt (hint): {cand}")
+            return cand
+
+    # Heuristik: von diesem File aus aufwärts
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    cand = ascend(this_dir)
+    if cand:
+        log_info(f"Projektpfad erkannt (__file__): {cand}")
+        return cand
+
+    # Fallback
+    log_warn(f"Projektpfad-Fallback genutzt: {PROJECT_DIR_DEFAULT}")
+    return PROJECT_DIR_DEFAULT
+
+
+def get_template_dir(project_dir: str) -> str:
+    tpl = os.path.join(project_dir, TEMPLATE_SUBDIR)
+    if not os.path.isdir(tpl):
+        raise FileNotFoundError(f"Template-Verzeichnis fehlt: {tpl}")
+    return tpl
 
 
 # ---------------------- Utils ----------------------
@@ -267,11 +327,18 @@ def aggregate_edges(authors: Dict[str, Author], mentions: List[Mention]):
     return df_nodes, agg
 
 def ensure_session_dir(base: str, pdfs: List[str]) -> str:
+    """
+    Erstellt einen neuen Session-Ordner IM PROJEKT unter data/authors_data,
+    unabhängig davon, wo die PDFs liegen.
+    """
+    project_dir = detect_project_dir(hint=base)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     h = hashlib.sha1(("|".join(sorted(os.path.basename(p) for p in pdfs))).encode("utf-8")).hexdigest()[:8]
-    root = os.path.join(base, "data", "authors_data")
+    root = os.path.join(project_dir, DATA_SUBDIR)
+    os.makedirs(root, exist_ok=True)
     session_dir = os.path.join(root, f"session_{ts}_{h}")
     os.makedirs(session_dir, exist_ok=True)
+    log_info(f"Session-Root: {root}")
     return session_dir
 
 def write_csvs(out_dir: str, df_nodes, df_edges) -> Tuple[str, str]:
@@ -299,62 +366,92 @@ def write_gexf(out_dir: str, authors: Dict[str, Author], df_edges) -> Optional[s
     log_info(f"GEXF geschrieben: {out}")
     return out
 
+def _compute_asset_rel(out_dir: str, template_dir: str) -> str:
+    rel = os.path.relpath(template_dir, start=out_dir).replace(os.sep, "/")
+    return rel
+
+def _read_template_html(template_dir: str) -> str:
+    path = os.path.join(template_dir, "authors_report.html")
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Template-Datei fehlt: {path}")
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
+def _esc(s: object) -> str:
+    return html.escape("" if s is None else str(s), quote=True)
+
 def write_html_report(out_dir: str, authors: Dict[str, Author], df_edges) -> str:
+    """
+    Rendert den Report mit dem HTML/CSS/JS-Template aus config/authors_report_template.
+    Ersetzt Platzhalter und speichert authors_report.html im Session-Ordner.
+    """
     import pandas as pd  # type: ignore
+
+    project_dir = detect_project_dir(hint=out_dir)
+    template_dir = get_template_dir(project_dir)
+    tpl_html = _read_template_html(template_dir)
+    asset_rel = _compute_asset_rel(out_dir, template_dir)
+
     df_out = df_edges.copy()
-    df_out["src_label"] = df_out["src"].map(lambda x: authors[x].display if x in authors else x)
-    df_out["tgt_label"] = df_out["tgt"].map(lambda x: authors[x].display if x in authors else x)
+    # Labels anreichern
+    def lab(aid: str) -> str:
+        a = authors.get(aid)
+        return a.display if a else aid
 
-    top_citers = df_out.groupby("src_label")["weighted"].sum().sort_values(ascending=False).head(10)
-    top_cited  = df_out.groupby("tgt_label")["weighted"].sum().sort_values(ascending=False).head(10)
+    df_out["src_label"] = df_out["src"].map(lab)
+    df_out["tgt_label"] = df_out["tgt"].map(lab)
 
-    def esc(s: str) -> str:
-        return html.escape(str(s), quote=True)
+    # Top-Listen
+    if df_out.empty:
+        top_citers = pd.Series(dtype=float)
+        top_cited = pd.Series(dtype=float)
+    else:
+        top_citers = df_out.groupby("src_label")["weighted"].sum().sort_values(ascending=False).head(10)
+        top_cited  = df_out.groupby("tgt_label")["weighted"].sum().sort_values(ascending=False).head(10)
 
-    html_parts = [
-        "<!doctype html><html><head><meta charset='utf-8'>",
-        "<title>Autor↔Autor Referenznetz</title>",
-        "<style>",
-        "body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px}",
-        "h1,h2{margin:0.2em 0}",
-        "table{border-collapse:collapse;width:100%;margin-top:8px}",
-        "th,td{border:1px solid #ddd;padding:6px;vertical-align:top}",
-        "th{background:#f6f6f6;text-align:left}",
-        ".grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}",
-        ".small{color:#666;font-size:12px}",
-        "</style></head><body>",
-        "<h1>Autor↔Autor Referenznetz</h1>",
-        f"<p class='small'>Kanten: <b>{len(df_out)}</b> | Autoren: <b>{len(authors)}</b></p>",
-        "<div class='grid'>",
-        "<div><h2>Top Zitierende</h2><table><thead><tr><th>Autor</th><th>Score</th></tr></thead><tbody>"
-    ]
-    for name, val in top_citers.items():
-        html_parts.append(f"<tr><td>{esc(name)}</td><td>{int(val)}</td></tr>")
-    html_parts.append("</tbody></table></div>")
+    def rows_from_series(ser: pd.Series) -> str:
+        parts: List[str] = []
+        for name, val in ser.items():
+            parts.append(f"<tr><td>{_esc(name)}</td><td>{int(val)}</td></tr>")
+        return "\n".join(parts)
 
-    html_parts.append("<div><h2>Top Zitierte</h2><table><thead><tr><th>Autor</th><th>Score</th></tr></thead><tbody>")
-    for name, val in top_cited.items():
-        html_parts.append(f"<tr><td>{esc(name)}</td><td>{int(val)}</td></tr>")
-    html_parts.append("</tbody></table></div></div>")
+    def rows_from_edges(dfv: pd.DataFrame) -> str:
+        parts: List[str] = []
+        for _, r in dfv.sort_values("weighted", ascending=False).iterrows():
+            parts.append(
+                "<tr>"
+                f"<td>{_esc(r.get('src_label',''))}</td>"
+                f"<td>{_esc(r.get('tgt_label',''))}</td>"
+                f"<td>{int(r.get('total',0))}</td>"
+                f"<td>{int(r.get('bib_hits',0))}</td>"
+                f"<td>{int(r.get('text_hits',0))}</td>"
+                f"<td>{_esc(str(r.get('examples','')))}</td>"
+                "</tr>"
+            )
+        return "\n".join(parts)
 
-    html_parts.append("<h2>Alle Kanten (Quelle → Ziel)</h2><table><thead><tr>"
-                      "<th>Quelle</th><th>Ziel</th><th>Total</th><th>Bibliographie</th><th>Text</th><th>Beispiele</th>"
-                      "</tr></thead><tbody>")
-    for _, r in df_out.sort_values("weighted", ascending=False).iterrows():
-        html_parts.append("<tr>"
-                          f"<td>{esc(r['src_label'])}</td>"
-                          f"<td>{esc(r['tgt_label'])}</td>"
-                          f"<td>{int(r['total'])}</td>"
-                          f"<td>{int(r['bib_hits'])}</td>"
-                          f"<td>{int(r['text_hits'])}</td>"
-                          f"<td>{esc(str(r['examples']))}</td>"
-                          "</tr>")
-    html_parts.append("</tbody></table></body></html>")
+    top_citers_rows = rows_from_series(top_citers)
+    top_cited_rows = rows_from_series(top_cited)
+    edges_rows = rows_from_edges(df_out)
+
+    # Autorenanzahl aus dict, nicht aus df_edges (robuster)
+    count_authors = len(authors)
+    count_edges = int(df_out.shape[0])
+
+    # Platzhalter ersetzen
+    html_str = tpl_html
+    html_str = html_str.replace("{{ASSET_REL}}", _esc(asset_rel))
+    html_str = html_str.replace("{{COUNT_AUTHORS}}", str(count_authors))
+    html_str = html_str.replace("{{COUNT_EDGES}}", str(count_edges))
+    html_str = html_str.replace("{{TOP_CITERS_ROWS}}", top_citers_rows)
+    html_str = html_str.replace("{{TOP_CITED_ROWS}}", top_cited_rows)
+    html_str = html_str.replace("{{EDGES_ROWS}}", edges_rows)
 
     out = os.path.join(out_dir, "authors_report.html")
     with open(out, "w", encoding="utf-8") as f:
-        f.write("\n".join(html_parts))
-    log_info(f"HTML geschrieben: {out}")
+        f.write(html_str)
+    log_info(f"HTML geschrieben (Template): {out}")
+    log_info(f"Assets relativ verlinkt: {asset_rel}/(style.css|script.js)")
     return out
 
 def write_session_meta(out_dir: str, base: str, pdfs: List[str]) -> str:
@@ -391,3 +488,54 @@ def environment_report() -> None:
             pass
     log_info(f"OCR-Fallback aktiv bei < {TEXT_MIN_LEN} Zeichen.")
 
+
+# ---------------------- Optionaler Selbsttest ---------------------------------
+def _selftest_render_if_csv_exists() -> None:
+    """
+    Kleiner Smoke-Test: Falls im neuesten Session-Ordner CSVs liegen,
+    rendere Report mit Template erneut.
+    """
+    if not HAVE_PANDAS:
+        log_warn("pandas nicht installiert, Selftest übersprungen.")
+        return
+    import pandas as pd  # noqa
+    project_dir = detect_project_dir()
+    data_dir = os.path.join(project_dir, DATA_SUBDIR)
+    if not os.path.isdir(data_dir):
+        log_warn(f"Kein Datenverzeichnis: {data_dir}")
+        return
+    # Neueste Session finden
+    cands = []
+    for name in os.listdir(data_dir):
+        p = os.path.join(data_dir, name)
+        if os.path.isdir(p) and name.startswith("session_"):
+            nodes = os.path.join(p, "authors_nodes.csv")
+            edges = os.path.join(p, "authors_edges.csv")
+            if os.path.isfile(nodes) and os.path.isfile(edges):
+                cands.append((os.path.getmtime(p), p))
+    if not cands:
+        log_warn("Keine Session mit CSVs gefunden. Selftest beendet.")
+        return
+    cands.sort(key=lambda t: t[0], reverse=True)
+    session_dir = cands[0][1]
+    log_info(f"Selftest-Session: {session_dir}")
+    df_nodes = pd.read_csv(os.path.join(session_dir, "authors_nodes.csv"), sep=";")
+    df_edges = pd.read_csv(os.path.join(session_dir, "authors_edges.csv"), sep=";")
+    # Autoren-Map für Labels
+    authors: Dict[str, Author] = {}
+    for aid, disp in zip(df_nodes["author_id"].astype(str), df_nodes["display"].astype(str)):
+        authors[aid] = Author(aid, disp, tuple(), tuple(), tuple())
+    write_html_report(session_dir, authors, df_edges)
+
+
+# Nur für manuellen Schnelltest; im regulären Betrieb wird dieses Modul importiert.
+if __name__ == "__main__":
+    def main() -> None:
+        log_info("Selftest gestartet.")
+        environment_report()
+        try:
+            _selftest_render_if_csv_exists()
+        except Exception as e:
+            log_error(f"Selftest-Fehler: {e}")
+        log_info("Selftest Ende. Usage: Modul importieren und Funktionen aufrufen.")
+    main()

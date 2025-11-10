@@ -1,94 +1,149 @@
+
+# organizer/chronik/chronik_finder/run.py
+#!/usr/bin/env python3
 """
-Orchestrator: verbindet Pfade, Muster, Scan, Aggregation und Ausgabe.
-Genauigkeit hat Vorrang vor Geschwindigkeit. Alle Ausgaben identisch zur
-Monolith-Version: chroniken_mentions.csv, chroniken_summary.csv,
-chroniken_report.html, chroniken_network.gexf*, session_meta.json
-(*nur bei vorhandenen Abhängigkeiten).
+Orchestrator für den DB-basierten Chroniken-Finder.
+
+Ablauf:
+1) Projektpfade bestimmen und DB laden
+2) Regex-Muster aus SQLite kompilieren
+3) PDFs finden und scannen
+4) Treffer aggregieren und Ausgaben schreiben:
+   - chroniken_mentions.csv
+   - chroniken_summary.csv
+   - chroniken_report.html
+   - chroniken_network.gexf*  (*falls networkx vorhanden)
+   - session_meta.json
+
+Öffentliche Funktion:
+    run_finder(...) -> (session_dir | None, df | None, agg | None)
+
+Kompatibel zum bisherigen Aufrufer 'chronik-search.py'.
 """
 from __future__ import annotations
 
 import os
 import traceback
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from .aggregate import aggregate
 from .constants import DEFAULT_SKIP_BIBLIOGRAPHY, MAX_WORKERS_DEFAULT
-from .env import HAVE_PANDAS
 from .models import Hit
-from .output import ensure_session_dir, maybe_write_gexf, write_html, write_meta, write_outputs
-from .paths import config_path, default_pdf_dir, iter_pdfs, project_root
-from .patterns import compile_patterns, load_config
+from .output import (
+    ensure_session_dir,
+    maybe_write_gexf,
+    write_html,
+    write_meta,
+    write_outputs,
+)
+from .paths import config_db_path, default_pdf_dir, iter_pdfs, project_root
+from .patterns import compile_patterns_from_db
 from .scan import scan_pdfs
-from .ui import pick_pdf_dir, print_env
 
-def _auto_workers() -> int:
-    if MAX_WORKERS_DEFAULT > 0:
-        return MAX_WORKERS_DEFAULT
-    cpu = max(1, (os.cpu_count() or 2) - 1)
-    return min(cpu, 4)
 
-def run_finder() -> Tuple[Optional[Path], object, object]:
+def _print_env(root: Path, pdf_dir: Path, db_path: Path, skip_bib: bool, max_workers: int) -> None:
+    print("[INFO] Chroniken-Finder (DB-Modus)")
+    print("       root       =", root)
+    print("       db_path    =", db_path)
+    print("       pdf_dir    =", pdf_dir)
+    print("       skip_bib   =", skip_bib)
+    print("       workers    =", max_workers)
+
+
+def _deduplicate_hits(hits: List[Hit]) -> List[Hit]:
+    """
+    Entfernt identische Treffer. Stabil für identischen Output.
+    Schlüssel: (pdf_file, page, group, label, pattern, context)
+    """
+    seen: set = set()
+    out: List[Hit] = []
+    for h in hits:
+        key = (getattr(h, "pdf_path", getattr(h, "pdf_file", "")),
+               getattr(h, "page", 0),
+               getattr(h, "group", ""),
+               getattr(h, "label", ""),
+               getattr(h, "pattern", ""),
+               getattr(h, "context", ""))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(h)
+    return out
+
+
+def run_finder(
+    pdf_dir: Optional[Path] = None,
+    db_path: Optional[Path] = None,
+    skip_bibliography: bool = DEFAULT_SKIP_BIBLIOGRAPHY,
+    max_workers: int = MAX_WORKERS_DEFAULT,
+) -> Tuple[Optional[Path], object, object]:
     """
     Führt den gesamten Pipeline-Lauf aus.
     Rückgabe: (session_dir | None, df | None, agg | None)
     """
-    print_env()
-
     root = project_root()
-    std_pdf_dir = default_pdf_dir(root)
-    cfg_file = config_path(root)
+    pdf_dir = pdf_dir or default_pdf_dir(root)
+    db_path = db_path or config_db_path(root)
+    _print_env(root, pdf_dir, db_path, skip_bibliography, max_workers)
 
+    # 1) Patterns laden
     try:
-        cfg = load_config(cfg_file)
+        patterns, weights = compile_patterns_from_db(db_path)
     except Exception as e:
-        print(f"[ERROR] Konnte Config nicht laden: {cfg_file} ({e})")
+        print(f"[ERROR] Konnte Muster aus DB nicht laden: {e}")
+        traceback.print_exc()
         return None, None, None
-
-    patterns, weights = compile_patterns(cfg)
     if not patterns:
-        print("[ERROR] Keine gültigen Muster. Prüfe config/chroniken_canon.json.")
+        print("[ERROR] Keine gültigen Muster aus DB.")
         return None, None, None
 
-    pdf_dir = pick_pdf_dir(std_pdf_dir)
+    # 2) PDFs
     pdfs = list(iter_pdfs(pdf_dir))
     if not pdfs:
         print("[WARN] Keine PDFs gefunden.")
         return None, None, None
 
+    # 3) Session
     session_dir = ensure_session_dir(root, pdfs)
     print(f"[INFO] Session-Ordner: {session_dir}")
 
+    # 4) Scan
     try:
-        all_hits: List[Hit] = scan_pdfs(pdfs, patterns, max_workers=_auto_workers(), skip_bib=DEFAULT_SKIP_BIBLIOGRAPHY)
+        hits = scan_pdfs(pdfs, patterns, max_workers=max_workers, skip_bib=skip_bibliography)
     except Exception as e:
-        print(f"[ERROR] Gesamtscan fehlgeschlagen: {e}")
+        print(f"[ERROR] Scan fehlgeschlagen: {e}")
         traceback.print_exc()
-        return session_dir, None, None
+        return None, None, None
 
-    if not HAVE_PANDAS:
-        print("[ERROR] pandas fehlt. Installiere mit: pip install pandas")
-        return session_dir, None, None
-
-    # weiche Duplikat-Reduktion
-    dedup: List[Hit] = []
-    seen = set()
-    for h in all_hits:
-        key = (h.pdf_path, h.page, h.group, h.label, h.context)
-        if key not in seen:
-            seen.add(key)
-            dedup.append(h)
-
+    # 5) Dedup + Aggregation
+    dedup = _deduplicate_hits(hits)
     df, agg = aggregate(dedup, weights)
-    write_meta(session_dir, root, pdf_dir, pdfs, cfg_file, weights)
-    write_outputs(session_dir, df, agg)
-    maybe_write_gexf(session_dir, df)
-    write_html(session_dir, df, agg)
 
-    if agg is not None and len(agg) > 0:
-        print("[INFO] Top-Labels nach Weighted:")
-        for _, r in agg.sort_values("weighted_mentions", ascending=False).head(15).iterrows():
-            print(f"  [{r['group']}] {r['label']}: mentions={r['mentions']} docs={r['docs']} weighted={r['weighted_mentions']}")
-    else:
-        print("[INFO] Keine Treffer aggregiert.")
+    # 6) Outputs
+    try:
+        write_meta(session_dir, root, pdf_dir, pdfs, db_path, weights)
+        write_outputs(session_dir, df, agg)
+        maybe_write_gexf(session_dir, df)
+        write_html(session_dir, df, agg)
+    except Exception as e:
+        print(f"[ERROR] Schreiben der Outputs fehlgeschlagen: {e}")
+        traceback.print_exc()
+        return session_dir, df, agg
+
+    # 7) Kurzer Überblick
+    try:
+        if agg is not None and len(agg) > 0:
+            print("[INFO] Top-Labels nach Weighted:")
+            view = agg.sort_values("weighted_mentions", ascending=False).head(15)
+            for _, r in view.iterrows():
+                print(f"  [{r['group']}] {r['label']}: "
+                      f"mentions={int(r['mentions'])} docs={int(r['docs'])} "
+                      f"weighted={float(r['weighted_mentions'])}")
+        else:
+            print("[INFO] Keine Treffer aggregiert.")
+    except Exception:
+        # Keine harte Abhängigkeit von pandas für diese Ausgabe
+        pass
+
     return session_dir, df, agg
