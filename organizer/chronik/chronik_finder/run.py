@@ -28,7 +28,7 @@ def _auto_workers() -> int:
     cpu = max(1, (os.cpu_count() or 2) - 1)
     return min(cpu, 4)
 
-def run() -> Tuple[Optional[Path], object, object]:
+def run_finder() -> Tuple[Optional[Path], object, object]:
     """
     Führt den gesamten Pipeline-Lauf aus.
     Rückgabe: (session_dir | None, df | None, agg | None)

@@ -1,5 +1,4 @@
-{
-  "works": [
+{ "works": [
     {
       "canonical": "Fründ (Hans Fründ)",
       "aliases": [
@@ -8,6 +7,21 @@
         "\\bfr[üu]nd\\b",
         "chronik\\s+des\\s+hans\\s+fr[üu]nd",
         "annales\\s+fr[üu]nd\\b"
+      ]
+    },
+
+   {
+      "canonical": "Dacher (Gebhard/Gebhart Dacher, Konstanzer Chronik)",
+      "aliases": [
+        "(?:gebhard|gebhart)\\s+dacher",
+        "dacher\\s+von\\s+dingelstorff",
+        "gebhard\\s+dacher\\s+von\\s+dingelstorff",
+        "\\bkonstanzer\\s+chronik\\b",
+        "konstanzer\\s+chronik\\s+dacher",
+        "chronik\\s+der\\s+stadt\\s+konstanz",
+        "chronik\\s+von\\s+konstanz",
+        "historia\\s+civitatis\\s+et\\s+episcopatus\\s+constantiensis",
+        "constantiensis\\s+historia"
       ]
     },
     {
@@ -367,7 +381,7 @@
     {
       "canonical": "Chronik der Stadt Zürich (Edlibach u. a.)",
       "aliases": [
-        "chronik\\s+der\\s+stadt\\s+z[üu]rich",
+        "chronik\\s+ der\\s+stadt\\s+z[üu]rich",
         "z[üu]rich(?:er)?\\s+stadt\\s+chronik"
       ]
     },
@@ -602,3 +616,4 @@
     "generic": 1.2
   }
 }
+

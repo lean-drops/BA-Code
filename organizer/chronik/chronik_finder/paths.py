@@ -66,7 +66,7 @@ def data_base_dir(root: Path) -> Path:
 
 def default_pdf_dir(root: Path) -> Path:
     """Standardverzeichnis für die zu scannenden PDFs: <DATA>/azk_library"""
-    return data_base_dir(root) / "azk_library"
+    return data_base_dir(root) / "data/chroniken_library/pdf"
 
 
 def config_path(root: Path) -> Path:

@@ -1,167 +1,163 @@
 (function(){
-  const $ = (s, c=document) => c.querySelector(s);
+  const $  = (s, c=document) => c.querySelector(s);
   const $$ = (s, c=document) => Array.from(c.querySelectorAll(s));
 
-  // ---------------- Dark-Mode ----------------
+  // ---------- Dark ----------
   const darkBtn = $('#dark');
-  function setDark(on){
-    document.documentElement.classList.toggle('dark', !!on);
-    try{ localStorage.setItem('chronik_dark', on ? '1':'0'); }catch(e){}
-  }
+  function setDark(on){ document.documentElement.classList.toggle('dark', !!on);
+    try{ localStorage.setItem('chronik_dark', on ? '1':'0'); }catch(e){} }
   try{ setDark(localStorage.getItem('chronik_dark') === '1'); }catch(e){}
   if(darkBtn) darkBtn.onclick = () => setDark(!document.documentElement.classList.contains('dark'));
 
-  // ---------------- State ----------------
-  let activeGroup = null; // "work" | "series" | "generic" | null
-  let activeLabel = null; // label string | null
-  let aggQuery = '';      // top search
-  let detQuery = '';      // bottom search
+  // ---------- State ----------
+  let activeGroup = null, activeLabel = null, activeFile = null;
+  let aggQuery = '', detQuery = '';
 
-  const fltAgg = $('#fltAgg');
-  const fltDet = $('#fltDet');
-  const clearDet = $('#clearDet');
-  const clearGroups = $('#clearGroups');
-  const clearLabels = $('#clearLabels');
-  const aggCount = $('#aggCount');
-  const detCount = $('#detCount');
+  const fltAgg = $('#fltAgg'), fltDet = $('#fltDet');
+  const clearDet = $('#clearDet'), clearGroups = $('#clearGroups'), clearLabels = $('#clearLabels');
+  const aggCount = $('#aggCount'), detCount = $('#detCount');
 
-  const pTitle = $('#pTitle');
-  const pBody  = $('#pBody');
-  const pClose = $('#pClose');
-
-  function setPanelOpen(on){
-    document.documentElement.classList.toggle('panel-open', !!on);
-    if(!on) { pTitle.textContent='Info'; pBody.innerHTML="<p>Wähle ein Label…</p>"; }
+  // ---------- Normalisierung + Fuzzy ≤1 (inkl. Transposition) ----------
+  function norm(s){
+    return String(s||"").toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+      .replace(/[^\p{L}\p{N}]+/gu,' ')
+      .replace(/[vu]/g,'v').replace(/[ij]/g,'i')
+      .trim();
+  }
+  function edit1(a,b){
+    if(a===b) return true;
+    const la=a.length, lb=b.length;
+    if(Math.abs(la-lb)>1) return false;
+    let i=0,j=0,ed=0;
+    while(i<la && j<lb){
+      if(a[i]===b[j]){i++;j++;continue;}
+      ed++; if(ed>1) return false;
+      if(la>lb){ i++; } else if(lb>la){ j++; } else {
+        if(a[i+1]===b[j] && a[i]===b[j+1]){ i+=2; j+=2; } else { i++; j++; }
+      }
+    }
+    if(i<la || j<lb) ed++;
+    return ed<=1;
+  }
+  function fuzzyLabelMatch(labelNorm, qNorm){
+    if(!qNorm) return false;
+    return labelNorm.includes(qNorm) || edit1(labelNorm, qNorm);
   }
 
-  // ---------------- Query parsing ----------------
+  // ---------- Vorindexierung für Speed ----------
+  const aggRows = $$('#agg tbody tr').map(row=>{
+    const g=row.dataset.group||'', l=row.dataset.label||'';
+    return {row, g, l, gn:norm(g), ln:norm(l), hay:norm(g+' '+l)};
+  });
+  const detRows = $$('#det tbody tr').map(row=>{
+    const tds=row.children;
+    const file=tds[0]?.innerText||'', page=tds[1]?.innerText||'';
+    const g=row.dataset.group||'', l=row.dataset.label||'';
+    const pat=tds[4]?.innerText||'', ctx=tds[5]?.innerText||'';
+    return {
+      row, g, l,
+      f:file, fn:norm(file), pn:norm(page), gn:norm(g), ln:norm(l),
+      pan:norm(pat), cxn:norm(ctx)
+    };
+  });
+
+  // Gruppenfarben an vorhandene Label-Buttons (Tabellen)
+  (function decorateByGroup(){
+    const stats = (window.LABEL_STATS||{});
+    $$('#agg .lbl, #det .lbl').forEach(b=>{
+      const s=stats[b.dataset.label]; if(s&&s.group) b.dataset.group=String(s.group);
+    });
+  })();
+
+  // ---------- Query ----------
   function parseQuery(q){
-    // supports: group:work  label:tschudi  file:jucker  pattern:chronik  plus free text
     const out = { group:null, label:null, file:null, pattern:null, text:[] };
-    const toks = (q||'').trim().split(/\s+/).filter(Boolean);
+    const toks=(q||'').trim().split(/\s+/).filter(Boolean);
     for(const t of toks){
-      const m = t.match(/^(\w+):(.*)$/);
-      if(m){
-        const k = m[1].toLowerCase(), v = m[2].toLowerCase();
-        if(k==='group') out.group = v;
-        else if(k==='label') out.label = v;
-        else if(k==='file') out.file = v;
-        else if(k==='pattern') out.pattern = v;
-        else out.text.push(t.toLowerCase());
-      }else{
-        out.text.push(t.toLowerCase());
-      }
+      const m=t.match(/^(\w+):(.*)$/);
+      if(m){ const k=m[1].toLowerCase(), v=norm(m[2]);
+        if(k==='group') out.group=v; else if(k==='label') out.label=v;
+        else if(k==='file') out.file=v; else if(k==='pattern') out.pattern=v;
+        else out.text.push(norm(t));
+      }else out.text.push(norm(t));
     }
     return out;
   }
 
-  // ---------------- Filtering ----------------
-  function visibleAggRow(row, q){
-    const g = row.dataset.group || '';
-    const l = row.dataset.label || '';
-    if(activeGroup && g !== activeGroup) return false;
-    if(activeLabel && l !== activeLabel) return false;
+  // ---------- Filterfunktionen ----------
+  function visibleAgg(r, q){
+    if(activeGroup && r.g!==activeGroup) return false;
+    if(activeLabel && r.l!==activeLabel) return false;
     if(!q) return true;
-    const {group,label,text} = parseQuery(q);
-    if(group && g.toLowerCase().indexOf(group)===-1) return false;
-    if(label && l.toLowerCase().indexOf(label)===-1) return false;
-    if(text.length){
-      const hay = (g+' '+l+' '+row.innerText).toLowerCase();
-      for(const t of text){ if(hay.indexOf(t)===-1) return false; }
-    }
+    const pq=parseQuery(q);
+    if(pq.group && !r.gn.includes(pq.group)) return false;
+    if(pq.label){ if(!fuzzyLabelMatch(r.ln, pq.label)) return false; }
+    for(const t of pq.text){ if(!r.hay.includes(t)) return false; }
+    return true;
+  }
+  function visibleDet(r, q){
+    if(activeGroup && r.g!==activeGroup) return false;
+    if(activeLabel && r.l!==activeLabel) return false;
+    if(activeFile && r.f!==activeFile) return false;
+    if(!q) return true;
+    const pq=parseQuery(q);
+    if(pq.group && !r.gn.includes(pq.group)) return false;
+    if(pq.label && !r.ln.includes(pq.label)) return false; // Details: nur includes
+    if(pq.file  && !r.fn.includes(pq.file)) return false;
+    if(pq.pattern && !(r.pan.includes(pq.pattern) || r.cxn.includes(pq.pattern))) return false;
+    for(const t of pq.text){ if(!(r.fn.includes(t)||r.pan.includes(t)||r.cxn.includes(t)||r.ln.includes(t)||r.gn.includes(t))) return false; }
     return true;
   }
 
-  function visibleDetRow(row, q){
-    const g = row.dataset.group || '';
-    const l = row.dataset.label || '';
-    const file = row.children[0]?.innerText || '';
-    const page = row.children[1]?.innerText || '';
-    const pat  = row.children[4]?.innerText || '';
-    const ctx  = row.children[5]?.innerText || '';
-    // label/group scoping
-    if(activeGroup && g !== activeGroup) return false;
-    if(activeLabel && l !== activeLabel) return false;
-    if(!q) return true;
-    const {group,label,file:ff,pattern,text} = parseQuery(q);
-    if(group && g.toLowerCase().indexOf(group)===-1) return false;
-    if(label && l.toLowerCase().indexOf(label)===-1) return false;
-    if(ff && file.toLowerCase().indexOf(ff)===-1) return false;
-    if(pattern && (pat.toLowerCase().indexOf(pattern)===-1 && ctx.toLowerCase().indexOf(pattern)===-1)) return false;
-    if(text.length){
-      const hay = (file+' '+page+' '+g+' '+l+' '+pat+' '+ctx).toLowerCase();
-      for(const t of text){ if(hay.indexOf(t)===-1) return false; }
-    }
-    return true;
-  }
-
+  // ---------- Batch-Anwendung ----------
   function applyAgg(){
-    const rows = $$('#agg tbody tr');
-    let vis = 0;
-    rows.forEach(r => { const ok = visibleAggRow(r, aggQuery); r.classList.toggle('hidden', !ok); if(ok) vis++; });
-    if(aggCount) aggCount.textContent = String(vis);
-    // keep panel consistent
-    if(activeLabel) showPanel(activeLabel);
+    let vis=0;
+    for(const r of aggRows){ const ok=visibleAgg(r, aggQuery); if(ok) vis++; r.row.classList.toggle('hidden', !ok); }
+    if(aggCount) aggCount.textContent=String(vis);
   }
-
   function applyDet(){
-    const rows = $$('#det tbody tr');
-    let vis = 0;
-    rows.forEach(r => { const ok = visibleDetRow(r, detQuery); r.classList.toggle('hidden', !ok); if(ok) vis++; });
-    if(detCount) detCount.textContent = String(vis);
-    if(activeLabel) showPanel(activeLabel);
+    let vis=0;
+    for(const r of detRows){ const ok=visibleDet(r, detQuery); if(ok) vis++; r.row.classList.toggle('hidden', !ok); }
+    if(detCount) detCount.textContent=String(vis);
   }
 
-  // ---------------- Panel (stats only) ----------------
-  function showPanel(label){
-    const s = (window.LABEL_STATS||{})[label] || null;
-    pTitle.textContent = label;
-    let html = "";
-    if(s){
-      html += "<div class='kv'><div>Gruppe</div><div class='badge'>"+esc(s.group)+"</div>";
-      html += "<div>Mentions</div><div>"+s.mentions+"</div>";
-      html += "<div>Dokumente</div><div>"+s.docs+"</div>";
-      html += "<div>Weighted</div><div>"+s.weighted+"</div></div>";
-    }else{
-      html += "<p class='small'>Keine Statistiken gefunden.</p>";
-    }
-    pBody.innerHTML = html;
-  }
-
-  // ---------------- Bindings ----------------
+  // ---------- Auswahl ----------
   function selectLabel(label){
     activeLabel = label;
     $$('.chip.label').forEach(c=>c.classList.toggle('active', c.dataset.label===activeLabel));
-    setPanelOpen(!!activeLabel);
     applyAgg(); applyDet();
-    if(activeLabel) showPanel(activeLabel);
+  }
+  function selectFile(file){
+    activeFile = file;
+    $$('.chip.file').forEach(c=>c.classList.toggle('active', c.dataset.file===activeFile));
+    applyDet();
   }
 
-  // group chips
+  // ---------- Bindings ----------
+  // Debounce
+  const debounce=(fn,ms)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; };
+  if(fltAgg){ fltAgg.oninput = debounce(()=>{ aggQuery = fltAgg.value||''; applyAgg(); }, 120); }
+  if(fltDet){ fltDet.oninput = debounce(()=>{ detQuery = fltDet.value||''; applyDet(); }, 120); }
+  if(clearDet){ clearDet.onclick = ()=>{ detQuery=''; if(fltDet) fltDet.value=''; applyDet(); }; }
+
   $$('.chip.group').forEach(ch=>{
     ch.addEventListener('click', ()=>{
-      const g = ch.dataset.group;
-      activeGroup = (activeGroup===g)?null:g;
+      const g=ch.dataset.group; activeGroup=(activeGroup===g)?null:g;
       $$('.chip.group').forEach(c=>c.classList.toggle('active', c.dataset.group===activeGroup));
       applyAgg(); applyDet();
     });
   });
   if(clearGroups){ clearGroups.onclick = ()=>{ activeGroup=null; $$('.chip.group').forEach(c=>c.classList.remove('active')); applyAgg(); applyDet(); }; }
 
-  // label chips + label buttons
-  $$('.chip.label').forEach(ch=> ch.addEventListener('click', ()=> selectLabel(ch.dataset.label)));
+  // Datei-Chips
+  $$('.chip.file').forEach(ch=> ch.addEventListener('click', ()=> selectFile(ch.dataset.file)));
+  if(clearLabels){ clearLabels.onclick = ()=>{ selectLabel(null); selectFile(null); }; }
+
+  // Label-Buttons in Tabellen
   $$('#agg .lbl, #det .lbl').forEach(b=> b.addEventListener('click', ()=> selectLabel(b.dataset.label)));
-  if(clearLabels){ clearLabels.onclick = ()=> selectLabel(null); }
-  if(pClose){ pClose.onclick = ()=> selectLabel(null); }
 
-  // search inputs
-  if(fltAgg){ fltAgg.oninput = ()=>{ aggQuery = (fltAgg.value||''); applyAgg(); }; }
-  if(fltDet){ fltDet.oninput = ()=>{ detQuery = (fltDet.value||''); applyDet(); }; }
-  if(clearDet){ clearDet.onclick = ()=>{ detQuery=''; if(fltDet) fltDet.value=''; applyDet(); }; }
-
-  // helpers
-  function esc(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-  // init
+  // ---------- Init ----------
   applyAgg(); applyDet();
 })();

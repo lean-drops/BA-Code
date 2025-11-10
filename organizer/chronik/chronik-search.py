@@ -8,7 +8,7 @@ Genauigkeit vor Geschwindigkeit.
 """
 from __future__ import annotations
 
-from chronik_finder import run as run_finder
+from organizer.chronik.chronik_finder.run import run_finder
 
 
 def main() -> None:

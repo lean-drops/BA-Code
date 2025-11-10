@@ -1,6 +1,4 @@
 """
-chronik_finder/output.py – Ausgabe: Session-Ordner, CSV, HTML (Template-basiert mit Auto-Einbettung von CSS/JS), GEXF, Metadaten.
-
 Nutzung:
   - Wird vom Orchestrator verwendet:
       from .output import ensure_session_dir, write_outputs, write_html, write_meta, maybe_write_gexf
@@ -220,6 +218,12 @@ def write_html(out_dir: Path, df, agg) -> Path:
     else:
         labels_sorted = sorted({str(x) for x in (df["label"].tolist() if df is not None and len(df) > 0 else [])})
 
+    # Datei-Liste (Sekundärliteratur)
+    if df is not None and len(df) > 0:
+        files_sorted = sorted({Path(x).name for x in df["pdf_file"].tolist()})
+    else:
+        files_sorted = []
+
     label_stats, label_examples = _build_label_maps(df, agg, max_examples=12)
 
     # Tabellen
@@ -258,14 +262,16 @@ def write_html(out_dir: Path, df, agg) -> Path:
                 "</tr>"
             )
 
-    # Chips/Buttons
+    # Chips
     group_buttons = "".join([f"<button class='chip group' data-group='{_esc(g)}'>{_esc(g)}</button>" for g in groups])
-    label_chips = "".join([f"<button class='chip label' data-label='{_esc(lbl)}'>{_esc(lbl)}</button>" for lbl in labels_sorted])
+
+    # Oben: Dateien (Sekundärliteratur) als Chips
+    file_chips = "".join([f"<button class='chip file' data-file='{_esc(fn)}'>{_esc(fn)}</button>" for fn in files_sorted])
 
     # Templates laden
     tpl_html, tpl_css, tpl_js, all_present = _load_templates()
 
-    # JSON-Variablen als Skript
+    # JSON-Variablen als Skript (unverändert für Label-Suche oben)
     json_script = (
         "window.LABEL_STATS = " + json.dumps(label_stats, ensure_ascii=False) + ";\n"
         "window.LABEL_EXAMPLES = " + json.dumps(label_examples, ensure_ascii=False) + ";\n"
@@ -282,7 +288,7 @@ def write_html(out_dir: Path, df, agg) -> Path:
         .replace("{{TOTAL_LABELS}}", str(total_labels))
         .replace("{{TOTAL_FILES}}", str(total_files))
         .replace("{{GROUP_BUTTONS}}", group_buttons if "{{GROUP_BUTTONS}}" in tpl_html else "{{GROUP_BUTTONS}}")
-        .replace("{{LABEL_CHIPS}}", label_chips if "{{LABEL_CHIPS}}" in tpl_html else "{{LABEL_CHIPS}}")
+        .replace("{{LABEL_CHIPS}}", file_chips if "{{LABEL_CHIPS}}" in tpl_html else "{{LABEL_CHIPS}}")
         .replace("{{AGG_ROWS}}", "\n".join(agg_rows) if "{{AGG_ROWS}}" in tpl_html else "{{AGG_ROWS}}")
         .replace("{{DETAIL_ROWS}}", "\n".join(detail_rows) if "{{DETAIL_ROWS}}" in tpl_html else "{{DETAIL_ROWS}}")
         .replace("{{INLINE_CSS}}", "{{INLINE_CSS}}")  # erst mit _inject_assets füllen
@@ -294,11 +300,11 @@ def write_html(out_dir: Path, df, agg) -> Path:
         .replace("{{DARK_CLASS}}", "")
     )
 
-    # Fehlende Kern-Platzhalter ({GROUP_BUTTONS, LABEL_CHIPS, AGG_ROWS, DETAIL_ROWS}) im Notfall ersetzen
+    # Fehlende Kern-Platzhalter sicher ersetzen
     if "{{GROUP_BUTTONS}}" in out:
         out = out.replace("{{GROUP_BUTTONS}}", group_buttons)
     if "{{LABEL_CHIPS}}" in out:
-        out = out.replace("{{LABEL_CHIPS}}", label_chips)
+        out = out.replace("{{LABEL_CHIPS}}", file_chips)
     if "{{AGG_ROWS}}" in out:
         out = out.replace("{{AGG_ROWS}}", "\n".join(agg_rows))
     if "{{DETAIL_ROWS}}" in out:
