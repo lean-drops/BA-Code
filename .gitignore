@@ -8,3 +8,5 @@ __pycache__/
 *.sqlite-shm
 data/chroniken_library/
 data/chroniken_library/**
+data/test_library/
+doc/~
