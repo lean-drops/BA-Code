@@ -6,3 +6,5 @@ __pycache__/
 *.pyc
 *.sqlite-wal
 *.sqlite-shm
+data/chroniken_library/
+data/chroniken_library/**
