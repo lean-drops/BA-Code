@@ -1,3 +1,4 @@
+# chronik-search.py
 #!/usr/bin/env python3
 """
 DB-basierter Einstiegspunkt für den Chroniken-Finder.
@@ -11,27 +12,18 @@ Funktionen:
       eingetragen (keine Bibliography-/Authors-/Works-Einträge).
     - Quellen sind TXT/PDF aus dem Chroniken-Korpus.
     - Ziele sind Chroniken, die über chroniken_canon-Patterns erkannt wurden.
-- Zusätzlich werden:
-    - chroniken_texts gefüllt:
-        * role='original_pdf'  → Verbindung Chronik ↔ Original-PDF (falls vorhanden)
-        * role='chronik_txt'   → Verbindung Chronik ↔ chr_*.txt-Transkript
-    - chroniken_canon_links gefüllt:
-        * Verbindung chroniken_canon (Canon-Eintrag) ↔ chroniken (Werk)
 
 Wichtige Tabellen:
-- chroniken                (Quelle und Ziel für Chronik-IDs)
-- chroniken_canon          (liefert die Muster, aus denen run_finder() seine Regex baut)
-- chroniken_texts          (Chronik ↔ Dokument/Edition)
-- chroniken_canon_links    (Chronik ↔ Canon-Eintrag)
-- edges_cc                 (Chronik → Chronik Kanten)
-- search_runs              (für den Lauf-Typ 'chronik_search')
+- chroniken         (Quelle und Ziel für Chronik-IDs)
+- chroniken_canon   (liefert die Muster, aus denen run_finder() seine Regex baut)
+- edges_cc          (Chronik → Chronik Kanten)
+- search_runs       (für den Lauf-Typ 'chronik_search')
 
 Nutzung:
   python chronik-search.py
 """
 from __future__ import annotations
 
-import os
 import re
 import sqlite3
 import unicodedata
@@ -164,218 +156,6 @@ def _guess_chronik_from_ckey(ckey_from: str, lookup: ChronikLookup) -> Optional[
 
 
 # ---------------------------------------------------------------------------
-# chroniken_texts: Chronik ↔ Dokument/Edition (bibliography)
-# ---------------------------------------------------------------------------
-
-def _ensure_chroniken_texts_schema(conn: sqlite3.Connection) -> None:
-    cur = conn.cursor()
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS chroniken_texts (
-            chronik_id      INTEGER NOT NULL,
-            bibliography_id INTEGER NOT NULL,
-            role            TEXT    NOT NULL,
-            PRIMARY KEY (chronik_id, bibliography_id, role),
-            FOREIGN KEY (chronik_id)      REFERENCES chroniken(id),
-            FOREIGN KEY (bibliography_id) REFERENCES bibliography(id)
-        );
-        """
-    )
-    conn.commit()
-    print("[INFO] Tabelle chroniken_texts sichergestellt.")
-
-
-def _fill_chroniken_texts(conn: sqlite3.Connection, lookup: ChronikLookup) -> None:
-    """
-    Befüllt chroniken_texts auf Basis von:
-      - chroniken.pdf_filename  → role='original_pdf'
-      - bibliography.file_basename 'chr_*.txt' → role='chronik_txt'
-        (Mapping über canonical_key bzw. Token-Overlap)
-    """
-    _ensure_chroniken_texts_schema(conn)
-    cur = conn.cursor()
-
-    # Bibliography laden
-    cur.execute(
-        "SELECT id, file_basename, file_relpath, canonical_key "
-        "FROM bibliography;"
-    )
-    bib_rows = cur.fetchall()
-    print(f"[INFO] bibliography-Zeilen für chroniken_texts: {len(bib_rows)}")
-
-    # Index: basename → (bib_id, canonical_key)
-    bib_by_basename: Dict[str, Tuple[int, str]] = {}
-    for bid, base, rel, ckey in bib_rows:
-        base_str = str(base or "")
-        bib_by_basename.setdefault(base_str, (int(bid), str(ckey or "")))
-
-    # 1) original_pdf-Zuordnungen
-    inserted_pdf = 0
-    if lookup.by_basename:
-        for base, chronik_id in lookup.by_basename.items():
-            # base ist pdf_filename-Basename aus chroniken
-            bib_entry = bib_by_basename.get(base)
-            if not bib_entry:
-                continue
-            bib_id, _ = bib_entry
-            try:
-                cur.execute(
-                    """
-                    INSERT OR IGNORE INTO chroniken_texts
-                        (chronik_id, bibliography_id, role)
-                    VALUES (?, ?, 'original_pdf');
-                    """,
-                    (chronik_id, bib_id),
-                )
-                if cur.rowcount:
-                    inserted_pdf += 1
-            except sqlite3.Error as e:
-                print(
-                    f"[ERROR] Insert original_pdf für Chronik {chronik_id} / "
-                    f"Bib {bib_id} fehlgeschlagen: {e}"
-                )
-    print(f"[INFO] chroniken_texts: {inserted_pdf} 'original_pdf'-Zuordnungen eingefügt.")
-
-    # 2) chr_*.txt → chronik_txt
-    inserted_txt = 0
-
-    for bid, base, rel, ckey in bib_rows:
-        base_str = str(base or "")
-        base_lower = base_str.lower()
-        if not (base_lower.endswith(".txt") and base_lower.startswith("chr_")):
-            continue
-
-        # basename ohne 'chr_' + ohne Extension → Heuristik für Chronikname
-        stem = Path(base_str).stem
-        stem = re.sub(r"^chr[_\s]+", "", stem, flags=re.IGNORECASE)
-        ckey_from = canonical_key(stem if stem else base_str)
-        if not ckey_from:
-            print(f"[INFO] chr-TXT ohne gültigen canonical_key: {base_str}")
-            continue
-
-        # direkter Lookup über canonical_key
-        chronik_id = lookup.by_ckey.get(ckey_from)
-
-        # Fuzzy-Fallback, falls direkter Lookup fehlschlägt
-        if chronik_id is None:
-            chronik_id = _guess_chronik_from_ckey(ckey_from, lookup)
-
-        if chronik_id is None:
-            print(f"[INFO] chr-TXT nicht zugeordnet: {base_str}")
-            continue
-
-        try:
-            cur.execute(
-                """
-                INSERT OR IGNORE INTO chroniken_texts
-                    (chronik_id, bibliography_id, role)
-                VALUES (?, ?, 'chronik_txt');
-                """,
-                (chronik_id, int(bid)),
-            )
-            if cur.rowcount:
-                inserted_txt += 1
-                print(
-                    f"[INFO] chr-TXT '{base_str}' → Chronik-ID {chronik_id} "
-                    f"(role=chronik_txt)"
-                )
-        except sqlite3.Error as e:
-            print(
-                f"[ERROR] Insert chronik_txt für Chronik {chronik_id} / "
-                f"Bib {bid} fehlgeschlagen: {e}"
-            )
-
-    conn.commit()
-    print(f"[INFO] chroniken_texts: {inserted_txt} 'chronik_txt'-Zuordnungen eingefügt.")
-
-
-# ---------------------------------------------------------------------------
-# chroniken_canon_links: Chronik ↔ Canon-Eintrag
-# ---------------------------------------------------------------------------
-
-def _ensure_chroniken_canon_links_schema(conn: sqlite3.Connection) -> None:
-    cur = conn.cursor()
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS chroniken_canon_links (
-            canon_id   INTEGER NOT NULL,
-            chronik_id INTEGER NOT NULL,
-            PRIMARY KEY (canon_id, chronik_id),
-            FOREIGN KEY (canon_id)   REFERENCES chroniken_canon(id),
-            FOREIGN KEY (chronik_id) REFERENCES chroniken(id)
-        );
-        """
-    )
-    conn.commit()
-    print("[INFO] Tabelle chroniken_canon_links sichergestellt.")
-
-
-def _fill_chroniken_canon_links(conn: sqlite3.Connection, lookup: ChronikLookup) -> None:
-    """
-    Verknüpft chroniken_canon mit chroniken über canonical_key/Fuzzy-Matching.
-
-    Logik:
-      - Nur Einträge kind ∈ {'work', 'series'} werden gemappt.
-      - Name-Basis: canonical falls vorhanden, sonst label.
-      - canonical_key(name) → chroniken.canonical_key, Fallback via Token-Overlap.
-    """
-    _ensure_chroniken_canon_links_schema(conn)
-    cur = conn.cursor()
-
-    try:
-        cur.execute(
-            "SELECT id, kind, canonical, label FROM chroniken_canon;"
-        )
-    except sqlite3.OperationalError as e:
-        print(f"[WARN] Konnte Tabelle 'chroniken_canon' nicht lesen: {e}")
-        return
-
-    rows = cur.fetchall()
-    print(f"[INFO] chroniken_canon-Einträge: {len(rows)}")
-
-    inserted = 0
-    for canon_id, kind, canonical, label in rows:
-        kind_str = str(kind or "").lower()
-        if kind_str not in {"work", "series"}:
-            continue
-
-        name = str(canonical or "") or str(label or "")
-        if not name:
-            continue
-
-        ck = canonical_key(name)
-        if not ck:
-            continue
-
-        chronik_id = lookup.by_ckey.get(ck)
-        if chronik_id is None:
-            chronik_id = _guess_chronik_from_ckey(ck, lookup)
-
-        if chronik_id is None:
-            continue
-
-        try:
-            cur.execute(
-                """
-                INSERT OR IGNORE INTO chroniken_canon_links
-                    (canon_id, chronik_id)
-                VALUES (?, ?);
-                """,
-                (int(canon_id), int(chronik_id)),
-            )
-            if cur.rowcount:
-                inserted += 1
-        except sqlite3.Error as e:
-            print(
-                f"[ERROR] Insert chroniken_canon_links für canon_id={canon_id} / "
-                f"chronik_id={chronik_id} fehlgeschlagen: {e}"
-            )
-
-    conn.commit()
-    print(f"[INFO] chroniken_canon_links: {inserted} Zuordnungen eingefügt.")
-
-
-# ---------------------------------------------------------------------------
 # Verarbeitung der Treffer (DF) in die DB – nur edges_cc
 # ---------------------------------------------------------------------------
 
@@ -386,20 +166,16 @@ def _process_df_to_db(df, db_path: Path, root: Path) -> int:
         - run_finder() liefert Trefferzeilen mit u. a.:
               pdf_file / pdf_path, label, group, page, context
         - Dieses Skript:
-            1. Erzeugt einen Eintrag in search_runs (kind='chronik_search') oder
-               nutzt einen externen SEARCH_RUN_ID.
-            2. Stellt sicher:
-                 - chroniken_texts ist gefüllt (Chronik ↔ Original-PDF / chr_*.txt).
-                 - chroniken_canon_links ist gefüllt (Canon-Eintrag ↔ Chronik).
-            3. Mappt jede Quell-Datei auf eine Chronik-ID (from_id):
+            1. Erzeugt einen Eintrag in search_runs (kind='chronik_search').
+            2. Mappt jede Quell-Datei auf eine Chronik-ID (from_id):
                  - 1) exakter Match über pdf_filename-Basename
                  - 2) canonical_key(Basename oder Stem) → chroniken.canonical_key
                  - 3) Fuzzy-Overlap zwischen Tokens der canonical_keys
-            4. Mappt jedes label (Chronik-Name) über canonical_key(label) auf eine
+            3. Mappt jedes label (Chronik-Name) über canonical_key(label) auf eine
                Chronik-ID (to_id).
-            5. Aggregiert Kanten (from_id, to_id) mit Gewicht = Anzahl Treffer
+            4. Aggregiert Kanten (from_id, to_id) mit Gewicht = Anzahl Treffer
                und sammelt Beispiel-Kontexte (raw_source).
-            6. Schreibt alles nach edges_cc.
+            5. Schreibt alles nach edges_cc.
 
     WICHTIG:
         - Es werden KEINE Einträge in bibliography / works_canon / authors angelegt.
@@ -419,27 +195,11 @@ def _process_df_to_db(df, db_path: Path, root: Path) -> int:
     processed_rows = 0
 
     with sqlite3.connect(str(db_path)) as conn:
-        # Lauf-Id (für edges_cc): entweder extern (SEARCH_RUN_ID) oder neu
-        env_run = os.environ.get("SEARCH_RUN_ID")
-        if env_run:
-            try:
-                run_id = int(env_run)
-                print(f"[INFO] Nutze externen search_run.id={run_id} (SEARCH_RUN_ID).")
-            except ValueError:
-                print(f"[WARN] Ungültige SEARCH_RUN_ID='{env_run}', erzeuge neuen Lauf.")
-                run_id = create_search_run(conn, kind="chronik_search", session_dir=None)
-        else:
-            run_id = create_search_run(conn, kind="chronik_search", session_dir=None)
+        # Lauf-Id (für edges_cc)
+        run_id = create_search_run(conn, kind="chronik_search", session_dir=None)
 
-        # Chroniken-Lookup laden (für cc-Kanten + Text/Canon-Zuordnung)
+        # Chroniken-Lookup laden (für cc-Kanten)
         chronik_lookup = _load_chronik_lookup(conn)
-
-        # chroniken_texts füllen (Chronik ↔ TXT/PDF)
-        _fill_chroniken_texts(conn, chronik_lookup)
-
-        # chroniken_canon_links füllen (Chronik ↔ Canon-Eintrag)
-        _fill_chroniken_canon_links(conn, chronik_lookup)
-
         by_basename = chronik_lookup.by_basename
         by_ckey = chronik_lookup.by_ckey
 
@@ -464,7 +224,7 @@ def _process_df_to_db(df, db_path: Path, root: Path) -> int:
             suffix = path.suffix.lower()
 
             # Quelle ist nur interessant, wenn es sich um eine Chronik-Datei handelt
-            # (Heuristik: beginnt mit 'chr_' oder ist eine .txt).
+            # (Heuristik: beginnt mit 'chr_' oder ist eine .txt im Chronik-Ordner).
             is_chronik_source = basename.startswith("chr_") or suffix == ".txt"
             if not is_chronik_source:
                 continue
@@ -484,6 +244,7 @@ def _process_df_to_db(df, db_path: Path, root: Path) -> int:
 
             # 1b) canonical_key(Basename / Stem) → chroniken.canonical_key
             if from_id is None:
+                # Stem ggf. ohne 'chr_'-Prefix
                 stem = path.stem
                 stem = re.sub(r"^chr[_\s]+", "", stem, flags=re.IGNORECASE)
                 ckey_from = canonical_key(stem if stem else basename)
@@ -579,7 +340,7 @@ def main() -> None:
     root = project_root()
     db_path = config_db_path(root)
 
-    # Treffer direkt in DB schreiben (nur edges_cc + chroniken_texts + canon_links)
+    # Treffer direkt in DB schreiben (nur edges_cc)
     count = _process_df_to_db(df, db_path, root)
     print(f"[INFO] {count} Trefferzeilen verarbeitet (edges_cc-Modus).")
     print(f"[INFO] Fertig. Session-Ordner: {session_dir}")

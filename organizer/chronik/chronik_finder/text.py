@@ -1,3 +1,7 @@
+
+# =====================================================================
+# text.py
+# =====================================================================
 #!/usr/bin/env python3
 """
 OCR-starker Text-Extractor für Chroniken-PDFs.
@@ -5,32 +9,23 @@ OCR-starker Text-Extractor für Chroniken-PDFs.
 Pipeline:
   1) PyMuPDF-Varianten: "text" → "blocks" → "rawdict" (bestes Ergebnis via Qualitätsheuristik)
   2) Fallbacks: pdfplumber → pypdf → pdfminer.six
-  3) OCR-Stack mit Fraktur-Fokus:
-     - Rendering mit hoher Auflösung (600 dpi)
-     - Orientierungserkennung (Tesseract OSD)
-     - Vorverarbeitung: Entzerrung (Deskew), Entrauschen, adaptive Binarisierung
-     - Mehrere Tesseract-Läufe mit frk/deu_frak+deu+lat, OEM 1, PSM 6/4/12, Auswahl per Score
-     - Optionaler weiterer OCR-Fallback: EasyOCR (falls installiert)
+  3) OCR-Stack mit Fokus auf gescannte Seiten / Fraktur:
+     - Frühe Scan-Erkennung, bei Image-only-PDFs direkter OCR-Pfad
+     - Stufe 1: moderates Preprocessing (Grauwert, leicht geglättet) + deu/lat
+     - Stufe 2: stärkere Binarisierung + Fraktur-Sprachen
+     - Optionale EasyOCR-Fallback
   4) Normalisierung historischer Typographie: Lang-s, Ligaturen, Diakritika-Faltung, Silbentrennungen
 
 Schnittstellen bleiben stabil:
   - normalize_text(txt: str) -> str
   - extract_text(page, pdf_path: str, page_index: int, pdf_mtime: float) -> str
-
-Assumptions:
-  - .env-Modul exportiert Flags (HAVE_PDFMINER, HAVE_PDFPLUMBER, HAVE_PYPDF, HAVE_TESS) und optionale Objekte.
-  - Zusätzliche Libraries (cv2, numpy, skimage, easyocr) sind optional und werden sicher erkannt.
-  - Kein CLI, feste Defaults, sichtbare Debug-Prints.
-
-Usage:
-  - Wird vom Scanner importiert. Direktstart führt einen No-Op-Selbsttest mit Debug-Ausgabe aus.
 """
 from __future__ import annotations
 
 import io
 import math
 import unicodedata
-from typing import Any, Iterable, List, Tuple, Optional
+from typing import Any, List, Tuple
 
 from .constants import TEXT_MIN_LEN
 from .env import (
@@ -66,51 +61,95 @@ def _merge_hyphenation(txt: str) -> str:
 
 
 def normalize_text(txt: str) -> str:
+    """
+    Normalisiert extrahierten Text für die weitere Suche.
+
+    Ziele:
+      - Unicode-Normalisierung
+      - Auflösung historischer Typographie (Lang-s, Ligaturen, Sonderzeichen)
+      - einfache OCR-/Altformen:
+            ſ → s
+            ß → ss
+      - Silbentrennung über Zeilen zusammenführen
+      - Zeilenumbrüche in einfache Spaces überführen
+      - Diakritika entfernen (ä → a, ö → o, ü → u, etc.)
+    """
     if not txt:
         return ""
+
+    # Unicode-Normalisierung
     txt = unicodedata.normalize("NFC", txt)
 
+    # historische Zeichen, Ligaturen, einfache Varianten
     subs = {
         "\u00AD": "",    # Soft Hyphen
         "ſ": "s",
         "ꝛ": "r", "ꝝ": "v", "ꝯ": "o",
         "Æ": "AE", "æ": "ae", "Œ": "OE", "œ": "oe",
         "ﬃ": "ffi", "ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬅ": "ft", "ﬆ": "st",
+        "ß": "ss",
     }
     for k, v in subs.items():
         txt = txt.replace(k, v)
 
+    # Silbentrennungen über Zeilen hinweg auflösen
     txt = _merge_hyphenation(txt)
 
     import re as _re
+    # Zeilenumbrüche vereinheitlichen
     txt = _re.sub(r"\r\n?|\n", " ", txt)
+    # Diakritika entfernen (ä → a, ö → o, ü → u, etc.)
     txt = _strip_diacritics(txt)
+    # Whitespace normalisieren
     return normspace(txt)
-
 
 # ------------------------ Heuristiken ------------------------
 
 def _text_quality(t: str) -> float:
+    """
+    Qualitätsscore für extrahierten Text.
+
+    - Buchstabenanteil und Ziffernanteil werden berücksichtigt.
+    - Digit-lastige Inhalte (Rechnungsbücher, Tabellen) werden nicht mehr zu stark bestraft.
+    """
     if not t:
         return 0.0
+
     letters = sum(ch.isalpha() for ch in t)
     digits = sum(ch.isdigit() for ch in t)
-    frac_letters = letters / max(1, len(t))
-    score = (frac_letters * 0.7) + (min(0.2, digits / max(1, len(t))) * 0.3)
-    score *= math.log1p(len(t)) / math.log(1 + 400)  # etwas längenfreundlicher
+    length = len(t)
+
+    frac_letters = letters / max(1, length)
+    frac_digits = digits / max(1, length)
+    frac_alnum = (letters + digits) / max(1, length)
+
+    # Grundmix: Buchstaben wichtig, aber Ziffern können positiv beitragen.
+    score = (
+        frac_letters * 0.5 +
+        min(0.3, frac_digits) * 0.3 +
+        frac_alnum * 0.2
+    )
+
+    # Längenskala (ab ~400 Zeichen gesättigt)
+    score *= math.log1p(length) / math.log(1 + 400)
     return score
 
 
 def _is_likely_scanned(first_try: str, page: Any) -> bool:
-    """Heuristik: sehr kurzer/leer extrahierter Text und zugleich Bildanteil → gescannt."""
+    """
+    Heuristik: sehr kurzer/leer extrahierter Text und zugleich Bildanteil → gescannt.
+
+    Für Image-only PDFs wie niederhauser-peter__7.pdf wird hier sehr früh 'True'.
+    """
     try:
-        if first_try and len(first_try) >= 50:
+        if first_try and len(first_try) >= 80:
             return False
-        # Wenn viele "image" Blöcke existieren, spricht das für Scan
+
         raw = page.get_text("rawdict")
         if isinstance(raw, dict):
             blocks = raw.get("blocks", [])
             img_blocks = sum(1 for b in blocks if "image" in b)
+            # Schon 1 großes Bild reicht typischerweise für Vollscan
             return img_blocks >= 1
     except Exception:
         pass
@@ -129,7 +168,6 @@ def _mupdf_text_variants(page: Any) -> List[str]:
         pass
 
     try:
-        # blocks: [(x0,y0,x1,y1,text, block_no, ...)]
         blocks = page.get_text("blocks") or []
         blocks = [b for b in blocks if len(b) >= 5 and isinstance(b[4], str) and b[4].strip()]
         blocks.sort(key=lambda b: (round(b[1], 1), round(b[0], 1)))  # y, dann x
@@ -160,7 +198,12 @@ def _mupdf_text_variants(page: Any) -> List[str]:
 
 # ------------------------ Bildaufbereitung ------------------------
 
-def _render_page_image(page: Any, dpi: int = 600):
+def _render_page_image(page: Any, dpi: int = 400):
+    """
+    Rendert die Seite in ein PIL-Image.
+
+    400 dpi ist ein guter Kompromiss für Tesseract (schneller als 600, meist ausreichend).
+    """
     pix = page.get_pixmap(dpi=dpi, alpha=False)
     from PIL import Image
     return Image.open(io.BytesIO(pix.tobytes("png")))
@@ -184,6 +227,7 @@ def _rotate_pil(img):
 def _deskew_binarize(img):
     """
     Deskew + Binarisierung. OpenCV/Skimage bevorzugt, sonst PIL-Fallback.
+    Eher für schwierige Fraktur-/Scan-Seiten gedacht.
     """
     try:
         import numpy as _np
@@ -215,7 +259,7 @@ def _deskew_binarize(img):
                 for rho_theta in lines[:200]:
                     for rho, theta in _np.atleast_2d(rho_theta):
                         ang = theta * 180.0 / _np.pi
-                        if 20 < ang < 160:  # horizontnahe ignorieren, Fokus auf Text-Linien
+                        if 20 < ang < 160:
                             angles.append(ang - 90)
                 if angles:
                     angle = float(_np.median(angles))
@@ -227,7 +271,7 @@ def _deskew_binarize(img):
             M = _cv2.getRotationMatrix2D((w // 2, h // 2), angle, 1.0)
             bin_img = _cv2.warpAffine(bin_img, M, (w, h), flags=_cv2.INTER_CUBIC, borderMode=_cv2.BORDER_REPLICATE)
 
-        # Leichte Morphologie, um Gebrochene-Schrift zu schließen
+        # Leichte Morphologie, um gebrochene Schrift zu schließen
         try:
             kernel = _cv2.getStructuringElement(_cv2.MORPH_RECT, (1, 1))
             bin_img = _cv2.morphologyEx(bin_img, _cv2.MORPH_OPEN, kernel, iterations=1)
@@ -248,13 +292,15 @@ def _deskew_binarize(img):
 # ------------------------ OCR-Engines ------------------------
 
 def _ocr_tesseract(img, langs: str, psm: int) -> str:
+    """
+    Dünne Hülle um pytesseract, mit Fallback ohne Fraktur-Pakete.
+    """
     if not HAVE_TESS or pytesseract is None:
         return ""
     cfg = f"--oem 1 --psm {psm}"
     try:
         return pytesseract.image_to_string(img, lang=langs, config=cfg) or ""
     except Exception:
-        # Fallback ohne Fraktur-Pakete
         try:
             base = "deu+lat+eng"
             return pytesseract.image_to_string(img, lang=base, config=cfg) or ""
@@ -271,7 +317,7 @@ def _ocr_easyocr(img) -> str:
         import numpy as _np
         import easyocr  # type: ignore
         arr = _np.array(img)
-        reader = easyocr.Reader(["de", "en"], gpu=False)  # CPU-default
+        reader = easyocr.Reader(["de", "en"], gpu=False)
         lines = reader.readtext(arr, detail=0, paragraph=True)
         text = "\n".join(lines)
         return text
@@ -281,54 +327,76 @@ def _ocr_easyocr(img) -> str:
 
 def _ocr_page(page: Any) -> str:
     """
-    OCR mehrstufig mit starker Fraktur-Unterstützung.
+    OCR mehrstufig mit Fokus auf gescannte PDFs.
+
+    Stufe 1: moderates Preprocessing + deu/lat (schnell, gut für moderne Antiqua).
+    Stufe 2: stärkere Binarisierung + Fraktur-Sprachen.
     """
     try:
-        from PIL import Image
+        from PIL import Image  # noqa: F401
     except Exception:
         return ""
 
     try:
-        base = _render_page_image(page, dpi=600)
+        base = _render_page_image(page, dpi=400)
     except Exception as e:
         print(f"[WARN] Rendering fehlgeschlagen: {e}")
         return ""
 
-    # Orientierung und Vorverarbeitung
+    # Orientierung
     rot = _rotate_pil(base)
-    pre = _deskew_binarize(rot)
 
-    # Tesseract-Laufbündel
-    # Sprachen: frk (Fraktur), deu_frak (kompatibles Paket), deu, lat, eng
-    lang_chain = ["frk+deu_frak+deu+lat+eng", "deu_frak+deu+lat+eng", "deu+lat+eng"]
-    psm_chain = [6, 4, 12]  # 6: block of text, 4: column, 12: sparse
     candidates: List[Tuple[str, float]] = []
+
+    # ---------- Stufe 1: moderates Preprocessing ----------
+    try:
+        import numpy as _np
+        import cv2 as _cv2
+        arr = _np.array(rot)
+        gray = _cv2.cvtColor(arr, _cv2.COLOR_RGB2GRAY)
+        smooth = _cv2.GaussianBlur(gray, (3, 3), 0)
+        mild_img = _cv2.cvtColor(smooth, _cv2.COLOR_GRAY2RGB)
+    except Exception:
+        mild_img = rot
+
+    primary = _ocr_tesseract(mild_img, langs="deu+lat", psm=6)
+    primary = normalize_text(primary)
+    if primary:
+        score = _text_quality(primary)
+        candidates.append((primary, score))
+        print(f"[DEBUG] OCR Stage1 deu+lat psm=6 score={score:.3f} len={len(primary)}")
+        if score >= 0.65 and len(primary) >= TEXT_MIN_LEN:
+            return primary
+
+    # ---------- Stufe 2: starke Binarisierung + Fraktur-Sprachen ----------
+    strong_img = _deskew_binarize(rot)
+    lang_chain = ["frk+deu_frak+deu+lat+eng", "deu_frak+deu+lat+eng", "deu+lat+eng"]
+    psm_chain = [6, 4]
 
     for langs in lang_chain:
         for psm in psm_chain:
-            t = _ocr_tesseract(pre, langs, psm=psm)
+            t = _ocr_tesseract(strong_img, langs=langs, psm=psm)
             t = normalize_text(t)
-            if t:
-                score = _text_quality(t)
-                candidates.append((t, score))
-                print(f"[DEBUG] OCR tesseract langs={langs} psm={psm} score={score:.3f} len={len(t)}")
-                if score >= 0.65 and len(t) >= TEXT_MIN_LEN:
-                    # gut genug, früh abbrechen
-                    return t
+            if not t:
+                continue
+            score = _text_quality(t)
+            candidates.append((t, score))
+            print(f"[DEBUG] OCR Stage2 langs={langs} psm={psm} score={score:.3f} len={len(t)}")
+            if score >= 0.7 and len(t) >= TEXT_MIN_LEN:
+                return t
 
-    # Optionaler Fallback: EasyOCR, wenn Tesseract schwach war
+    # ---------- Optionaler EasyOCR-Fallback ----------
     if not candidates or max(s for _, s in candidates) < 0.45:
-        e_txt = _ocr_easyocr(pre)
+        e_txt = _ocr_easyocr(rot)
         e_txt = normalize_text(e_txt)
         if e_txt:
             score = _text_quality(e_txt)
             candidates.append((e_txt, score))
-            print(f"[DEBUG] OCR easyocr score={score:.3f} len={len(e_txt)}")
+            print(f"[DEBUG] OCR EasyOCR score={score:.3f} len={len(e_txt)}")
 
     if not candidates:
         return ""
 
-    # bestes Ergebnis wählen
     best = max(candidates, key=lambda x: (x[1], len(x[0])))[0]
     return best
 
@@ -338,15 +406,22 @@ def _ocr_page(page: Any) -> str:
 def extract_text(page: Any, pdf_path: str, page_index: int, pdf_mtime: float) -> str:
     """
     Extrahiert Page-Text mit Kaskade und Cache.
+
+    Reihenfolge:
+      1) PyMuPDF-Textvarianten
+      2) Wenn Seite als Scan erkannt → direkt OCR + Cache
+      3) pdfplumber, pypdf, pdfminer (für echte Text-PDFs)
+      4) Falls immer noch schwach → OCR als Fallback
     """
     cache = get_page_cache()
     cached = cache.get(pdf_path, page_index, pdf_mtime)
     if cached is not None and len(cached) >= 1:
         return cached
 
-    # 1) PyMuPDF in Varianten
     best = ""
     first_try = ""
+
+    # 1) PyMuPDF-Textvarianten
     try:
         variants = _mupdf_text_variants(page)
         if variants:
@@ -359,11 +434,28 @@ def extract_text(page: Any, pdf_path: str, page_index: int, pdf_mtime: float) ->
                     break
     except Exception:
         pass
-    if len(best) >= TEXT_MIN_LEN and _text_quality(best) >= 0.6:
+
+    likely_scan = _is_likely_scanned(first_try or best, page)
+
+    if len(best) >= TEXT_MIN_LEN and _text_quality(best) >= 0.6 and not likely_scan:
         cache.put(pdf_path, page_index, pdf_mtime, best)
         return best
 
-    # 2) pdfplumber
+    # 2) Für klar gescannte Seiten direkt OCR, ohne pdfplumber/pypdf/pdfminer zu verschwenden
+    if likely_scan:
+        print(f"[DEBUG] Seite als Scan erkannt → direkte OCR: {pdf_path} p{page_index + 1}")
+        try:
+            ocr = _ocr_page(page)
+        except Exception as e:
+            print(f"[WARN] OCR fehlgeschlagen (direkter Pfad): {pdf_path} p{page_index + 1}: {e}")
+            ocr = ""
+        if len(ocr) > len(best):
+            best = normalize_text(ocr)
+
+        cache.put(pdf_path, page_index, pdf_mtime, best)
+        return best
+
+    # 3) pdfplumber
     if HAVE_PDFPLUMBER and pdfplumber is not None:
         try:
             with pdfplumber.open(pdf_path) as pl:
@@ -378,7 +470,7 @@ def extract_text(page: Any, pdf_path: str, page_index: int, pdf_mtime: float) ->
             cache.put(pdf_path, page_index, pdf_mtime, best)
             return best
 
-    # 3) pypdf
+    # 4) pypdf
     if HAVE_PYPDF and pypdf is not None:
         try:
             reader = pypdf.PdfReader(pdf_path)
@@ -393,10 +485,8 @@ def extract_text(page: Any, pdf_path: str, page_index: int, pdf_mtime: float) ->
             cache.put(pdf_path, page_index, pdf_mtime, best)
             return best
 
-    # 4) pdfminer (Dokumentweit; kann langsam sein)
-    # Nur wenn nicht klar gescannt, sonst direkt OCR versuchen
-    likely_scan = _is_likely_scanned(first_try or best, page)
-    if HAVE_PDFMINER and pdfminer_extract_text is not None and not likely_scan:
+    # 5) pdfminer (Dokumentweit; kann langsam sein)
+    if HAVE_PDFMINER and pdfminer_extract_text is not None:
         try:
             full = pdfminer_extract_text(pdf_path) or ""
             full = normalize_text(full)
@@ -408,12 +498,14 @@ def extract_text(page: Any, pdf_path: str, page_index: int, pdf_mtime: float) ->
             cache.put(pdf_path, page_index, pdf_mtime, best)
             return best
 
-    # 5) OCR bevorzugen, wenn gescannt oder Text zu schwach
+    # 6) OCR-Fallback für Text-PDFs, bei denen die Extraktoren schwach waren
     try:
+        print(f"[DEBUG] Text-Extractor schwach → OCR-Fallback: {pdf_path} p{page_index + 1}")
         ocr = _ocr_page(page)
     except Exception as e:
-        print(f"[WARN] OCR fehlgeschlagen: {e}")
+        print(f"[WARN] OCR-Fallback fehlgeschlagen: {pdf_path} p{page_index + 1}: {e}")
         ocr = ""
+
     if len(ocr) > len(best):
         best = normalize_text(ocr)
 
@@ -424,6 +516,9 @@ def extract_text(page: Any, pdf_path: str, page_index: int, pdf_mtime: float) ->
 # ------------------------ Debug-Selbsttest ------------------------
 
 def main() -> None:
+    """
+    Minimaler Selbsttest für das Modul.
+    """
     print("[DEBUG] text.py self-test: Kein CLI, nur Import-Test und Konstanten.")
     try:
         print(f"[DEBUG] TEXT_MIN_LEN={TEXT_MIN_LEN}")
@@ -435,3 +530,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

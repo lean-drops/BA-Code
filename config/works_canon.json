@@ -1,0 +1,204 @@
+{
+ "works": [
+    {
+        "canonical": "Peter Niederhäuser und Christian Sieber: Kriegsgeschichte(n) – ein Vorwort",
+        "author": "Peter Niederhäuser und Christian Sieber",
+        "aliases": [
+            "(?i)Niederh[aä]user.*Sieber.*Vorwort",
+            "(?i)Kriegsgeschichte\\(n\\).*Vorwort",
+            "(?i)Bruderkrieg.*Vorwort"
+        ]
+    },
+    {
+        "canonical": "Peter Niederhäuser und Christian Sieber: Zur Einführung",
+        "author": "Peter Niederhäuser und Christian Sieber",
+        "aliases": [
+            "(?i)Niederh[aä]user.*Sieber.*Einfu[eü]hrung",
+            "(?i)Bruderkrieg.*Einfu[eü]hrung",
+            "(?i)Niederh[aä]user.*AGZ.*Einfu[eü]hr"
+        ]
+    },
+    {
+        "canonical": "Christian Sieber: Zeittafel",
+        "author": "Christian Sieber",
+        "aliases": [
+            "(?i)Sieber.*Zeittafel",
+            "(?i)Zeit\\s*Tafel.*Z[uü]richkrieg",
+            "(?i)Sieber.*Zeiten"
+        ]
+    },
+    {
+        "canonical": "Bernhard Stettler: Die Historiographie des Alten Zürichkriegs (15.–19. Jahrhundert)",
+        "author": "Bernhard Stettler",
+        "aliases": [
+            "(?i)Stettler.*Historiographie.*Z[uü]richkrieg",
+            "(?i)Stettler.*15.?-19.? Jahrhundert",
+            "(?i)Historiographie.*Alten Z[uü]richkrieg"
+        ]
+    },
+    {
+        "canonical": "Michael Jucker: Verstetigung und Verrechtlichung der Diplomatie. Krieg als Innovationsfaktor für die Politik (1415–1460)",
+        "author": "Michael Jucker",
+        "aliases": [
+            "(?i)Jucker.*Verstetigung.*Verrechtlichung",
+            "(?i)Jucker.*Diplomatie.*Innovationsfaktor",
+            "(?i)Krieg.*Politik.*1415-1460"
+        ]
+    },
+    {
+        "canonical": "Oliver Landolt: Das Alte Land Schwyz während des Alten Zürichkriegs",
+        "author": "Oliver Landolt",
+        "aliases": [
+            "(?i)Landolt.*Alte Land Schwyz",
+            "(?i)Landolt.*Z[uü]richkriegs",
+            "(?i)Oliver Landolt.*Schwyz.*Z[uü]richkrieg"
+        ]
+    },
+    {
+        "canonical": "Christian Sieber: Der Vater tot, das Haus verbrannt. Der Alte Zürichkrieg aus der Sicht der Opfer in Stadt und Landschaft Zürich",
+        "author": "Christian Sieber",
+        "aliases": [
+            "(?i)Sieber.*Vater tot.*Haus verbrannt",
+            "(?i)Sieber.*Opfer.*Stadt.*Landschaft Z[uü]rich",
+            "(?i)Vater tot.*Alte[n]? Z[uü]richkrieg"
+        ]
+    },
+    {
+        "canonical": "Stefan Frey: Rudolf Stüssi – ein tragischer Held?",
+        "author": "Stefan Frey",
+        "aliases": [
+            "(?i)Frey.*Rudolf St[üu]ssi",
+            "(?i)St[üu]ssi.*tragischer Held",
+            "(?i)Stefan Frey.*St[üu]ssi"
+        ]
+    },
+    {
+        "canonical": "Werner Bosshard: Krieg und Todesvorbereitung. Zürcher letztwillige Verfügungen 1428–1445",
+        "author": "Werner Bosshard",
+        "aliases": [
+            "(?i)Bosshard.*Todesvorbereitung",
+            "(?i)Bosshard.*letztwillige Verf[uü]gungen",
+            "(?i)1428–1445.*Bosshard"
+        ]
+    },
+    {
+        "canonical": "Fritz Rigendinger: \"Ir hertz und sinn stuond fast gen Zürich\". Der Alte Zürichkrieg aus der regionalen Perspektive des Sarganserlands",
+        "author": "Fritz Rigendinger",
+        "aliases": [
+            "(?i)Rigendinger.*Sarganserland",
+            "(?i)Rigendinger.*regionalen Perspektive",
+            "(?i)hertz und sinn.*Z[uü]rich"
+        ]
+    },
+    {
+        "canonical": "Pascale Sutter: Rapperswil – mehr als nur ein Bollwerk am See? Der Alte Zürichkrieg und seine Folgen für die Rosenstadt",
+        "author": "Pascale Sutter",
+        "aliases": [
+            "(?i)Sutter.*Rapperswil",
+            "(?i)Bollwerk am See.*Rosenstadt",
+            "(?i)Rapperswil.*Alte[n]? Z[uü]richkrieg"
+        ]
+    },
+    {
+        "canonical": "Peter Niederhäuser: \"Guot Sorg hat man zuo Winterthur\" – Winterthur und der Alte Zürichkrieg",
+        "author": "Peter Niederhäuser",
+        "aliases": [
+            "(?i)Niederh[aä]user.*Winterthur",
+            "(?i)Winterthur.*Z[uü]richkrieg",
+            "(?i)Guot Sorg.*Winterthur"
+        ]
+    },
+    {
+        "canonical": "Andreas Bihrer: \"Ein fürst des fridens\". Vermittlungsbemühungen und Selbstinszenierung des Konstanzer Bischofs Heinrich von Hewen (1436–1462)",
+        "author": "Andreas Bihrer",
+        "aliases": [
+            "(?i)Bihrer.*fu[eü]rst des fridens",
+            "(?i)Bihrer.*Heinrich von Hewen",
+            "(?i)Konstanzer Bischof.*fridens"
+        ]
+    },
+    {
+        "canonical": "Dieter Speck: Albrecht VI. von Österreich und die \"untreuen Schweizer\"",
+        "author": "Dieter Speck",
+        "aliases": [
+            "(?i)Speck.*untreuen Schweizer",
+            "(?i)Albrecht\\s*VI.*Speck",
+            "(?i)Speck.*Albrecht VI"
+        ]
+    },
+    {
+        "canonical": "Peter Niederhäuser: Der Fürst in der Ostschweiz. Eine Teiledition des Rechnungsbuchs von Herzog Albrecht VI. von Österreich",
+        "author": "Peter Niederhäuser",
+        "aliases": [
+            "(?i)Niederh[aä]user.*Fürst in der Ostschweiz",
+            "(?i)Rechnungsbuch.*Albrecht VI",
+            "(?i)Niederh[aä]user.*Teiledition"
+        ]
+    },
+    {
+        "canonical": "Konstantin M. Langmaier: Terror in der Stadt? Innere Kriegsführung und Propaganda im Spätmittelalter. Psychologische Voraussetzungen, interne Konflikte und die Ausschaltung innerstädtischer Opposition während des Alten Zürichkrieges",
+        "author": "Konstantin M. Langmaier",
+        "aliases": [
+            "(?i)Langmaier.*Terror in der Stadt",
+            "(?i)Langmaier.*Propaganda.*Spätmittelalter",
+            "(?i)Langmaier.*Alten Z[uü]richkrieges"
+        ]
+    },
+    {
+        "canonical": "Konstantin M. Langmaier: Felix Hemmerli und der Dialog über den Adel und den Bauern (De nobilitate et rusticitate dialogus). Seine Bedeutung für die Erforschung der Mentalität des Adels",
+        "author": "Konstantin M. Langmaier",
+        "aliases": [
+            "(?i)Langmaier.*Felix Hemmerli",
+            "(?i)Hemmerli.*Dialog.*Adel.*Bauern",
+            "(?i)Langmaier.*rusticitate dialogus"
+        ]
+    },
+    {
+        "canonical": "Oliver Landolt: Kriegsgefallenenlisten – erläutert am Beispiel der Schlachtjahrzeiten in den eidgenössischen Orten",
+        "author": "Oliver Landolt",
+        "aliases": [
+            "(?i)Landolt.*Kriegsgefallenenlisten",
+            "(?i)Landolt.*Schlachtjahrzeiten",
+            "(?i)eidgen[oö]ssischen Orten.*Landolt"
+        ]
+    },
+    {
+        "canonical": "Konstantin M. Langmaier: Das Zeugenprotokoll über die schwyzfreundliche Haltung der Fraumünsteräbtissin Anna von Hewen (ca. 1408–1484) während des Alten Zürichkrieges",
+        "author": "Konstantin M. Langmaier",
+        "aliases": [
+            "(?i)Langmaier.*Zeugenprotokoll.*schwyzfreundliche Haltung",
+            "(?i)Anna von Hewen.*Langmaier",
+            "(?i)Langmaier.*Fraum[uü]nster[aä]btissin"
+        ]
+    },
+    {
+        "canonical": "Christian Sieber: Politik, Verwaltung und Archiv: Aufstieg und Fall der „kaiserlichen“ Stadt Zürich zwischen 1430 und 1450 im Spiegel der Biographien von Bürgermeister Rudolf Stüssi und Stadtschreiber Michael Stebler",
+        "author": "Christian Sieber",
+        "aliases": [
+            "(?i)Sieber.*Politik.*Verwaltung.*Archiv",
+            "(?i)Sieber.*kaiserlichen Stadt Z[uü]rich",
+            "(?i)Rudolf St[üu]ssi.*Michael Stebler"
+        ]
+    },
+   {
+  "canonical": "Dieter Speck: Albrecht VI. von Österreich und die «untreuen Schweizer»",
+  "author": "Dieter Speck",
+  "aliases": [
+    "(?i)Speck,?\\s*Dieter.*Albrecht\\s*VI\\.?\\s+von\\s+O[öo]sterreich",
+    "(?i)Dieter\\s+Speck.*untreuen\\s+Schweizer",
+    "(?i)Albrecht\\s*VI\\.?\\s+von\\s+O[öo]sterreich.*untreuen\\s+Schweizer",
+    "(?i)Speck.*Albrecht\\s*VI",
+    "(?i)Speck.*\"?untreuen\"?\\s+Schweizer",
+    "(?i)Speck[-_ ]dieter__6\\.pdf"
+  ]
+}
+
+  ],
+  "series": [],
+  "generic_terms": [],
+  "weights": {
+    "work": 1.0,
+    "series": 1.0,
+    "generic": 1.2
+  }
+}

@@ -1,9 +1,7 @@
-"""
-authors_utils.py — Utility-Funktionen und Modelle für Autor↔Autor-Referenznetz.
 
-Usage:
-  - Wird von authors_search.py und authors_gui.py importiert.
-  - Nicht direkt ausführen. Ein kleines __main__ dient nur zum Selbsttest.
+#!/usr/bin/env python3
+"""
+authors_utils.py — Gemeinsame Utilities für Scrape, Analyse und Report.
 
 Benötigt:
   - Python 3.9+
@@ -13,8 +11,8 @@ Benötigt:
   - optional: networkx
 
 Environment:
-  - FBNE_PROJECT_DIR (optional): Absoluter Projektpfad, der 'config/authors_report_template' enthält.
-    Fallback: automatische Erkennung oder Default '/Users/programming/PycharmProjects/Find_Bibliography_NEw'.
+  - FBNE_PROJECT_DIR (optional): Absoluter Projektpfad mit 'config/authors_report_template'.
+    Fallback: heuristische Erkennung oder Default.
 """
 from __future__ import annotations
 
@@ -25,17 +23,16 @@ import json
 import html
 import hashlib
 import unicodedata
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from typing import Dict, List, Tuple, Optional, Iterable, Set
 from datetime import datetime
 
-# Drittanbieter
+# ---------------------- Drittanbieter-Flags ----------------------
 try:
     import fitz  # PyMuPDF
 except Exception as e:
     raise RuntimeError("PyMuPDF (fitz) ist erforderlich. Installation: pip install pymupdf") from e
 
-# Flags erst lazy in Funktionen geprüft
 try:
     import pandas as pd  # noqa
     HAVE_PANDAS = True
@@ -68,7 +65,7 @@ BIB_HEADINGS = [
 ]
 LOG_TS_FMT = "%H:%M:%S"
 
-# Projekt-Defaults
+# Projekt-Defaults (werden durch detect_project_dir übersteuert)
 PROJECT_DIR_DEFAULT = "/Users/programming/PycharmProjects/Find_Bibliography_NEw"
 TEMPLATE_SUBDIR = os.path.join("config", "authors_report_template")
 DATA_SUBDIR = os.path.join("data", "authors_data")
@@ -92,6 +89,27 @@ class Mention:
     in_bib: bool
     pattern: str
     context: str
+
+
+@dataclass(frozen=True)
+class WorkSpec:
+    canonical: str
+    kind: str                  # "work" | "series" | "generic"
+    patterns: Tuple[str, ...]
+    negatives: Tuple[str, ...]
+    weight: float
+
+
+@dataclass(frozen=True)
+class WorkMention:
+    pdf_file: str
+    canonical: str
+    kind: str
+    page: int
+    in_bib: int
+    pattern: str
+    context: str
+    weight: float
 
 
 # ---------------------- Logging ----------------------
@@ -159,7 +177,7 @@ def get_template_dir(project_dir: str) -> str:
     return tpl
 
 
-# ---------------------- Utils ----------------------
+# ---------------------- Text/Regex-Utils ----------------------
 def normspace(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
@@ -187,60 +205,19 @@ def make_diacritic_regex(token: str) -> str:
     out = out.replace("-", r"[-\s]+")
     return out
 
-def iter_pdfs(root: str) -> Iterable[str]:
-    for d, _, files in os.walk(root):
-        for fn in files:
-            if fn.lower().endswith(".pdf"):
-                yield os.path.join(d, fn)
-
-def _display_from_tokens(tokens: List[str]) -> str:
-    if len(tokens) >= 2:
-        last = tokens[-1].capitalize()
-        firsts = " ".join(t.capitalize() for t in tokens[:-1] if len(t) > 1)
-        return f"{last}, {firsts}" if firsts else last
-    return tokens[0].capitalize() if tokens else "Unbekannt"
-
-def extract_authors_from_filenames(pdf_paths: List[str]) -> Dict[str, Author]:
-    authors: Dict[str, Author] = {}
-    for p in pdf_paths:
-        base = os.path.splitext(os.path.basename(p))[0]
-        left = base.split("__")[0].replace("_", "-").strip("-")
-        if not left:
-            continue
-        tokens = [t for t in left.split("-") if t]
-        display = _display_from_tokens(tokens)
-        # Nachnamenkandidaten
-        surs: List[str] = []
-        if tokens:
-            surs.append(tokens[0])
-            if tokens[-1] != tokens[0]:
-                surs.append(tokens[-1])
-        surs = [s for s in surs if len(s) > 1 and not s.isdigit()]
-        if not surs:
-            continue
-        # Musterstrings bauen (keine kompilierten Regex für Pickle-Freundlichkeit)
-        pattern_strs: List[str] = []
-        for sur in dict.fromkeys(surs):
-            srx = make_diacritic_regex(sur)
-            pat1 = rf"\b{srx}\b\s*,\s*[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\.\-]{{1,}}"
-            pat2 = rf"\b[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\.\-]{{1,}}\s+{srx}\b"
-            pat3 = rf"\b{srx}\b[^\n]{{0,30}}\b{YEAR_RE}\b"
-            pattern_strs.extend([pat1, pat2, pat3])
-        folded = tuple(strip_diacritics(s).casefold() for s in dict.fromkeys(surs))
-        authors[left] = Author(
-            author_id=left,
-            display=display,
-            surnames=tuple(dict.fromkeys(surs)),
-            pattern_strs=tuple(pattern_strs),
-            folded_surnames=folded,
-        )
-    return authors
-
 def compile_patterns(pattern_strs: Iterable[str]) -> List[re.Pattern]:
     return [re.compile(p, re.IGNORECASE) for p in pattern_strs]
 
 def compile_bib_heading_patterns() -> List[re.Pattern]:
     return [re.compile(p, re.IGNORECASE | re.MULTILINE) for p in BIB_HEADINGS]
+
+
+# ---------------------- PDF & OCR ----------------------
+def iter_pdfs(root: str) -> Iterable[str]:
+    for d, _, files in os.walk(root):
+        for fn in files:
+            if fn.lower().endswith(".pdf"):
+                yield os.path.join(d, fn)
 
 def detect_bibliography_pages(doc: "fitz.Document") -> Set[int]:
     pats = compile_bib_heading_patterns()
@@ -273,12 +250,15 @@ def extract_text_with_ocr(page: "fitz.Page") -> str:
     except Exception:
         return txt
 
+
 def classify_section(page_index: int, bib_pages: Set[int]) -> str:
     return "bib" if page_index in bib_pages else "text"
+
 
 def quick_page_filter(text_folded: str, target_folded_surnames: Tuple[str, ...]) -> bool:
     # Sehr schneller Vorfilter ohne Regex, diakritikfrei und casefolded
     return any(sur in text_folded for sur in target_folded_surnames)
+
 
 def find_author_mentions(text: str, compiled_patterns: List[re.Pattern]) -> List[Tuple[Tuple[int, int], str]]:
     hits: List[Tuple[Tuple[int, int], str]] = []
@@ -287,12 +267,221 @@ def find_author_mentions(text: str, compiled_patterns: List[re.Pattern]) -> List
             hits.append((m.span(), pat.pattern))
     return hits
 
+
 def make_context(text: str, span: Tuple[int, int], length: int = SNIPPET_LEN) -> str:
     s, e = span
     mid = (s + e) // 2
     start = max(0, mid - length // 2)
     end = min(len(text), start + length)
     return normspace(text[start:end])
+
+
+# ---------------------- Autoren/Canon/Heuristik ----------------------
+def _display_from_tokens(tokens: List[str]) -> str:
+    if len(tokens) >= 2:
+        last = tokens[-1].capitalize()
+        firsts = " ".join(t.capitalize() for t in tokens[:-1] if len(t) > 1)
+        return f"{last}, {firsts}" if firsts else last
+    return tokens[0].capitalize() if tokens else "Unbekannt"
+
+
+def extract_authors_from_filenames(pdf_paths: List[str]) -> Dict[str, Author]:
+    authors: Dict[str, Author] = {}
+    for p in pdf_paths:
+        base = os.path.splitext(os.path.basename(p))[0]
+        left = base.split("__")[0].replace("_", "-").strip("-")
+        if not left:
+            continue
+        tokens = [t for t in left.split("-") if t]
+        display = _display_from_tokens(tokens)
+        # Nachnamenkandidaten
+        surs: List[str] = []
+        if tokens:
+            surs.append(tokens[0])
+            if tokens[-1] != tokens[0]:
+                surs.append(tokens[-1])
+        surs = [s for s in surs if len(s) > 1 and not s.isdigit()]
+        if not surs:
+            continue
+        # Musterstrings bauen
+        pattern_strs: List[str] = []
+        for sur in dict.fromkeys(surs):
+            srx = make_diacritic_regex(sur)
+            pat1 = rf"\b{srx}\b\s*,\s*[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\.\-]{{1,}}"
+            pat2 = rf"\b[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\.\-]{{1,}}\s+{srx}\b"
+            pat3 = rf"\b{srx}\b[^\n]{{0,30}}\b{YEAR_RE}\b"
+            pattern_strs.extend([pat1, pat2, pat3])
+        folded = tuple(strip_diacritics(s).casefold() for s in dict.fromkeys(surs))
+        authors[left] = Author(
+            author_id=left,
+            display=display,
+            surnames=tuple(dict.fromkeys(surs)),
+            pattern_strs=tuple(pattern_strs),
+            folded_surnames=folded,
+        )
+    return authors
+
+
+def load_authors_canon(path: str) -> Dict:
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Autoren-Canon nicht gefunden: {path}")
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if "authors" not in data or not isinstance(data["authors"], list):
+        raise ValueError("autoren_canon.json: Feld 'authors' fehlt oder ist kein Array.")
+    return data
+
+
+def build_authors_from_canon(canon: Dict, heuristic_authors: Dict[str, Author]) -> Tuple[Dict[str, Author], Dict[str, dict], Dict[str, str]]:
+    """
+    Erzeugt:
+      - authors: kanonische Autoren (ID->Author)
+      - aux: Meta je Autor (negatives, filename_aliases, text_aliases)
+      - merge_map: Weiterleitungen (canonical_id -> merge_into)
+    """
+    authors: Dict[str, Author] = {}
+    aux: Dict[str, dict] = {}
+    merge_map: Dict[str, str] = {}
+
+    def _tokens(cid: str) -> List[str]:
+        return [x for x in cid.replace("_", "-").split("-") if x]
+
+    def _surnames(tokens: List[str]) -> List[str]:
+        out: List[str] = []
+        if tokens:
+            out.append(tokens[0])
+            if tokens[-1] != tokens[0]:
+                out.append(tokens[-1])
+        return [s for s in out if len(s) > 1 and not s.isdigit()]
+
+    # Merge-Zuordnung
+    for a in canon["authors"]:
+        cid = a.get("canonical_id") or ""
+        mi = a.get("merge_into")
+        if mi and mi != cid:
+            merge_map[cid] = mi
+
+    # Nur kanonische IDs erzeugen
+    for a in canon["authors"]:
+        cid = a.get("canonical_id") or ""
+        if not cid:
+            continue
+        if cid in merge_map and merge_map[cid] != cid:
+            continue
+        disp = a.get("display") or ", ".join(reversed([t.capitalize() for t in _tokens(cid)])) or cid
+        surs = _surnames(_tokens(cid))
+        pattern_strs: List[str] = []
+        for sur in dict.fromkeys(surs):
+            srx = make_diacritic_regex(sur)
+            pat1 = rf"\b{srx}\b\s*,\s*[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\.\-]{{1,}}"
+            pat2 = rf"\b[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\.\-]{{1,}}\s+{srx}\b"
+            pat3 = rf"\b{srx}\b[^\n]{{0,30}}\b(1[4-9]\d{{2}}|20\d{{2}})\b"
+            pattern_strs.extend([pat1, pat2, pat3])
+        for ta in a.get("text_aliases", []) or []:
+            if isinstance(ta, str) and ta:
+                pattern_strs.append(ta)
+        folded = tuple(strip_diacritics(s).casefold() for s in dict.fromkeys(surs))
+        authors[cid] = Author(
+            author_id=cid,
+            display=disp,
+            surnames=tuple(dict.fromkeys(surs)),
+            pattern_strs=tuple(dict.fromkeys(pattern_strs)),
+            folded_surnames=folded,
+        )
+        aux[cid] = {
+            "negatives": list(a.get("negatives", []) or []),
+            "filename_aliases": list(a.get("filename_aliases", []) or []),
+            "text_aliases": list(a.get("text_aliases", []) or []),
+        }
+
+    # Heuristische Autoren ergänzen
+    for hid, ha in heuristic_authors.items():
+        if hid not in authors:
+            authors[hid] = ha
+            aux[hid] = {"negatives": [], "filename_aliases": [], "text_aliases": []}
+
+    return authors, aux, merge_map
+
+
+def compile_filename_aliases(aux: Dict[str, dict]) -> Dict[str, List[re.Pattern]]:
+    out: Dict[str, List[re.Pattern]] = {}
+    for aid, meta in aux.items():
+        regs = []
+        for rx in meta.get("filename_aliases", []):
+            try:
+                regs.append(re.compile(rx, re.IGNORECASE))
+            except re.error as e:
+                log_warn(f"Fehlerhafte filename_aliases-Regex für {aid}: {rx} ({e})")
+        out[aid] = regs
+    return out
+
+
+def choose_src_from_filename(pdf_path: str, fname_rx: Dict[str, List[re.Pattern]], left_guess: str) -> Optional[str]:
+    for aid, regs in fname_rx.items():
+        for r in regs:
+            if r.search(pdf_path):
+                return aid
+    return left_guess or None
+
+
+# ---------------------- Werke-Canon ----------------------
+def load_works_canon(path: str) -> Optional[Dict]:
+    if not os.path.isfile(path):
+        log_warn(f"Werke-Canon fehlt, Werk-Suche wird übersprungen: {path}")
+        return None
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if "works" not in data:
+        raise ValueError("works_canon.json: Feld 'works' fehlt.")
+    return data
+
+
+def build_work_specs(work_json: Dict) -> List[WorkSpec]:
+    weights = {"work": 1.0, "series": 1.0, "generic": 1.2}
+    weights.update(work_json.get("weights", {}))
+
+    specs: List[WorkSpec] = []
+    for w in work_json.get("works", []):
+        canon = w.get("canonical") or ""
+        aliases = tuple(w.get("aliases", []) or [])
+        if not canon or not aliases:
+            continue
+        specs.append(WorkSpec(canonical=canon, kind="work", patterns=aliases,
+                              negatives=tuple(w.get("negatives", []) or []),
+                              weight=float(weights.get("work", 1.0))))
+    for s in work_json.get("series", []):
+        canon = s.get("canonical") or ""
+        aliases = tuple(s.get("aliases", []) or [])
+        if not canon or not aliases:
+            continue
+        specs.append(WorkSpec(canonical=canon, kind="series", patterns=aliases,
+                              negatives=tuple(s.get("negatives", []) or []),
+                              weight=float(weights.get("series", 1.0))))
+    for g in work_json.get("generic_terms", []):
+        canon = g.get("label") or ""
+        aliases = tuple(g.get("patterns", []) or [])
+        if not canon or not aliases:
+            continue
+        specs.append(WorkSpec(canonical=canon, kind="generic", patterns=aliases,
+                              negatives=tuple(g.get("negatives", []) or []),
+                              weight=float(weights.get("generic", 1.2))))
+    return specs
+
+
+def compile_work_regex(specs: List[WorkSpec]) -> Tuple[List[WorkSpec], Dict[str, List[re.Pattern]], Dict[str, List[re.Pattern]]]:
+    pos: Dict[str, List[re.Pattern]] = {}
+    neg: Dict[str, List[re.Pattern]] = {}
+    for sp in specs:
+        ps: List[re.Pattern] = []
+        for pat in sp.patterns:
+            try:
+                ps.append(re.compile(pat, re.IGNORECASE))
+            except re.error as e:
+                log_warn(f"Fehlerhafte Werk-Regex für {sp.canonical}: {pat} ({e})")
+        pos[sp.canonical] = ps
+        neg[sp.canonical] = [re.compile(n, re.IGNORECASE) for n in (sp.negatives or [])]
+    return specs, pos, neg
+
 
 # ---------------------- Aggregation & Output ----------------------
 def aggregate_edges(authors: Dict[str, Author], mentions: List[Mention]):
@@ -326,6 +515,7 @@ def aggregate_edges(authors: Dict[str, Author], mentions: List[Mention]):
     agg["weighted"] = agg["bib_hits"] * 2 + agg["text_hits"] * 1
     return df_nodes, agg
 
+
 def ensure_session_dir(base: str, pdfs: List[str]) -> str:
     """
     Erstellt einen neuen Session-Ordner IM PROJEKT unter data/authors_data,
@@ -341,6 +531,7 @@ def ensure_session_dir(base: str, pdfs: List[str]) -> str:
     log_info(f"Session-Root: {root}")
     return session_dir
 
+
 def write_csvs(out_dir: str, df_nodes, df_edges) -> Tuple[str, str]:
     nodes_path = os.path.join(out_dir, "authors_nodes.csv")
     edges_path = os.path.join(out_dir, "authors_edges.csv")
@@ -349,6 +540,7 @@ def write_csvs(out_dir: str, df_nodes, df_edges) -> Tuple[str, str]:
     log_info(f"CSV geschrieben: {nodes_path}")
     log_info(f"CSV geschrieben: {edges_path}")
     return nodes_path, edges_path
+
 
 def write_gexf(out_dir: str, authors: Dict[str, Author], df_edges) -> Optional[str]:
     if not HAVE_NX:
@@ -366,9 +558,11 @@ def write_gexf(out_dir: str, authors: Dict[str, Author], df_edges) -> Optional[s
     log_info(f"GEXF geschrieben: {out}")
     return out
 
+
 def _compute_asset_rel(out_dir: str, template_dir: str) -> str:
     rel = os.path.relpath(template_dir, start=out_dir).replace(os.sep, "/")
     return rel
+
 
 def _read_template_html(template_dir: str) -> str:
     path = os.path.join(template_dir, "authors_report.html")
@@ -377,8 +571,10 @@ def _read_template_html(template_dir: str) -> str:
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
+
 def _esc(s: object) -> str:
     return html.escape("" if s is None else str(s), quote=True)
+
 
 def write_html_report(out_dir: str, authors: Dict[str, Author], df_edges) -> str:
     """
@@ -393,13 +589,14 @@ def write_html_report(out_dir: str, authors: Dict[str, Author], df_edges) -> str
     asset_rel = _compute_asset_rel(out_dir, template_dir)
 
     df_out = df_edges.copy()
-    # Labels anreichern
+
     def lab(aid: str) -> str:
         a = authors.get(aid)
         return a.display if a else aid
 
-    df_out["src_label"] = df_out["src"].map(lab)
-    df_out["tgt_label"] = df_out["tgt"].map(lab)
+    if not df_out.empty:
+        df_out["src_label"] = df_out["src"].map(lab)
+        df_out["tgt_label"] = df_out["tgt"].map(lab)
 
     # Top-Listen
     if df_out.empty:
@@ -434,11 +631,9 @@ def write_html_report(out_dir: str, authors: Dict[str, Author], df_edges) -> str
     top_cited_rows = rows_from_series(top_cited)
     edges_rows = rows_from_edges(df_out)
 
-    # Autorenanzahl aus dict, nicht aus df_edges (robuster)
     count_authors = len(authors)
     count_edges = int(df_out.shape[0])
 
-    # Platzhalter ersetzen
     html_str = tpl_html
     html_str = html_str.replace("{{ASSET_REL}}", _esc(asset_rel))
     html_str = html_str.replace("{{COUNT_AUTHORS}}", str(count_authors))
@@ -453,6 +648,7 @@ def write_html_report(out_dir: str, authors: Dict[str, Author], df_edges) -> str
     log_info(f"HTML geschrieben (Template): {out}")
     log_info(f"Assets relativ verlinkt: {asset_rel}/(style.css|script.js)")
     return out
+
 
 def write_session_meta(out_dir: str, base: str, pdfs: List[str]) -> str:
     meta = {
@@ -474,6 +670,7 @@ def write_session_meta(out_dir: str, base: str, pdfs: List[str]) -> str:
     log_info(f"Session-Metadaten geschrieben: {out}")
     return out
 
+
 def environment_report() -> None:
     log_info("Bibliotheken:")
     print("  PyMuPDF: OK")
@@ -489,53 +686,11 @@ def environment_report() -> None:
     log_info(f"OCR-Fallback aktiv bei < {TEXT_MIN_LEN} Zeichen.")
 
 
-# ---------------------- Optionaler Selbsttest ---------------------------------
-def _selftest_render_if_csv_exists() -> None:
-    """
-    Kleiner Smoke-Test: Falls im neuesten Session-Ordner CSVs liegen,
-    rendere Report mit Template erneut.
-    """
-    if not HAVE_PANDAS:
-        log_warn("pandas nicht installiert, Selftest übersprungen.")
-        return
-    import pandas as pd  # noqa
-    project_dir = detect_project_dir()
-    data_dir = os.path.join(project_dir, DATA_SUBDIR)
-    if not os.path.isdir(data_dir):
-        log_warn(f"Kein Datenverzeichnis: {data_dir}")
-        return
-    # Neueste Session finden
-    cands = []
-    for name in os.listdir(data_dir):
-        p = os.path.join(data_dir, name)
-        if os.path.isdir(p) and name.startswith("session_"):
-            nodes = os.path.join(p, "authors_nodes.csv")
-            edges = os.path.join(p, "authors_edges.csv")
-            if os.path.isfile(nodes) and os.path.isfile(edges):
-                cands.append((os.path.getmtime(p), p))
-    if not cands:
-        log_warn("Keine Session mit CSVs gefunden. Selftest beendet.")
-        return
-    cands.sort(key=lambda t: t[0], reverse=True)
-    session_dir = cands[0][1]
-    log_info(f"Selftest-Session: {session_dir}")
-    df_nodes = pd.read_csv(os.path.join(session_dir, "authors_nodes.csv"), sep=";")
-    df_edges = pd.read_csv(os.path.join(session_dir, "authors_edges.csv"), sep=";")
-    # Autoren-Map für Labels
-    authors: Dict[str, Author] = {}
-    for aid, disp in zip(df_nodes["author_id"].astype(str), df_nodes["display"].astype(str)):
-        authors[aid] = Author(aid, disp, tuple(), tuple(), tuple())
-    write_html_report(session_dir, authors, df_edges)
-
-
-# Nur für manuellen Schnelltest; im regulären Betrieb wird dieses Modul importiert.
 if __name__ == "__main__":
     def main() -> None:
         log_info("Selftest gestartet.")
         environment_report()
-        try:
-            _selftest_render_if_csv_exists()
-        except Exception as e:
-            log_error(f"Selftest-Fehler: {e}")
-        log_info("Selftest Ende. Usage: Modul importieren und Funktionen aufrufen.")
+        # Kein automatischer Report-Run; Utilities werden von Sub-Skripten genutzt.
+        log_info("Selftest Ende. Dieses Modul wird importiert.")
     main()
+

@@ -95,6 +95,18 @@ def compile_patterns_from_db(db_path: Path) -> Tuple[List[PatternEntry], Dict[st
     """
     Liest Regex-Muster aus SQLite und kompiliert sie.
 
+    Primäre Quelle:
+      - Tabelle 'chroniken_canon' mit Spalten:
+          kind          ('work' | 'series' | 'generic')
+          canonical     (optional, wird hier nur informativ genutzt)
+          label         (sprechender Name, z.B. 'Fründ', 'Klingenberger/Rapperswiler Chronik')
+          patterns_json (JSON-Liste von Regex-Strings)
+          weight        (REAL)
+
+    Fallbacks (falls vorhanden):
+      - works_canon (aliases_json)
+      - generische Tabellen 'generic_terms' / 'generic_patterns'
+
     :param db_path: Pfad zu 'chroniken.sqlite3'
     :return: (compiled_patterns, weights)
     """
@@ -102,49 +114,83 @@ def compile_patterns_from_db(db_path: Path) -> Tuple[List[PatternEntry], Dict[st
         raise FileNotFoundError(f"SQLite nicht gefunden: {db_path}")
 
     compiled: List[PatternEntry] = []
+    weights: Dict[str, float] = dict(DEFAULT_WEIGHTS)
+
     with sqlite3.connect(str(db_path)) as con:
         con.row_factory = sqlite3.Row
         cur = con.cursor()
 
-        # Gewichte
-        weights = _maybe_weights(cur)
+        # 1) Gewichte-Tabelle (optional)
+        base_weights = _maybe_weights(cur)
+        weights.update(base_weights)
 
-        # --- works_json ---
-        if not _table_exists(cur, "works_json"):
-            raise RuntimeError("Tabelle 'works_json' fehlt in der Datenbank.")
-        cur.execute(
-            "SELECT COALESCE(json_canonical,'') AS label, "
-            "       COALESCE(aliases_json,'[]') AS aliases_json "
-            "FROM works_json;"
-        )
-        for row in cur.fetchall():
-            label = str(row["label"]).strip()
-            try:
-                aliases = json.loads(row["aliases_json"]) or []
-                if not isinstance(aliases, list):
-                    aliases = []
-            except Exception:
-                aliases = []
-            _compile_list(aliases, label=label or "work", group="work", sink=compiled)
-
-        # --- series (optional) ---
-        if _table_exists(cur, "series_patterns"):
+        # 2) Chroniken-Canon: Hauptquelle
+        if _table_exists(cur, "chroniken_canon"):
             cur.execute(
-                "SELECT COALESCE(canonical,'') AS label, "
-                "       COALESCE(aliases_json,'[]') AS aliases_json "
-                "FROM series_patterns;"
+                """
+                SELECT kind, canonical, label, patterns_json, weight
+                FROM chroniken_canon;
+                """
             )
             for row in cur.fetchall():
-                label = str(row["label"]).strip() or "series"
+                kind = (row["kind"] or "").strip() or "work"
+                label = (row["label"] or "").strip() or "work"
+                pats_raw = row["patterns_json"] or "[]"
                 try:
-                    aliases = json.loads(row["aliases_json"]) or []
+                    aliases = json.loads(pats_raw) or []
                     if not isinstance(aliases, list):
                         aliases = []
                 except Exception:
                     aliases = []
-                _compile_list(aliases, label=label, group="series", sink=compiled)
+                # Gewicht pro Gruppe aus chroniken_canon (überschreibt ggf. DEFAULT_WEIGHTS/_maybe_weights)
+                try:
+                    w_val = float(row["weight"])
+                    if w_val > 0:
+                        weights[kind] = w_val
+                except Exception:
+                    pass
 
-        # --- generic terms (optional, mehrere mögliche Schemata) ---
+                _compile_list(aliases, label=label, group=kind, sink=compiled)
+        else:
+            # 3) Fallback: alte Schema-Variante über works_canon / works_json
+            #    (nur nötig, wenn deine DB älter ist und keine chroniken_canon-Tabelle hat)
+            if _table_exists(cur, "works_json"):
+                cur.execute(
+                    "SELECT COALESCE(json_canonical,'') AS label, "
+                    "       COALESCE(aliases_json,'[]') AS aliases_json "
+                    "FROM works_json;"
+                )
+                for row in cur.fetchall():
+                    label = str(row["label"]).strip()
+                    try:
+                        aliases = json.loads(row["aliases_json"]) or []
+                        if not isinstance(aliases, list):
+                            aliases = []
+                    except Exception:
+                        aliases = []
+                    _compile_list(aliases, label=label or "work", group="work", sink=compiled)
+            elif _table_exists(cur, "works_canon"):
+                cur.execute(
+                    "SELECT COALESCE(canonical,'') AS label, "
+                    "       COALESCE(aliases_json,'[]') AS aliases_json "
+                    "FROM works_canon;"
+                )
+                for row in cur.fetchall():
+                    label = str(row["label"]).strip()
+                    try:
+                        aliases = json.loads(row["aliases_json"]) or []
+                        if not isinstance(aliases, list):
+                            aliases = []
+                    except Exception:
+                        aliases = []
+                    _compile_list(aliases, label=label or "work", group="work", sink=compiled)
+            else:
+                raise RuntimeError(
+                    "Es wurde weder 'chroniken_canon' noch ein kompatibles works_* Schema gefunden. "
+                    "Keine Muster verfügbar."
+                )
+
+        # 4) Optionale Serien- und Generic-Tabellen (nur falls du sie weiter nutzen willst)
         def _add_generic_from_patterns_table(tbl: str) -> None:
             cur.execute(f"SELECT pattern FROM {tbl};")
             for (pat,) in cur.fetchall():
@@ -152,11 +198,9 @@ def compile_patterns_from_db(db_path: Path) -> Tuple[List[PatternEntry], Dict[st
                     _compile_list([str(pat)], label="generic", group="generic", sink=compiled)
 
         if _table_exists(cur, "generic_terms"):
-            # a) pattern pro Zeile
             try:
                 _add_generic_from_patterns_table("generic_terms")
             except Exception:
-                # b) aliases_json
                 try:
                     cur.execute("SELECT aliases_json FROM generic_terms;")
                     for (aj,) in cur.fetchall():
@@ -173,7 +217,6 @@ def compile_patterns_from_db(db_path: Path) -> Tuple[List[PatternEntry], Dict[st
 
     print(f"[INFO] Kompilierte Regex: {len(compiled)} | Gewichte: {weights}")
     return compiled, weights
-
 
 def compile_bib_heading_patterns() -> List[re.Pattern]:
     return [re.compile(p, re.IGNORECASE | re.MULTILINE) for p in BIB_HEADINGS]

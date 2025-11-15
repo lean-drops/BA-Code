@@ -3,34 +3,58 @@
 <head>
   <meta charset="utf-8">
   <title>Chroniken ↔ Werke — Navigator</title>
+  <meta name="description" content="Interaktives Netz zwischen Chroniken und Werken. Suche, Mehrfachauswahl, Tastatursteuerung, Export.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' https://unpkg.com 'unsafe-inline' 'unsafe-eval'; connect-src 'self';">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0f14">
+  <!-- Strenger, kompatibler CSP: extern nur unpkg; kein inline-Script nötig -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 base-uri 'self';
+                 frame-ancestors 'none';
+                 img-src 'self' data: blob:;
+                 style-src 'self' 'unsafe-inline';
+                 script-src 'self' https://unpkg.com;
+                 connect-src 'self';
+                 worker-src 'self' blob:;
+                 upgrade-insecure-requests">
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="dns-prefetch" href="https://unpkg.com">
   <link rel="stylesheet" href="{{ url_for('static', filename='chroniken.css') }}">
-  <script src="https://unpkg.com/cytoscape@3.28.0/dist/cytoscape.min.js"></script>
-  <script src="https://unpkg.com/cytoscape-fcose@2.2.1/cytoscape-fcose.js"></script>
+  <!-- Externe Libs: exakt versioniert -->
+  <script src="https://unpkg.com/cytoscape@3.28.0/dist/cytoscape.min.js" defer></script>
+  <script src="https://unpkg.com/cytoscape-fcose@2.2.1/cytoscape-fcose.js" defer></script>
+  <!-- App-Logik -->
+  <script src="{{ url_for('static', filename='chroniken.js') }}" defer></script>
 </head>
 <body class="index-body">
-  <div class="index-wrap">
-    <aside class="index-panel">
+  <noscript>
+    <div class="index-noscript">Dieses Tool benötigt JavaScript.</div>
+  </noscript>
+
+  <div class="index-wrap" role="application">
+    <aside class="index-panel" aria-label="Steuerung">
       <header class="index-header">
-        <div class="index-title">chroniken_library ↔ Werke</div>
-        <div class="index-sub">Interaktives Netz</div>
+        <h1 class="index-title">Chroniken ↔ Werke</h1>
+        <p class="index-sub">Interaktives Netz</p>
       </header>
 
-      <section class="index-card">
-        <input id="file" type="file" accept=".csv" class="index-file">
-        <div class="index-actions">
-          <button id="pick" class="index-btn">CSV wählen</button>
-          <button id="upload" class="index-btn index-btn--primary">Laden</button>
-          <button id="autoload" class="index-btn">Auto-Laden</button>
+      <section class="index-card" aria-labelledby="upload-sect">
+        <h2 id="upload-sect" class="index-secttitle">Daten</h2>
+        <input id="file" type="file" accept=".csv" class="index-file" aria-label="CSV-Datei wählen">
+        <div class="index-actions" role="group" aria-label="Datei laden">
+          <button id="pick" type="button" class="index-btn" title="CSV-Datei im Dateidialog wählen">CSV wählen</button>
+          <button id="upload" type="button" class="index-btn index-btn--primary" title="Ausgewählte CSV laden">Laden</button>
+          <button id="autoload" type="button" class="index-btn" title="Server-Autoload versuchen">Auto-Laden</button>
         </div>
-        <div id="fname" class="index-hint">Keine Datei</div>
+        <div id="fname" class="index-hint" role="status" aria-live="polite">Keine Datei</div>
       </section>
 
-      <section class="index-card index-grid2">
+      <section class="index-card index-grid2" aria-labelledby="layout-sect">
+        <h2 id="layout-sect" class="index-secttitle">Ansicht</h2>
         <div>
           <label class="index-label" for="layout">Layout</label>
-          <select id="layout" class="index-select">
+          <select id="layout" class="index-select" aria-label="Layout wählen">
             <option value="preset">preset</option>
             <option value="fcose">fcose</option>
             <option value="breadthfirst">breadthfirst</option>
@@ -38,36 +62,47 @@
           </select>
         </div>
         <div>
-          <label class="index-label" for="thresh">Kantenschwelle: <span id="threshLabel">≥ 1</span></label>
-          <input id="thresh" type="range" min="1" max="10" step="1" value="1" class="index-range">
+          <label class="index-label" for="thresh">Kantengewicht: <span id="threshLabel">≥ 1</span></label>
+          <input id="thresh" type="range" min="1" max="10" step="1" value="1" class="index-range" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1">
         </div>
       </section>
 
-      <section class="index-card index-grid2">
-        <label class="index-check"><input id="labels" type="checkbox" checked> Labels</label>
+      <section class="index-card index-grid2" aria-labelledby="opts-sect">
+        <h2 id="opts-sect" class="index-secttitle">Optionen</h2>
+        <label class="index-check"><input id="labels" type="checkbox" checked> Labels anzeigen</label>
         <label class="index-check"><input id="invert" type="checkbox"> Nicht-verbundene hervorheben</label>
       </section>
 
-      <section class="index-card">
+      <section class="index-card" aria-labelledby="search-sect">
+        <h2 id="search-sect" class="index-secttitle">Suche &amp; Auswahl</h2>
         <label class="index-label" for="search">Suche</label>
         <div class="index-actions">
-          <input id="search" type="text" placeholder="Knotenlabel… Enter = Highlight" class="index-input">
-          <button id="searchBtn" class="index-btn index-btn--primary" title="Ohne Shift: ersetzen • Mit Shift: hinzufügen">Hervorheben</button>
+          <input id="search" type="text" class="index-input" inputmode="search" autocomplete="off"
+                 placeholder="Knotenlabel… Enter = Highlight" aria-describedby="search-help">
+          <button id="searchBtn" type="button" class="index-btn index-btn--primary"
+                  title="Ohne Shift: ersetzen • Mit Shift: hinzufügen">Hervorheben</button>
         </div>
-        <div class="index-hint">Shift gedrückt halten, um mehrere Hervorhebungen zu sammeln. Überschneidende Kanten werden gestrichelt.</div>
-        <div class="index-toolbar">
-          <button id="clearSel" class="index-btn">Auswahl löschen</button>
-          <button id="export" class="index-btn">PNG exportieren</button>
-          <button id="fit" class="index-btn">Auf Inhalt zoomen</button>
-          <span class="index-pill" id="stats">—</span>
+        <p id="search-help" class="index-hint">Shift hält Mehrfachauswahl. Überlappende Kanten werden gestrichelt.</p>
+        <div class="index-toolbar" role="group" aria-label="Aktionen">
+          <button id="clearSel" type="button" class="index-btn" title="Auswahl zurücksetzen">Auswahl löschen</button>
+          <button id="export"   type="button" class="index-btn" title="PNG exportieren">PNG exportieren</button>
+          <button id="fit"      type="button" class="index-btn" title="Auf Inhalt zoomen (F)">Auf Inhalt zoomen</button>
+          <span class="index-pill" id="stats" aria-live="polite">—</span>
         </div>
+        <details class="index-details">
+          <summary>Tastaturkürzel</summary>
+          <ul class="index-list">
+            <li>Pfeile: pannen</li>
+            <li>Strg/Alt + Pfeile: zum nächsten sichtbaren Nachbarn springen</li>
+            <li>Shift: schnelleres Panning bzw. Auswahl additiv</li>
+            <li>F: auf Inhalt zoomen • Esc: Auswahl leeren</li>
+            <li>+ / −: Zoom</li>
+          </ul>
+        </details>
       </section>
     </aside>
 
-    <main id="cy" class="index-canvas" aria-label="Graph"></main>
+    <main id="cy" class="index-canvas" aria-label="Graph" tabindex="0"></main>
   </div>
-
-  <script src="{{ url_for('static', filename='chroniken.js') }}"></script>
 </body>
 </html>
-

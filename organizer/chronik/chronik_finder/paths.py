@@ -1,4 +1,3 @@
-
 # organizer/chronik/chronik_finder/paths.py
 #!/usr/bin/env python3
 """
@@ -7,19 +6,19 @@ paths.py – Pfade und Projektstruktur für den Chroniken-Finder (DB-Version).
 Funktionen:
 - project_root(): Projektwurzel bestimmen.
 - data_base_dir(root): Basispfad für Daten.
-- default_pdf_dir(root): Standard-PDF-Ordner finden.
+- default_pdf_dir(root): Standard-PDF-/Text-Ordner finden.
 - config_db_path(root): Pfad zur SQLite-DB 'config/chroniken.sqlite3'.
-- iter_pdfs(pdf_dir): rekursive PDF-Iteration.
+- iter_pdfs(pdf_dir): rekursive PDF-/TXT-Iteration (rückwärtskompatibler Name).
 
 Robustheit:
 - Nutzt Umgebungsvariablen CHRONIK_ROOT, CHRONIK_DATA_DIR, CHRONIK_PDF_DIR wenn vorhanden.
-- Fallbacks prüfen existierende Ordner ('chroniken_library/pdf' zuerst, dann 'azk_library').
+- Fallbacks prüfen existierende Ordner.
 """
 from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Generator, Iterable
+from typing import Generator
 
 from .constants import DB_FILENAME
 
@@ -70,9 +69,9 @@ def default_pdf_dir(root: Path) -> Path:
 
     # 2) Bevorzugter Standard in diesem Projekt
     candidates = [
-        data_base_dir(root) / "chroniken_library" / "pdf",  # bevorzugt
-        data_base_dir(root) / "azk_library",                # historischer Name
-        data_base_dir(root),                                # Fallback
+        data_base_dir(root) / "test"
+        / data_base_dir(root) / "test",  # historischer Name (beibehalten)
+        data_base_dir(root),             # Fallback
     ]
     for c in candidates:
         if c.exists():
@@ -85,11 +84,23 @@ def config_db_path(root: Path) -> Path:
 
 
 def iter_pdfs(pdf_dir: Path) -> Generator[Path, None, None]:
+    """
+    Iteriert rekursiv über alle unterstützten Dokumente.
+
+    Historisch nur PDFs; jetzt auch .txt (Name beibehalten aus Kompatibilitätsgründen).
+    """
     if not pdf_dir.exists():
         return
-    for p in pdf_dir.rglob("*.pdf"):
-        if p.is_file():
-            yield p
+
+    # os.walk ist meist schneller als mehrfaches rglob
+    exts = {".pdf", ".txt"}
+    for root, dirs, files in os.walk(pdf_dir):
+        root_path = Path(root)
+        for fname in files:
+            if Path(fname).suffix.lower() in exts:
+                p = root_path / fname
+                if p.is_file():
+                    yield p
 
 
 def _debug_print() -> None:
@@ -101,7 +112,7 @@ def _debug_print() -> None:
     print("[DEBUG] data_base_dir   =", d)
     print("[DEBUG] default_pdf_dir =", pdf)
     print("[DEBUG] config_db_path  =", db)
-    print("[DEBUG] pdf_count       =", sum(1 for _ in iter_pdfs(pdf)) if pdf.exists() else 0)
+    print("[DEBUG] doc_count       =", sum(1 for _ in iter_pdfs(pdf)) if pdf.exists() else 0)
 
 
 def main() -> None:
@@ -110,5 +121,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

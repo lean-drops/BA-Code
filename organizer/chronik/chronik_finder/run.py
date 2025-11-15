@@ -1,4 +1,3 @@
-
 # organizer/chronik/chronik_finder/run.py
 #!/usr/bin/env python3
 """
@@ -9,11 +8,10 @@ Ablauf:
 2) Regex-Muster aus SQLite kompilieren
 3) PDFs finden und scannen
 4) Treffer aggregieren und Ausgaben schreiben:
-   - chroniken_mentions.csv
-   - chroniken_summary.csv
    - chroniken_report.html
    - chroniken_network.gexf*  (*falls networkx vorhanden)
    - session_meta.json
+   - Kanten in edges_ac / edges_cc
 
 Öffentliche Funktion:
     run_finder(...) -> (session_dir | None, df | None, agg | None)
@@ -23,9 +21,10 @@ Kompatibel zum bisherigen Aufrufer 'chronik-search.py'.
 from __future__ import annotations
 
 import os
+import sqlite3
 import traceback
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from .aggregate import aggregate
 from .constants import DEFAULT_SKIP_BIBLIOGRAPHY, MAX_WORKERS_DEFAULT
@@ -35,11 +34,14 @@ from .output import (
     maybe_write_gexf,
     write_html,
     write_meta,
-    write_outputs,
 )
 from .paths import config_db_path, default_pdf_dir, iter_pdfs, project_root
 from .patterns import compile_patterns_from_db
 from .scan import scan_pdfs
+
+# DB-Helper nur für Chroniken-Kanten
+from .chronik_db_io import insert_edges_ac, insert_edges_cc
+from organizer.authors.db_io import create_search_run
 
 
 def _print_env(root: Path, pdf_dir: Path, db_path: Path, skip_bib: bool, max_workers: int) -> None:
@@ -59,12 +61,14 @@ def _deduplicate_hits(hits: List[Hit]) -> List[Hit]:
     seen: set = set()
     out: List[Hit] = []
     for h in hits:
-        key = (getattr(h, "pdf_path", getattr(h, "pdf_file", "")),
-               getattr(h, "page", 0),
-               getattr(h, "group", ""),
-               getattr(h, "label", ""),
-               getattr(h, "pattern", ""),
-               getattr(h, "context", ""))
+        key = (
+            getattr(h, "pdf_path", getattr(h, "pdf_file", "")),
+            getattr(h, "page", 0),
+            getattr(h, "group", ""),
+            getattr(h, "label", ""),
+            getattr(h, "pattern", ""),
+            getattr(h, "context", ""),
+        )
         if key in seen:
             continue
         seen.add(key)
@@ -87,7 +91,7 @@ def run_finder(
     db_path = db_path or config_db_path(root)
     _print_env(root, pdf_dir, db_path, skip_bibliography, max_workers)
 
-    # 1) Patterns laden
+    # 1) Patterns laden (inkl. chroniken_canon.patterns_json)
     try:
         patterns, weights = compile_patterns_from_db(db_path)
     except Exception as e:
@@ -120,10 +124,29 @@ def run_finder(
     dedup = _deduplicate_hits(hits)
     df, agg = aggregate(dedup, weights)
 
-    # 6) Outputs
+    # 6) Outputs + DB-Kanten
     try:
+        # Metadaten schreiben (Session-Verzeichnis, DB-Pfad etc.)
         write_meta(session_dir, root, pdf_dir, pdfs, db_path, weights)
-        write_outputs(session_dir, df, agg)
+
+        # Kanten direkt in DB eintragen
+        try:
+            with sqlite3.connect(str(db_path)) as conn:
+                run_id = create_search_run(
+                    conn,
+                    kind="chronik_search",
+                    session_dir=str(session_dir),
+                )
+
+                edges_cc = insert_edges_cc(conn, run_id, dedup, str(root))
+                edges_ac = insert_edges_ac(conn, run_id, dedup, str(root))
+
+                print(f"[INFO] DB-Einträge: edges_ac={edges_ac} edges_cc={edges_cc}")
+        except Exception as e:
+            print(f"[ERROR] DB-Insert fehlgeschlagen: {e}")
+            traceback.print_exc()
+
+        # Optional: Netzwerk und HTML generieren
         maybe_write_gexf(session_dir, df)
         write_html(session_dir, df, agg)
     except Exception as e:
@@ -137,9 +160,11 @@ def run_finder(
             print("[INFO] Top-Labels nach Weighted:")
             view = agg.sort_values("weighted_mentions", ascending=False).head(15)
             for _, r in view.iterrows():
-                print(f"  [{r['group']}] {r['label']}: "
-                      f"mentions={int(r['mentions'])} docs={int(r['docs'])} "
-                      f"weighted={float(r['weighted_mentions'])}")
+                print(
+                    f"  [{r['group']}] {r['label']}: "
+                    f"mentions={int(r['mentions'])} docs={int(r['docs'])} "
+                    f"weighted={float(r['weighted_mentions'])}"
+                )
         else:
             print("[INFO] Keine Treffer aggregiert.")
     except Exception:
