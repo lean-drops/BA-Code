@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2025-11-12">
+    <creator>NetworkX 3.1</creator>
+  </meta>
+  <graph defaultedgetype="directed" mode="static" name="">
+    <attributes mode="static" class="edge">
+      <attribute id="0" title="total" type="long" />
+      <attribute id="1" title="bib" type="long" />
+      <attribute id="2" title="text" type="long" />
+    </attributes>
+    <nodes>
+      <node id="jucker-michael" label="Jucker, Michael" />
+      <node id="langmaier-konstantin-m" label="Langmaier, Konstantin M." />
+      <node id="landolt-oliver" label="Landolt, Oliver" />
+      <node id="sieber-christian" label="Sieber, Christian" />
+      <node id="bihrer-andreas" label="Bihrer, Andreas" />
+      <node id="bosshard-werner" label="Bosshard, Werner" />
+      <node id="sutter-pascale" label="Sutter, Pascale" />
+      <node id="stettler-bernhard" label="Stettler, Bernhard" />
+      <node id="frey-stefan" label="Frey, Stefan" />
+      <node id="illi-martin" label="Illi, Martin" />
+      <node id="rigendinger-fritz" label="Rigendinger, Fritz" />
+      <node id="speck-dieter" label="Speck, Dieter" />
+      <node id="zahnd-urs-martin" label="Zahnd, Urs Martin" />
+      <node id="niederhauser-peter" label="Niederhauser, Peter" />
+      <node id="heinrich-speich" label="Speich, Heinrich" />
+    </nodes>
+    <edges>
+      <edge source="jucker-michael" target="heinrich-speich" id="0" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="illi-martin" id="1" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="jucker-michael" id="2" weight="12.0">
+        <attvalues>
+          <attvalue for="0" value="12" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="12" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="niederhauser-peter" id="3" weight="4.0">
+        <attvalues>
+          <attvalue for="0" value="4" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="stettler-bernhard" id="4" weight="4.0">
+        <attvalues>
+          <attvalue for="0" value="4" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="zahnd-urs-martin" id="5" weight="3.0">
+        <attvalues>
+          <attvalue for="0" value="3" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="stettler-bernhard" target="bosshard-werner" id="6" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="stettler-bernhard" target="heinrich-speich" id="7" weight="7.0">
+        <attvalues>
+          <attvalue for="0" value="7" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="7" />
+        </attvalues>
+      </edge>
+      <edge source="stettler-bernhard" target="jucker-michael" id="8" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="stettler-bernhard" target="niederhauser-peter" id="9" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="stettler-bernhard" target="stettler-bernhard" id="10" weight="11.0">
+        <attvalues>
+          <attvalue for="0" value="11" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="11" />
+        </attvalues>
+      </edge>
+    </edges>
+  </graph>
+</gexf>

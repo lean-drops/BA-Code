@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-11-15T07:43:05",
+  "project_root": "/Users/programming/PycharmProjects/Find_Bibliography_NEw",
+  "pdf_dir": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 7,
+  "pdfs": [
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Schilling d. Ä.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Gerold, Edlibach.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Tschudi, Chronicon Helveticum .txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Peterlin.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Etterlin.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Die Klingenberger.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Fründ.txt"
+  ],
+  "config_file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken.sqlite3",
+  "weights": {
+    "work": 1.0,
+    "series": 1.0,
+    "generic": 1.2
+  },
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

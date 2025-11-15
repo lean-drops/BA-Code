@@ -1,0 +1,400 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2025-11-15">
+    <creator>NetworkX 3.1</creator>
+  </meta>
+  <graph defaultedgetype="undirected" mode="static" name="">
+    <nodes>
+      <node id="Bullinger" label="Bullinger" />
+      <node id="Klingenberger/Rapperswiler Chronik" label="Klingenberger/Rapperswiler Chronik" />
+      <node id="Tschachtlan" label="Tschachtlan" />
+      <node id="Tschudi" label="Tschudi" />
+      <node id="Brennwald" label="Brennwald" />
+      <node id="Etterlin" label="Etterlin" />
+      <node id="Fründ" label="Fründ" />
+      <node id="Hottinger" label="Hottinger" />
+      <node id="Johann Jakob Leu" label="Johann Jakob Leu" />
+      <node id="Kopp" label="Kopp" />
+      <node id="Schilling" label="Schilling" />
+      <node id="Schodoler" label="Schodoler" />
+      <node id="Stumpf" label="Stumpf" />
+      <node id="Vadian" label="Vadian" />
+      <node id="Zürcher Stadtchronik" label="Zürcher Stadtchronik" />
+      <node id="Hemmerlin" label="Hemmerlin" />
+      <node id="Edlibach" label="Edlibach" />
+      <node id="Berner Chronik" label="Berner Chronik" />
+      <node id="Twinger von Königshofen" label="Twinger von Königshofen" />
+      <node id="Anonyme Basler Fortsetzung der Königshofen-Chronik" label="Anonyme Basler Fortsetzung der Königshofen-Chronik" />
+      <node id="Dacher" label="Dacher" />
+      <node id="Justinger" label="Justinger" />
+      <node id="Rüeger" label="Rüeger" />
+      <node id="Simler" label="Simler" />
+      <node id="Knebel" label="Knebel" />
+      <node id="Wurstisen" label="Wurstisen" />
+      <node id="Anshelm" label="Anshelm" />
+      <node id="Cysat" label="Cysat" />
+      <node id="Michael Stettler" label="Michael Stettler" />
+    </nodes>
+    <edges>
+      <edge source="Bullinger" target="Klingenberger/Rapperswiler Chronik" id="0" weight="7.0" />
+      <edge source="Bullinger" target="Tschachtlan" id="1" weight="6.0" />
+      <edge source="Bullinger" target="Tschudi" id="2" weight="9.0" />
+      <edge source="Bullinger" target="Brennwald" id="3" weight="6.0" />
+      <edge source="Bullinger" target="Etterlin" id="4" weight="5.0" />
+      <edge source="Bullinger" target="Fründ" id="5" weight="7.0" />
+      <edge source="Bullinger" target="Hottinger" id="6" weight="4.0" />
+      <edge source="Bullinger" target="Johann Jakob Leu" id="7" weight="2.0" />
+      <edge source="Bullinger" target="Kopp" id="8" weight="4.0" />
+      <edge source="Bullinger" target="Schilling" id="9" weight="7.0" />
+      <edge source="Bullinger" target="Schodoler" id="10" weight="2.0" />
+      <edge source="Bullinger" target="Stumpf" id="11" weight="6.0" />
+      <edge source="Bullinger" target="Vadian" id="12" weight="6.0" />
+      <edge source="Bullinger" target="Zürcher Stadtchronik" id="13" weight="5.0" />
+      <edge source="Bullinger" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="14" weight="3.0" />
+      <edge source="Bullinger" target="Dacher" id="15" weight="3.0" />
+      <edge source="Bullinger" target="Hemmerlin" id="16" weight="6.0" />
+      <edge source="Bullinger" target="Justinger" id="17" weight="4.0" />
+      <edge source="Bullinger" target="Rüeger" id="18" weight="1.0" />
+      <edge source="Bullinger" target="Simler" id="19" weight="4.0" />
+      <edge source="Bullinger" target="Berner Chronik" id="20" weight="3.0" />
+      <edge source="Bullinger" target="Edlibach" id="21" weight="4.0" />
+      <edge source="Bullinger" target="Anshelm" id="22" weight="1.0" />
+      <edge source="Bullinger" target="Cysat" id="23" weight="1.0" />
+      <edge source="Bullinger" target="Michael Stettler" id="24" weight="1.0" />
+      <edge source="Bullinger" target="Twinger von Königshofen" id="25" weight="1.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Tschachtlan" id="26" weight="8.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Tschudi" id="27" weight="14.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Fründ" id="28" weight="9.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Hemmerlin" id="29" weight="8.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Zürcher Stadtchronik" id="30" weight="5.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Brennwald" id="31" weight="7.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Edlibach" id="32" weight="5.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Schodoler" id="33" weight="4.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Berner Chronik" id="34" weight="5.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Schilling" id="35" weight="7.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Twinger von Königshofen" id="36" weight="2.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="37" weight="2.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Dacher" id="38" weight="3.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Etterlin" id="39" weight="3.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Justinger" id="40" weight="3.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Kopp" id="41" weight="3.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Rüeger" id="42" weight="1.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Simler" id="43" weight="4.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Vadian" id="44" weight="5.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Hottinger" id="45" weight="3.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Stumpf" id="46" weight="5.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Anshelm" id="47" weight="1.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Cysat" id="48" weight="1.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Michael Stettler" id="49" weight="1.0" />
+      <edge source="Tschachtlan" target="Tschudi" id="50" weight="12.0" />
+      <edge source="Tschachtlan" target="Berner Chronik" id="51" weight="9.0" />
+      <edge source="Tschachtlan" target="Brennwald" id="52" weight="4.0" />
+      <edge source="Tschachtlan" target="Fründ" id="53" weight="10.0" />
+      <edge source="Tschachtlan" target="Schilling" id="54" weight="10.0" />
+      <edge source="Tschachtlan" target="Schodoler" id="55" weight="3.0" />
+      <edge source="Tschachtlan" target="Twinger von Königshofen" id="56" weight="2.0" />
+      <edge source="Tschachtlan" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="57" weight="3.0" />
+      <edge source="Tschachtlan" target="Dacher" id="58" weight="3.0" />
+      <edge source="Tschachtlan" target="Etterlin" id="59" weight="6.0" />
+      <edge source="Tschachtlan" target="Hemmerlin" id="60" weight="4.0" />
+      <edge source="Tschachtlan" target="Justinger" id="61" weight="7.0" />
+      <edge source="Tschachtlan" target="Kopp" id="62" weight="4.0" />
+      <edge source="Tschachtlan" target="Rüeger" id="63" weight="1.0" />
+      <edge source="Tschachtlan" target="Simler" id="64" weight="3.0" />
+      <edge source="Tschachtlan" target="Vadian" id="65" weight="4.0" />
+      <edge source="Tschachtlan" target="Edlibach" id="66" weight="4.0" />
+      <edge source="Tschachtlan" target="Johann Jakob Leu" id="67" weight="4.0" />
+      <edge source="Tschachtlan" target="Knebel" id="68" weight="2.0" />
+      <edge source="Tschachtlan" target="Wurstisen" id="69" weight="1.0" />
+      <edge source="Tschachtlan" target="Stumpf" id="70" weight="4.0" />
+      <edge source="Tschachtlan" target="Anshelm" id="71" weight="3.0" />
+      <edge source="Tschachtlan" target="Cysat" id="72" weight="2.0" />
+      <edge source="Tschachtlan" target="Hottinger" id="73" weight="2.0" />
+      <edge source="Tschachtlan" target="Zürcher Stadtchronik" id="74" weight="5.0" />
+      <edge source="Tschachtlan" target="Michael Stettler" id="75" weight="1.0" />
+      <edge source="Tschudi" target="Brennwald" id="76" weight="8.0" />
+      <edge source="Tschudi" target="Etterlin" id="77" weight="7.0" />
+      <edge source="Tschudi" target="Fründ" id="78" weight="16.0" />
+      <edge source="Tschudi" target="Hottinger" id="79" weight="4.0" />
+      <edge source="Tschudi" target="Johann Jakob Leu" id="80" weight="5.0" />
+      <edge source="Tschudi" target="Kopp" id="81" weight="6.0" />
+      <edge source="Tschudi" target="Schilling" id="82" weight="12.0" />
+      <edge source="Tschudi" target="Schodoler" id="83" weight="5.0" />
+      <edge source="Tschudi" target="Stumpf" id="84" weight="7.0" />
+      <edge source="Tschudi" target="Vadian" id="85" weight="6.0" />
+      <edge source="Tschudi" target="Zürcher Stadtchronik" id="86" weight="6.0" />
+      <edge source="Tschudi" target="Edlibach" id="87" weight="7.0" />
+      <edge source="Tschudi" target="Berner Chronik" id="88" weight="8.0" />
+      <edge source="Tschudi" target="Twinger von Königshofen" id="89" weight="2.0" />
+      <edge source="Tschudi" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="90" weight="4.0" />
+      <edge source="Tschudi" target="Dacher" id="91" weight="3.0" />
+      <edge source="Tschudi" target="Hemmerlin" id="92" weight="7.0" />
+      <edge source="Tschudi" target="Justinger" id="93" weight="7.0" />
+      <edge source="Tschudi" target="Rüeger" id="94" weight="1.0" />
+      <edge source="Tschudi" target="Simler" id="95" weight="4.0" />
+      <edge source="Tschudi" target="Knebel" id="96" weight="1.0" />
+      <edge source="Tschudi" target="Wurstisen" id="97" weight="1.0" />
+      <edge source="Tschudi" target="Anshelm" id="98" weight="2.0" />
+      <edge source="Tschudi" target="Cysat" id="99" weight="1.0" />
+      <edge source="Tschudi" target="Michael Stettler" id="100" weight="1.0" />
+      <edge source="Brennwald" target="Etterlin" id="101" weight="3.0" />
+      <edge source="Brennwald" target="Fründ" id="102" weight="6.0" />
+      <edge source="Brennwald" target="Hottinger" id="103" weight="4.0" />
+      <edge source="Brennwald" target="Johann Jakob Leu" id="104" weight="1.0" />
+      <edge source="Brennwald" target="Kopp" id="105" weight="3.0" />
+      <edge source="Brennwald" target="Schilling" id="106" weight="6.0" />
+      <edge source="Brennwald" target="Schodoler" id="107" weight="4.0" />
+      <edge source="Brennwald" target="Stumpf" id="108" weight="5.0" />
+      <edge source="Brennwald" target="Vadian" id="109" weight="5.0" />
+      <edge source="Brennwald" target="Zürcher Stadtchronik" id="110" weight="4.0" />
+      <edge source="Brennwald" target="Edlibach" id="111" weight="5.0" />
+      <edge source="Brennwald" target="Berner Chronik" id="112" weight="3.0" />
+      <edge source="Brennwald" target="Twinger von Königshofen" id="113" weight="2.0" />
+      <edge source="Brennwald" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="114" weight="2.0" />
+      <edge source="Brennwald" target="Dacher" id="115" weight="3.0" />
+      <edge source="Brennwald" target="Hemmerlin" id="116" weight="5.0" />
+      <edge source="Brennwald" target="Justinger" id="117" weight="3.0" />
+      <edge source="Brennwald" target="Rüeger" id="118" weight="1.0" />
+      <edge source="Brennwald" target="Simler" id="119" weight="4.0" />
+      <edge source="Brennwald" target="Anshelm" id="120" weight="1.0" />
+      <edge source="Brennwald" target="Cysat" id="121" weight="1.0" />
+      <edge source="Brennwald" target="Michael Stettler" id="122" weight="1.0" />
+      <edge source="Etterlin" target="Fründ" id="123" weight="8.0" />
+      <edge source="Etterlin" target="Hottinger" id="124" weight="2.0" />
+      <edge source="Etterlin" target="Johann Jakob Leu" id="125" weight="4.0" />
+      <edge source="Etterlin" target="Kopp" id="126" weight="6.0" />
+      <edge source="Etterlin" target="Schilling" id="127" weight="7.0" />
+      <edge source="Etterlin" target="Schodoler" id="128" weight="3.0" />
+      <edge source="Etterlin" target="Stumpf" id="129" weight="3.0" />
+      <edge source="Etterlin" target="Vadian" id="130" weight="5.0" />
+      <edge source="Etterlin" target="Zürcher Stadtchronik" id="131" weight="4.0" />
+      <edge source="Etterlin" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="132" weight="3.0" />
+      <edge source="Etterlin" target="Dacher" id="133" weight="2.0" />
+      <edge source="Etterlin" target="Hemmerlin" id="134" weight="3.0" />
+      <edge source="Etterlin" target="Justinger" id="135" weight="5.0" />
+      <edge source="Etterlin" target="Rüeger" id="136" weight="1.0" />
+      <edge source="Etterlin" target="Simler" id="137" weight="3.0" />
+      <edge source="Etterlin" target="Berner Chronik" id="138" weight="4.0" />
+      <edge source="Etterlin" target="Edlibach" id="139" weight="3.0" />
+      <edge source="Etterlin" target="Knebel" id="140" weight="2.0" />
+      <edge source="Etterlin" target="Wurstisen" id="141" weight="1.0" />
+      <edge source="Etterlin" target="Anshelm" id="142" weight="2.0" />
+      <edge source="Etterlin" target="Cysat" id="143" weight="2.0" />
+      <edge source="Etterlin" target="Michael Stettler" id="144" weight="1.0" />
+      <edge source="Etterlin" target="Twinger von Königshofen" id="145" weight="1.0" />
+      <edge source="Fründ" target="Hottinger" id="146" weight="4.0" />
+      <edge source="Fründ" target="Johann Jakob Leu" id="147" weight="6.0" />
+      <edge source="Fründ" target="Kopp" id="148" weight="7.0" />
+      <edge source="Fründ" target="Schilling" id="149" weight="11.0" />
+      <edge source="Fründ" target="Schodoler" id="150" weight="4.0" />
+      <edge source="Fründ" target="Stumpf" id="151" weight="5.0" />
+      <edge source="Fründ" target="Vadian" id="152" weight="6.0" />
+      <edge source="Fründ" target="Zürcher Stadtchronik" id="153" weight="8.0" />
+      <edge source="Fründ" target="Hemmerlin" id="154" weight="7.0" />
+      <edge source="Fründ" target="Berner Chronik" id="155" weight="7.0" />
+      <edge source="Fründ" target="Twinger von Königshofen" id="156" weight="2.0" />
+      <edge source="Fründ" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="157" weight="4.0" />
+      <edge source="Fründ" target="Dacher" id="158" weight="3.0" />
+      <edge source="Fründ" target="Justinger" id="159" weight="8.0" />
+      <edge source="Fründ" target="Rüeger" id="160" weight="1.0" />
+      <edge source="Fründ" target="Simler" id="161" weight="4.0" />
+      <edge source="Fründ" target="Edlibach" id="162" weight="6.0" />
+      <edge source="Fründ" target="Knebel" id="163" weight="2.0" />
+      <edge source="Fründ" target="Wurstisen" id="164" weight="1.0" />
+      <edge source="Fründ" target="Anshelm" id="165" weight="3.0" />
+      <edge source="Fründ" target="Cysat" id="166" weight="2.0" />
+      <edge source="Fründ" target="Michael Stettler" id="167" weight="1.0" />
+      <edge source="Hottinger" target="Johann Jakob Leu" id="168" weight="2.0" />
+      <edge source="Hottinger" target="Kopp" id="169" weight="2.0" />
+      <edge source="Hottinger" target="Schilling" id="170" weight="4.0" />
+      <edge source="Hottinger" target="Schodoler" id="171" weight="2.0" />
+      <edge source="Hottinger" target="Stumpf" id="172" weight="4.0" />
+      <edge source="Hottinger" target="Vadian" id="173" weight="4.0" />
+      <edge source="Hottinger" target="Zürcher Stadtchronik" id="174" weight="4.0" />
+      <edge source="Hottinger" target="Anshelm" id="175" weight="1.0" />
+      <edge source="Hottinger" target="Berner Chronik" id="176" weight="2.0" />
+      <edge source="Hottinger" target="Cysat" id="177" weight="1.0" />
+      <edge source="Hottinger" target="Edlibach" id="178" weight="4.0" />
+      <edge source="Hottinger" target="Justinger" id="179" weight="2.0" />
+      <edge source="Hottinger" target="Knebel" id="180" weight="1.0" />
+      <edge source="Hottinger" target="Simler" id="181" weight="3.0" />
+      <edge source="Hottinger" target="Hemmerlin" id="182" weight="3.0" />
+      <edge source="Hottinger" target="Dacher" id="183" weight="1.0" />
+      <edge source="Johann Jakob Leu" target="Kopp" id="184" weight="2.0" />
+      <edge source="Johann Jakob Leu" target="Schilling" id="185" weight="5.0" />
+      <edge source="Johann Jakob Leu" target="Schodoler" id="186" weight="2.0" />
+      <edge source="Johann Jakob Leu" target="Stumpf" id="187" weight="2.0" />
+      <edge source="Johann Jakob Leu" target="Vadian" id="188" weight="2.0" />
+      <edge source="Johann Jakob Leu" target="Zürcher Stadtchronik" id="189" weight="2.0" />
+      <edge source="Johann Jakob Leu" target="Berner Chronik" id="190" weight="4.0" />
+      <edge source="Johann Jakob Leu" target="Edlibach" id="191" weight="3.0" />
+      <edge source="Johann Jakob Leu" target="Justinger" id="192" weight="4.0" />
+      <edge source="Johann Jakob Leu" target="Knebel" id="193" weight="2.0" />
+      <edge source="Johann Jakob Leu" target="Wurstisen" id="194" weight="1.0" />
+      <edge source="Johann Jakob Leu" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="195" weight="2.0" />
+      <edge source="Johann Jakob Leu" target="Anshelm" id="196" weight="2.0" />
+      <edge source="Johann Jakob Leu" target="Cysat" id="197" weight="1.0" />
+      <edge source="Johann Jakob Leu" target="Simler" id="198" weight="1.0" />
+      <edge source="Kopp" target="Schilling" id="199" weight="5.0" />
+      <edge source="Kopp" target="Schodoler" id="200" weight="3.0" />
+      <edge source="Kopp" target="Stumpf" id="201" weight="2.0" />
+      <edge source="Kopp" target="Vadian" id="202" weight="5.0" />
+      <edge source="Kopp" target="Zürcher Stadtchronik" id="203" weight="4.0" />
+      <edge source="Kopp" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="204" weight="2.0" />
+      <edge source="Kopp" target="Dacher" id="205" weight="2.0" />
+      <edge source="Kopp" target="Hemmerlin" id="206" weight="3.0" />
+      <edge source="Kopp" target="Justinger" id="207" weight="4.0" />
+      <edge source="Kopp" target="Rüeger" id="208" weight="1.0" />
+      <edge source="Kopp" target="Simler" id="209" weight="3.0" />
+      <edge source="Kopp" target="Anshelm" id="210" weight="2.0" />
+      <edge source="Kopp" target="Berner Chronik" id="211" weight="2.0" />
+      <edge source="Kopp" target="Cysat" id="212" weight="2.0" />
+      <edge source="Kopp" target="Edlibach" id="213" weight="2.0" />
+      <edge source="Kopp" target="Knebel" id="214" weight="1.0" />
+      <edge source="Kopp" target="Michael Stettler" id="215" weight="1.0" />
+      <edge source="Kopp" target="Twinger von Königshofen" id="216" weight="1.0" />
+      <edge source="Schilling" target="Schodoler" id="217" weight="4.0" />
+      <edge source="Schilling" target="Stumpf" id="218" weight="6.0" />
+      <edge source="Schilling" target="Vadian" id="219" weight="7.0" />
+      <edge source="Schilling" target="Zürcher Stadtchronik" id="220" weight="6.0" />
+      <edge source="Schilling" target="Berner Chronik" id="221" weight="7.0" />
+      <edge source="Schilling" target="Twinger von Königshofen" id="222" weight="2.0" />
+      <edge source="Schilling" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="223" weight="3.0" />
+      <edge source="Schilling" target="Dacher" id="224" weight="2.0" />
+      <edge source="Schilling" target="Hemmerlin" id="225" weight="5.0" />
+      <edge source="Schilling" target="Justinger" id="226" weight="6.0" />
+      <edge source="Schilling" target="Rüeger" id="227" weight="1.0" />
+      <edge source="Schilling" target="Simler" id="228" weight="5.0" />
+      <edge source="Schilling" target="Edlibach" id="229" weight="5.0" />
+      <edge source="Schilling" target="Knebel" id="230" weight="2.0" />
+      <edge source="Schilling" target="Wurstisen" id="231" weight="1.0" />
+      <edge source="Schilling" target="Anshelm" id="232" weight="3.0" />
+      <edge source="Schilling" target="Cysat" id="233" weight="2.0" />
+      <edge source="Schilling" target="Michael Stettler" id="234" weight="1.0" />
+      <edge source="Schodoler" target="Stumpf" id="235" weight="1.0" />
+      <edge source="Schodoler" target="Vadian" id="236" weight="3.0" />
+      <edge source="Schodoler" target="Zürcher Stadtchronik" id="237" weight="2.0" />
+      <edge source="Schodoler" target="Edlibach" id="238" weight="2.0" />
+      <edge source="Schodoler" target="Berner Chronik" id="239" weight="2.0" />
+      <edge source="Schodoler" target="Twinger von Königshofen" id="240" weight="1.0" />
+      <edge source="Schodoler" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="241" weight="1.0" />
+      <edge source="Schodoler" target="Dacher" id="242" weight="1.0" />
+      <edge source="Schodoler" target="Hemmerlin" id="243" weight="1.0" />
+      <edge source="Schodoler" target="Justinger" id="244" weight="2.0" />
+      <edge source="Schodoler" target="Rüeger" id="245" weight="1.0" />
+      <edge source="Schodoler" target="Simler" id="246" weight="2.0" />
+      <edge source="Schodoler" target="Anshelm" id="247" weight="1.0" />
+      <edge source="Schodoler" target="Cysat" id="248" weight="1.0" />
+      <edge source="Schodoler" target="Knebel" id="249" weight="1.0" />
+      <edge source="Stumpf" target="Vadian" id="250" weight="4.0" />
+      <edge source="Stumpf" target="Zürcher Stadtchronik" id="251" weight="4.0" />
+      <edge source="Stumpf" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="252" weight="2.0" />
+      <edge source="Stumpf" target="Berner Chronik" id="253" weight="4.0" />
+      <edge source="Stumpf" target="Justinger" id="254" weight="3.0" />
+      <edge source="Stumpf" target="Edlibach" id="255" weight="4.0" />
+      <edge source="Stumpf" target="Hemmerlin" id="256" weight="4.0" />
+      <edge source="Stumpf" target="Simler" id="257" weight="3.0" />
+      <edge source="Stumpf" target="Dacher" id="258" weight="2.0" />
+      <edge source="Stumpf" target="Anshelm" id="259" weight="1.0" />
+      <edge source="Stumpf" target="Cysat" id="260" weight="1.0" />
+      <edge source="Stumpf" target="Michael Stettler" id="261" weight="1.0" />
+      <edge source="Stumpf" target="Twinger von Königshofen" id="262" weight="1.0" />
+      <edge source="Vadian" target="Zürcher Stadtchronik" id="263" weight="5.0" />
+      <edge source="Vadian" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="264" weight="2.0" />
+      <edge source="Vadian" target="Dacher" id="265" weight="2.0" />
+      <edge source="Vadian" target="Hemmerlin" id="266" weight="5.0" />
+      <edge source="Vadian" target="Justinger" id="267" weight="3.0" />
+      <edge source="Vadian" target="Rüeger" id="268" weight="1.0" />
+      <edge source="Vadian" target="Simler" id="269" weight="5.0" />
+      <edge source="Vadian" target="Anshelm" id="270" weight="2.0" />
+      <edge source="Vadian" target="Berner Chronik" id="271" weight="2.0" />
+      <edge source="Vadian" target="Cysat" id="272" weight="2.0" />
+      <edge source="Vadian" target="Edlibach" id="273" weight="4.0" />
+      <edge source="Vadian" target="Knebel" id="274" weight="1.0" />
+      <edge source="Vadian" target="Michael Stettler" id="275" weight="1.0" />
+      <edge source="Vadian" target="Twinger von Königshofen" id="276" weight="1.0" />
+      <edge source="Zürcher Stadtchronik" target="Hemmerlin" id="277" weight="5.0" />
+      <edge source="Zürcher Stadtchronik" target="Anshelm" id="278" weight="2.0" />
+      <edge source="Zürcher Stadtchronik" target="Berner Chronik" id="279" weight="3.0" />
+      <edge source="Zürcher Stadtchronik" target="Cysat" id="280" weight="2.0" />
+      <edge source="Zürcher Stadtchronik" target="Edlibach" id="281" weight="4.0" />
+      <edge source="Zürcher Stadtchronik" target="Justinger" id="282" weight="3.0" />
+      <edge source="Zürcher Stadtchronik" target="Knebel" id="283" weight="1.0" />
+      <edge source="Zürcher Stadtchronik" target="Simler" id="284" weight="3.0" />
+      <edge source="Zürcher Stadtchronik" target="Dacher" id="285" weight="2.0" />
+      <edge source="Zürcher Stadtchronik" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="286" weight="1.0" />
+      <edge source="Zürcher Stadtchronik" target="Michael Stettler" id="287" weight="1.0" />
+      <edge source="Zürcher Stadtchronik" target="Twinger von Königshofen" id="288" weight="1.0" />
+      <edge source="Hemmerlin" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="289" weight="2.0" />
+      <edge source="Hemmerlin" target="Dacher" id="290" weight="3.0" />
+      <edge source="Hemmerlin" target="Justinger" id="291" weight="3.0" />
+      <edge source="Hemmerlin" target="Rüeger" id="292" weight="1.0" />
+      <edge source="Hemmerlin" target="Simler" id="293" weight="4.0" />
+      <edge source="Hemmerlin" target="Edlibach" id="294" weight="4.0" />
+      <edge source="Hemmerlin" target="Berner Chronik" id="295" weight="2.0" />
+      <edge source="Hemmerlin" target="Anshelm" id="296" weight="1.0" />
+      <edge source="Hemmerlin" target="Cysat" id="297" weight="1.0" />
+      <edge source="Hemmerlin" target="Michael Stettler" id="298" weight="1.0" />
+      <edge source="Hemmerlin" target="Twinger von Königshofen" id="299" weight="1.0" />
+      <edge source="Edlibach" target="Berner Chronik" id="300" weight="4.0" />
+      <edge source="Edlibach" target="Justinger" id="301" weight="4.0" />
+      <edge source="Edlibach" target="Knebel" id="302" weight="2.0" />
+      <edge source="Edlibach" target="Wurstisen" id="303" weight="1.0" />
+      <edge source="Edlibach" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="304" weight="2.0" />
+      <edge source="Edlibach" target="Anshelm" id="305" weight="2.0" />
+      <edge source="Edlibach" target="Cysat" id="306" weight="2.0" />
+      <edge source="Edlibach" target="Simler" id="307" weight="4.0" />
+      <edge source="Edlibach" target="Dacher" id="308" weight="2.0" />
+      <edge source="Edlibach" target="Michael Stettler" id="309" weight="1.0" />
+      <edge source="Edlibach" target="Twinger von Königshofen" id="310" weight="1.0" />
+      <edge source="Berner Chronik" target="Twinger von Königshofen" id="311" weight="2.0" />
+      <edge source="Berner Chronik" target="Justinger" id="312" weight="6.0" />
+      <edge source="Berner Chronik" target="Knebel" id="313" weight="2.0" />
+      <edge source="Berner Chronik" target="Wurstisen" id="314" weight="1.0" />
+      <edge source="Berner Chronik" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="315" weight="2.0" />
+      <edge source="Berner Chronik" target="Anshelm" id="316" weight="3.0" />
+      <edge source="Berner Chronik" target="Cysat" id="317" weight="2.0" />
+      <edge source="Berner Chronik" target="Simler" id="318" weight="2.0" />
+      <edge source="Berner Chronik" target="Dacher" id="319" weight="2.0" />
+      <edge source="Berner Chronik" target="Michael Stettler" id="320" weight="1.0" />
+      <edge source="Twinger von Königshofen" target="Anonyme Basler Fortsetzung der Königshofen-Chronik" id="321" weight="1.0" />
+      <edge source="Twinger von Königshofen" target="Anshelm" id="322" weight="1.0" />
+      <edge source="Twinger von Königshofen" target="Cysat" id="323" weight="1.0" />
+      <edge source="Twinger von Königshofen" target="Dacher" id="324" weight="1.0" />
+      <edge source="Twinger von Königshofen" target="Justinger" id="325" weight="1.0" />
+      <edge source="Twinger von Königshofen" target="Michael Stettler" id="326" weight="1.0" />
+      <edge source="Twinger von Königshofen" target="Simler" id="327" weight="1.0" />
+      <edge source="Anonyme Basler Fortsetzung der Königshofen-Chronik" target="Dacher" id="328" weight="2.0" />
+      <edge source="Anonyme Basler Fortsetzung der Königshofen-Chronik" target="Justinger" id="329" weight="3.0" />
+      <edge source="Anonyme Basler Fortsetzung der Königshofen-Chronik" target="Rüeger" id="330" weight="1.0" />
+      <edge source="Anonyme Basler Fortsetzung der Königshofen-Chronik" target="Simler" id="331" weight="2.0" />
+      <edge source="Anonyme Basler Fortsetzung der Königshofen-Chronik" target="Anshelm" id="332" weight="1.0" />
+      <edge source="Anonyme Basler Fortsetzung der Königshofen-Chronik" target="Cysat" id="333" weight="1.0" />
+      <edge source="Anonyme Basler Fortsetzung der Königshofen-Chronik" target="Michael Stettler" id="334" weight="1.0" />
+      <edge source="Dacher" target="Justinger" id="335" weight="3.0" />
+      <edge source="Dacher" target="Rüeger" id="336" weight="1.0" />
+      <edge source="Dacher" target="Simler" id="337" weight="2.0" />
+      <edge source="Dacher" target="Anshelm" id="338" weight="1.0" />
+      <edge source="Dacher" target="Cysat" id="339" weight="1.0" />
+      <edge source="Dacher" target="Michael Stettler" id="340" weight="1.0" />
+      <edge source="Justinger" target="Rüeger" id="341" weight="1.0" />
+      <edge source="Justinger" target="Simler" id="342" weight="3.0" />
+      <edge source="Justinger" target="Knebel" id="343" weight="2.0" />
+      <edge source="Justinger" target="Wurstisen" id="344" weight="1.0" />
+      <edge source="Justinger" target="Anshelm" id="345" weight="3.0" />
+      <edge source="Justinger" target="Cysat" id="346" weight="2.0" />
+      <edge source="Justinger" target="Michael Stettler" id="347" weight="1.0" />
+      <edge source="Rüeger" target="Simler" id="348" weight="1.0" />
+      <edge source="Simler" target="Anshelm" id="349" weight="2.0" />
+      <edge source="Simler" target="Cysat" id="350" weight="2.0" />
+      <edge source="Simler" target="Knebel" id="351" weight="1.0" />
+      <edge source="Simler" target="Michael Stettler" id="352" weight="1.0" />
+      <edge source="Knebel" target="Wurstisen" id="353" weight="1.0" />
+      <edge source="Knebel" target="Anshelm" id="354" weight="1.0" />
+      <edge source="Knebel" target="Cysat" id="355" weight="1.0" />
+      <edge source="Anshelm" target="Cysat" id="356" weight="2.0" />
+      <edge source="Anshelm" target="Michael Stettler" id="357" weight="1.0" />
+      <edge source="Cysat" target="Michael Stettler" id="358" weight="1.0" />
+    </edges>
+  </graph>
+</gexf>

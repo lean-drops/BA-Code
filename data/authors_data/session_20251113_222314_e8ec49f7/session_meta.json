@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-11-13T22:23:14",
+  "base_folder": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 2,
+  "pdfs": [
+    "bosshard-werner__14.pdf",
+    "sutter-pascale__3.pdf"
+  ],
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

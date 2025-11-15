@@ -1,0 +1,21 @@
+/* Layout- und UI-Stile. Klassen sind mit "index-" geprefixt. */
+:root { --index-gap: 10px; --index-bg: #0f1115; --index-fg: #e7eaf0; --index-muted:#aab1bd; --index-accent:#5aa9ff; --index-card:#181b22; --index-border:#2a2f3a;}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body.index-body { margin: 0; background: var(--index-bg); color: var(--index-fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif; }
+.index-header { padding: var(--index-gap); border-bottom: 1px solid var(--index-border); display: flex; gap: var(--index-gap); align-items: center; justify-content: space-between; }
+.index-title { margin: 0; font-size: 18px; font-weight: 600; }
+.index-toolbar { display: flex; gap: var(--index-gap); flex-wrap: wrap; align-items: center; }
+.index-control { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; color: var(--index-muted); }
+.index-btn { background: var(--index-card); color: var(--index-fg); border: 1px solid var(--index-border); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+.index-btn:hover { border-color: var(--index-accent); }
+.index-main { display: grid; grid-template-columns: 280px 1fr; gap: var(--index-gap); height: calc(100vh - 74px); padding: var(--index-gap); }
+.index-sidebar { display: flex; flex-direction: column; gap: var(--index-gap); }
+.index-card { background: var(--index-card); border: 1px solid var(--index-border); border-radius: 8px; }
+.index-card-title { padding: 10px 12px; border-bottom: 1px solid var(--index-border); font-weight: 600; }
+.index-card-body { padding: 10px 12px; font-size: 14px; color: var(--index-muted); display: grid; gap: 6px; }
+.index-hint { font-size: 12px; color: var(--index-muted); }
+.index-canvas-wrap { height: 100%; }
+#index-cy.index-canvas { width: 100%; height: 100%; background: #0b0d12; border: 1px solid var(--index-border); border-radius: 8px; }
+.index-footer { padding: 8px 10px; border-top: 1px solid var(--index-border); font-size: 12px; color: var(--index-muted); }
+

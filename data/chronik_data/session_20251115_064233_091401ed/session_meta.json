@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-11-15T06:42:39",
+  "project_root": "/Users/programming/PycharmProjects/Find_Bibliography_NEw",
+  "pdf_dir": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 7,
+  "pdfs": [
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Die Klingenberger Chronik, wie sie Schodoler, Tschudi, Stumpf, Guilliman und Andere benützten.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Gerold, Edlibach.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Tschudi, Chronicon Helveticum .txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Peterlin.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Schillling-Berner-Chronik.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Die Chronik des Hans Fründ, Landschreiber zu Schwytz.txt",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/chr_Basler Chroniken.txt"
+  ],
+  "config_file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken.sqlite3",
+  "weights": {
+    "work": 1.0,
+    "series": 1.0,
+    "generic": 1.2
+  },
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

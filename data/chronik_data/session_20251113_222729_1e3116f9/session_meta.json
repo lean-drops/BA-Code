@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-11-13T22:28:27",
+  "project_root": "/Users/programming/PycharmProjects/Find_Bibliography_NEw",
+  "pdf_dir": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 5,
+  "pdfs": [
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/landolt-oliver__30.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/Krieg und Todesvorbereitung (Werner, Bosshard).pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/bosshard-werner__14.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/sutter-pascale__3.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/landolt-oliver__10.pdf"
+  ],
+  "config_file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken.sqlite3",
+  "weights": {
+    "work": 1.0,
+    "series": 1.0,
+    "generic": 1.2
+  },
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

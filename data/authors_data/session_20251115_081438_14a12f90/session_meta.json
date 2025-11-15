@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-11-15T08:14:38",
+  "base_folder": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 1,
+  "pdfs": [
+    "jucker-michael__9.pdf"
+  ],
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

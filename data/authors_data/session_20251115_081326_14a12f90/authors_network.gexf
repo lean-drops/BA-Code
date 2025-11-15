@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2025-11-15">
+    <creator>NetworkX 3.1</creator>
+  </meta>
+  <graph defaultedgetype="directed" mode="static" name="">
+    <attributes mode="static" class="edge">
+      <attribute id="0" title="total" type="long" />
+      <attribute id="1" title="bib" type="long" />
+      <attribute id="2" title="text" type="long" />
+    </attributes>
+    <nodes>
+      <node id="jucker-michael" label="Jucker, Michael" />
+      <node id="langmaier-konstantin-m" label="Langmaier, Konstantin M." />
+      <node id="landolt-oliver" label="Landolt, Oliver" />
+      <node id="sieber-christian" label="Sieber, Christian" />
+      <node id="bihrer-andreas" label="Bihrer, Andreas" />
+      <node id="bosshard-werner" label="Bosshard, Werner" />
+      <node id="sutter-pascale" label="Sutter, Pascale" />
+      <node id="stettler-bernhard" label="Stettler, Bernhard" />
+      <node id="frey-stefan" label="Frey, Stefan" />
+      <node id="illi-martin" label="Illi, Martin" />
+      <node id="rigendinger-fritz" label="Rigendinger, Fritz" />
+      <node id="speck-dieter" label="Speck, Dieter" />
+      <node id="zahnd-urs-martin" label="Zahnd, Urs Martin" />
+      <node id="niederhauser-peter" label="Niederhauser, Peter" />
+      <node id="heinrich-speich" label="Speich, Heinrich" />
+      <node id="niederstaetter-alois" label="Niederstätter, Alois" />
+      <node id="Krieg und Todesvorbereitung (Werner, Bosshard)" label="Krieg und todesvorbereitung (werner, bosshard)" />
+      <node id="Alter Zürichkrige, Toggenburger Erbschaftskrieg (Illi, Martin)" label="Alter zürichkrige, toggenburger erbschaftskrieg (illi, martin)" />
+      <node id="Hans-Ulrich-Bärchtold" label="Bärchtold, Ulrich, Hans" />
+      <node id="Sources for the 1446 Confederate Campaign in the Old Zurich War (Speich, Heinrich)" label="Sources for the 1446 confederate campaign in the old zurich war (speich, heinrich)" />
+      <node id="Langmaier-konstantin" label="Konstantin, Langmaier" />
+      <node id="konstantin-m-langmaier" label="Langmaier, M, Konstantin" />
+      <node id="Der Alte Zürichkrieg aus der regionalen Perspektive des Sarganserlands (Riegendinger, Fritz)" label="Der alte zürichkrieg aus der regionalen perspektive des sarganserlands (riegendinger, fritz)" />
+      <node id="Rudolf Stüssi - ein tragischer Held? (Frey, Stefan)" label=" ein tragischer held? (frey, stefan), Rudolf stüssi " />
+    </nodes>
+    <edges>
+      <edge source="jucker-michael" target="Hans-Ulrich-Bärchtold" id="0" weight="3.0">
+        <attvalues>
+          <attvalue for="0" value="3" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="heinrich-speich" id="1" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="illi-martin" id="2" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="jucker-michael" id="3" weight="12.0">
+        <attvalues>
+          <attvalue for="0" value="12" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="12" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="niederhauser-peter" id="4" weight="4.0">
+        <attvalues>
+          <attvalue for="0" value="4" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="niederstaetter-alois" id="5" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="stettler-bernhard" id="6" weight="4.0">
+        <attvalues>
+          <attvalue for="0" value="4" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="jucker-michael" target="zahnd-urs-martin" id="7" weight="3.0">
+        <attvalues>
+          <attvalue for="0" value="3" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="3" />
+        </attvalues>
+      </edge>
+    </edges>
+  </graph>
+</gexf>

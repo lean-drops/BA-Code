@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-11-12T21:15:46",
+  "base_folder": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 23,
+  "pdfs": [
+    "langmaier-konstantin-m__17.pdf",
+    "landolt-oliver__30.pdf",
+    "sieber-christian__19.pdf",
+    "bosshard-werner__14.pdf",
+    "sutter-pascale__3.pdf",
+    "stettler-bernhard__8.pdf",
+    "jucker-michael__9.pdf",
+    "frey-stefan__13.pdf",
+    "illi-martin__24.pdf",
+    "rigendinger-fritz__2.pdf",
+    "jucker-michael.pdf",
+    "speck-dieter__6.pdf",
+    "Langmaier-konstantin__26.pdf",
+    "Hans-Ulrich-Bärchtold.pdf",
+    "stettler-bernhard.pdf",
+    "zahnd-urs-martin__20.pdf",
+    "niederhauser-peter__4.pdf",
+    "konstantin-m-langmaier__28.pdf",
+    "niederhauser-peter__7.pdf",
+    "langmaier-konstantin-m__18.pdf",
+    "sieber-christian__11.pdf",
+    "heinrich-speich__32.pdf",
+    "landolt-oliver__10.pdf"
+  ],
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Autor↔Autor Referenznetz</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- Platzhalter wird in Python auf ../../config/authors_report_template gesetzt -->
+  <link rel="stylesheet" href="../../../config/authors_report_template/style.css">
+  <script defer src="../../../config/authors_report_template/script.js"></script>
+  <!--
+    Ersetze die Platzhalter serverseitig:
+      ../../../config/authors_report_template
+      15
+      8
+      <tr><td>Sutter, Pascale</td><td>17</td></tr>
+<tr><td>Bosshard, Werner</td><td>5</td></tr>   -> <tr><td>Autor</td><td>Score</td></tr>...
+      <tr><td>Bosshard, Werner</td><td>7</td></tr>
+<tr><td>Niederhauser, Peter</td><td>5</td></tr>
+<tr><td>Speich, Heinrich</td><td>5</td></tr>
+<tr><td>Jucker, Michael</td><td>3</td></tr>
+<tr><td>Sutter, Pascale</td><td>2</td></tr>    -> <tr><td>Autor</td><td>Score</td></tr>...
+      <tr><td>Sutter, Pascale</td><td>Bosshard, Werner</td><td>6</td><td>0</td><td>6</td><td>verwiisten Rapperswiler Truppen Hurden. (Eidgendéssische Chronik des Werner Schodoler von 1514, Bd. 2, fol. 60 v; StadtA Brem- garten; Aussc | ie Ziirich und Osterreich geschlossen. (Eidgendssi- sche Chronik des Werner Schodoler von 1514, Bd. 2, fol. 76 v; StadtA Bremgar- ten; Aussc | ie beiden Parteien am 25. Juli zu einem Schiedsgericht vor seine Rate Werner von Zimmern, Werner von Schienen und Hans Kripp. Dieses fand am</td></tr>
+<tr><td>Sutter, Pascale</td><td>Niederhauser, Peter</td><td>5</td><td>0</td><td>5</td><td>sie schloss am 2. September 1407 ein Burgrecht mit Ziirich.. Peter Niederhauser: «Durch der herschafft willen lip und guot gewaget». Wintert | rswil. Auch sie schloss am 2. September 1407 ein Burgrecht mit Ziirich.. Peter Niederhauser: «Durch der herschafft willen lip und guot gewag | i- tat); ebenso StALU, Akten A1, F1, Schachtel 63. Vgl. dazu Peter Niederhauser: «Damit si bei dem Haus Osterreich beleiben». Eidgenéssische</td></tr>
+<tr><td>Sutter, Pascale</td><td>Speich, Heinrich</td><td>3</td><td>0</td><td>3</td><td>ht beruhigte, besetzte der dsterreichische Landvogt im Thurgau, Graf Heinrich von Lupfen, Rapperswil im Oktober mit Truppen aus dem Thurgau® | .- Meile-Huber ist der Ansicht, dass eventuell die Verurteilung des Heinrich Has, der zwischen 1449 und 1451 Schultheiss war und dem Betriig | der Ansicht, dass eventuell die Verurteilung des Heinrich Has, der zwischen 1449 und 1451 Schultheiss war und dem Betriigereien vorgeworfen</td></tr>
+<tr><td>Bosshard, Werner</td><td>Speich, Heinrich</td><td>2</td><td>0</td><td>2</td><td>tierli, und reben und nussbém, das mans absluog.»&#x27;® Auch der Chronist Heinrich Brennwald bringt drei Nachrichten zum Unter- suchungszeitrau | es Gemacht (ebd., B VI 306, fol. 48 r/v, 30. Januar 1444). So nimmt Heinrich Sanger die ehelichen Kinder des Ciieni Meiger, genannt Sanger,</td></tr>
+<tr><td>Bosshard, Werner</td><td>Jucker, Michael</td><td>2</td><td>0</td><td>2</td><td>der Jahre 1429-1438 mit Eintra- gen von der Hand des Stadt- schreibers Michael Stebler; oben in Reinschrift, unten in Entwurfschrift als Ko | der Ziircher Schreiber- und Kanzleigeschichte auf. Dass mit der Wahl Michael Steblers zum Stadtschreiber und seiner Aufnahme ins Biirgerrech</td></tr>
+<tr><td>Sutter, Pascale</td><td>Sutter, Pascale</td><td>2</td><td>0</td><td>2</td><td>? Der Alte Ziirichkrieg und seine Folgen fiir die Rosenstadt Pascale Sutter Dieser Beitrag stellt die wechselvolle Geschichte der Stadt u | erk am See? Der Alte Ziirichkrieg und seine Folgen fiir die Rosenstadt Pascale Sutter Dieser Beitrag stellt die wechselvolle Geschichte d</td></tr>
+<tr><td>Bosshard, Werner</td><td>Bosshard, Werner</td><td>1</td><td>0</td><td>1</td><td>esvorbereitung Ziircher letztwillige Verfiigungen 1428-1445! Werner Bosshard Lange standen bei Untersuchungen zu den spatmittelalterliche</td></tr>
+<tr><td>Sutter, Pascale</td><td>Jucker, Michael</td><td>1</td><td>0</td><td>1</td><td>ht mit Zitirich zu erneuern. Klosterarchiv Wurmsbach, A 69. 9 Michael Jucker: Gesandte, Schreiber, Akten. Politische Kommunikation auf eidg</td></tr>        -> <tr>
+                                 <td>Quelle</td><td>Ziel</td>
+                                 <td>total</td><td>bib_hits</td><td>text_hits</td>
+                                 <td>Beispiele</td>
+                               </tr>...
+  -->
+</head>
+<body class="authors_report-body">
+  <header class="authors_report-hero">
+    <div class="authors_report-frame"></div>
+    <h1 class="authors_report-title">Autor↔Autor Referenznetz</h1>
+    <p class="authors_report-sub">Kanten: <b id="edge-count">8</b> · Autoren: <b id="author-count">15</b></p>
+  </header>
+
+  <main class="authors_report-main">
+    <section class="authors_report-panels">
+      <article class="authors_report-card">
+        <h2 class="authors_report-h2">Top Zitierende</h2>
+        <table class="authors_report-table authors_report-sortable" id="authors_report-top-citers">
+          <thead><tr><th data-sort="text">Autor</th><th data-sort="num">Score</th></tr></thead>
+          <tbody>
+            <tr><td>Sutter, Pascale</td><td>17</td></tr>
+<tr><td>Bosshard, Werner</td><td>5</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="authors_report-card">
+        <h2 class="authors_report-h2">Top Zitierte</h2>
+        <table class="authors_report-table authors_report-sortable" id="authors_report-top-cited">
+          <thead><tr><th data-sort="text">Autor</th><th data-sort="num">Score</th></tr></thead>
+          <tbody>
+            <tr><td>Bosshard, Werner</td><td>7</td></tr>
+<tr><td>Niederhauser, Peter</td><td>5</td></tr>
+<tr><td>Speich, Heinrich</td><td>5</td></tr>
+<tr><td>Jucker, Michael</td><td>3</td></tr>
+<tr><td>Sutter, Pascale</td><td>2</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="authors_report-card">
+      <div class="authors_report-toolbar">
+        <h2 class="authors_report-h2">Alle Kanten</h2>
+        <div class="authors_report-controls">
+          <label class="authors_report-field">
+            <span>Filter</span>
+            <input id="authors_report-filter" type="search" placeholder="Quelle, Ziel oder Beispiel">
+          </label>
+          <label class="authors_report-check"><input type="checkbox" id="authors_report-only-text"> nur Text</label>
+          <label class="authors_report-check"><input type="checkbox" id="authors_report-only-bib"> nur Bibliographie</label>
+          <button type="button" id="authors_report-reset" class="authors_report-btn">Zurücksetzen</button>
+        </div>
+      </div>
+
+      <div class="authors_report-tablewrap">
+        <table class="authors_report-table authors_report-sortable" id="authors_report-edges">
+          <thead>
+            <tr>
+              <th data-sort="text">Quelle</th>
+              <th data-sort="text">Ziel</th>
+              <th data-sort="num">Total</th>
+              <th data-sort="num">Bibliographie</th>
+              <th data-sort="num">Text</th>
+              <th data-sort="text">Beispiele</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Sutter, Pascale</td><td>Bosshard, Werner</td><td>6</td><td>0</td><td>6</td><td>verwiisten Rapperswiler Truppen Hurden. (Eidgendéssische Chronik des Werner Schodoler von 1514, Bd. 2, fol. 60 v; StadtA Brem- garten; Aussc | ie Ziirich und Osterreich geschlossen. (Eidgendssi- sche Chronik des Werner Schodoler von 1514, Bd. 2, fol. 76 v; StadtA Bremgar- ten; Aussc | ie beiden Parteien am 25. Juli zu einem Schiedsgericht vor seine Rate Werner von Zimmern, Werner von Schienen und Hans Kripp. Dieses fand am</td></tr>
+<tr><td>Sutter, Pascale</td><td>Niederhauser, Peter</td><td>5</td><td>0</td><td>5</td><td>sie schloss am 2. September 1407 ein Burgrecht mit Ziirich.. Peter Niederhauser: «Durch der herschafft willen lip und guot gewaget». Wintert | rswil. Auch sie schloss am 2. September 1407 ein Burgrecht mit Ziirich.. Peter Niederhauser: «Durch der herschafft willen lip und guot gewag | i- tat); ebenso StALU, Akten A1, F1, Schachtel 63. Vgl. dazu Peter Niederhauser: «Damit si bei dem Haus Osterreich beleiben». Eidgenéssische</td></tr>
+<tr><td>Sutter, Pascale</td><td>Speich, Heinrich</td><td>3</td><td>0</td><td>3</td><td>ht beruhigte, besetzte der dsterreichische Landvogt im Thurgau, Graf Heinrich von Lupfen, Rapperswil im Oktober mit Truppen aus dem Thurgau® | .- Meile-Huber ist der Ansicht, dass eventuell die Verurteilung des Heinrich Has, der zwischen 1449 und 1451 Schultheiss war und dem Betriig | der Ansicht, dass eventuell die Verurteilung des Heinrich Has, der zwischen 1449 und 1451 Schultheiss war und dem Betriigereien vorgeworfen</td></tr>
+<tr><td>Bosshard, Werner</td><td>Speich, Heinrich</td><td>2</td><td>0</td><td>2</td><td>tierli, und reben und nussbém, das mans absluog.»&#x27;® Auch der Chronist Heinrich Brennwald bringt drei Nachrichten zum Unter- suchungszeitrau | es Gemacht (ebd., B VI 306, fol. 48 r/v, 30. Januar 1444). So nimmt Heinrich Sanger die ehelichen Kinder des Ciieni Meiger, genannt Sanger,</td></tr>
+<tr><td>Bosshard, Werner</td><td>Jucker, Michael</td><td>2</td><td>0</td><td>2</td><td>der Jahre 1429-1438 mit Eintra- gen von der Hand des Stadt- schreibers Michael Stebler; oben in Reinschrift, unten in Entwurfschrift als Ko | der Ziircher Schreiber- und Kanzleigeschichte auf. Dass mit der Wahl Michael Steblers zum Stadtschreiber und seiner Aufnahme ins Biirgerrech</td></tr>
+<tr><td>Sutter, Pascale</td><td>Sutter, Pascale</td><td>2</td><td>0</td><td>2</td><td>? Der Alte Ziirichkrieg und seine Folgen fiir die Rosenstadt Pascale Sutter Dieser Beitrag stellt die wechselvolle Geschichte der Stadt u | erk am See? Der Alte Ziirichkrieg und seine Folgen fiir die Rosenstadt Pascale Sutter Dieser Beitrag stellt die wechselvolle Geschichte d</td></tr>
+<tr><td>Bosshard, Werner</td><td>Bosshard, Werner</td><td>1</td><td>0</td><td>1</td><td>esvorbereitung Ziircher letztwillige Verfiigungen 1428-1445! Werner Bosshard Lange standen bei Untersuchungen zu den spatmittelalterliche</td></tr>
+<tr><td>Sutter, Pascale</td><td>Jucker, Michael</td><td>1</td><td>0</td><td>1</td><td>ht mit Zitirich zu erneuern. Klosterarchiv Wurmsbach, A 69. 9 Michael Jucker: Gesandte, Schreiber, Akten. Politische Kommunikation auf eidg</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="authors_report-footnote">Klick auf Spaltenkopf sortiert. Filter wirkt live. “nur Text” zeigt Kanten mit Text&gt;0, “nur Bibliographie” mit Bib&gt;0.</p>
+    </section>
+  </main>
+
+  <button class="authors_report-top" id="authors_report-top" aria-label="Nach oben">▲</button>
+</body>
+</html>
+

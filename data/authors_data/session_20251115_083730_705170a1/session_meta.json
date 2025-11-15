@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-11-15T08:37:30",
+  "base_folder": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 21,
+  "pdfs": [
+    "langmaier-konstantin-m__17.pdf",
+    "Alter Zürichkrige, Toggenburger Erbschaftskrieg (Illi, Martin).pdf",
+    "landolt-oliver__30.pdf",
+    "sieber-christian__19.pdf",
+    "Krieg und Todesvorbereitung (Werner, Bosshard).pdf",
+    "Sources for the 1446 Confederate Campaign in the Old Zurich War (Speich, Heinrich).pdf",
+    "Rudolf Stüssi - ein tragischer Held? (Frey, Stefan).pdf",
+    "sutter-pascale__3.pdf",
+    "stettler-bernhard__8.pdf",
+    "jucker-michael__9.pdf",
+    "Der Alte Zürichkrieg aus der regionalen Perspektive des Sarganserlands (Riegendinger, Fritz).pdf",
+    "speck-dieter__6.pdf",
+    "Langmaier-konstantin__26.pdf",
+    "Hans-Ulrich-Bärchtold.pdf",
+    "zahnd-urs-martin__20.pdf",
+    "niederhauser-peter__4.pdf",
+    "konstantin-m-langmaier__28.pdf",
+    "niederhauser-peter__7.pdf",
+    "langmaier-konstantin-m__18.pdf",
+    "sieber-christian__11.pdf",
+    "landolt-oliver__10.pdf"
+  ],
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

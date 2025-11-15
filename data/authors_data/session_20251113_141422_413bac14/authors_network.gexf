@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2025-11-13">
+    <creator>NetworkX 3.1</creator>
+  </meta>
+  <graph defaultedgetype="directed" mode="static" name="">
+    <attributes mode="static" class="edge">
+      <attribute id="0" title="total" type="long" />
+      <attribute id="1" title="bib" type="long" />
+      <attribute id="2" title="text" type="long" />
+    </attributes>
+    <nodes>
+      <node id="jucker-michael" label="Jucker, Michael" />
+      <node id="langmaier-konstantin-m" label="Langmaier, Konstantin M." />
+      <node id="landolt-oliver" label="Landolt, Oliver" />
+      <node id="sieber-christian" label="Sieber, Christian" />
+      <node id="bihrer-andreas" label="Bihrer, Andreas" />
+      <node id="bosshard-werner" label="Bosshard, Werner" />
+      <node id="sutter-pascale" label="Sutter, Pascale" />
+      <node id="stettler-bernhard" label="Stettler, Bernhard" />
+      <node id="frey-stefan" label="Frey, Stefan" />
+      <node id="illi-martin" label="Illi, Martin" />
+      <node id="rigendinger-fritz" label="Rigendinger, Fritz" />
+      <node id="speck-dieter" label="Speck, Dieter" />
+      <node id="zahnd-urs-martin" label="Zahnd, Urs Martin" />
+      <node id="niederhauser-peter" label="Niederhauser, Peter" />
+      <node id="heinrich-speich" label="Speich, Heinrich" />
+    </nodes>
+    <edges>
+      <edge source="bosshard-werner" target="bosshard-werner" id="0" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="bosshard-werner" target="heinrich-speich" id="1" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="bosshard-werner" target="jucker-michael" id="2" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+    </edges>
+  </graph>
+</gexf>

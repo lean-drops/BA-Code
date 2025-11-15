@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2025-11-13">
+    <creator>NetworkX 3.1</creator>
+  </meta>
+  <graph defaultedgetype="undirected" mode="static" name="">
+    <nodes>
+      <node id="Fründ" label="Fründ" />
+      <node id="Hemmerlin" label="Hemmerlin" />
+      <node id="Klingenberger/Rapperswiler Chronik" label="Klingenberger/Rapperswiler Chronik" />
+      <node id="Tschudi" label="Tschudi" />
+      <node id="Justinger" label="Justinger" />
+      <node id="Kopp" label="Kopp" />
+      <node id="Schodoler" label="Schodoler" />
+    </nodes>
+    <edges>
+      <edge source="Fründ" target="Hemmerlin" id="0" weight="1.0" />
+      <edge source="Fründ" target="Klingenberger/Rapperswiler Chronik" id="1" weight="1.0" />
+      <edge source="Fründ" target="Tschudi" id="2" weight="2.0" />
+      <edge source="Fründ" target="Justinger" id="3" weight="1.0" />
+      <edge source="Fründ" target="Kopp" id="4" weight="1.0" />
+      <edge source="Hemmerlin" target="Klingenberger/Rapperswiler Chronik" id="5" weight="1.0" />
+      <edge source="Hemmerlin" target="Tschudi" id="6" weight="1.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Tschudi" id="7" weight="2.0" />
+      <edge source="Klingenberger/Rapperswiler Chronik" target="Schodoler" id="8" weight="1.0" />
+      <edge source="Tschudi" target="Justinger" id="9" weight="1.0" />
+      <edge source="Tschudi" target="Kopp" id="10" weight="1.0" />
+      <edge source="Tschudi" target="Schodoler" id="11" weight="1.0" />
+      <edge source="Justinger" target="Kopp" id="12" weight="1.0" />
+    </edges>
+  </graph>
+</gexf>

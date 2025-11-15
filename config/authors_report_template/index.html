@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Chroniken ↔ Werke – Netzwerk</title>
+    <link rel="stylesheet" href="/assets/index.css" />
+    <!-- Cytoscape.js von CDN -->
+    <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+  <script id="CYTOSCAPE_FALLBACK">(function(){function I(s,c){var e=document.createElement('script');e.src=s;e.onload=c;document.head.appendChild(e);}if(!window.cytoscape){I('/assets/cytoscape.min.js',function(){if(!window.cytoscape){console.error('Cytoscape Fallback fehlgeschlagen');}});}})();</script>
+</head>
+  <body class="index-body">
+    <header class="index-header">
+      <h1 class="index-title">Chroniken ↔ Werke</h1>
+      <div class="index-toolbar">
+        <label class="index-control">
+          <span>Datei:</span>
+          <input id="index-file" type="file" accept=".csv" />
+        </label>
+        <button id="index-upload" class="index-btn" type="button">Upload</button>
+        <button id="index-autoload" class="index-btn" type="button">Autoload</button>
+        <label class="index-control">
+          <span>Variante:</span>
+          <select id="index-variant"></select>
+        </label>
+        <label class="index-control">
+          <span>min weight:</span>
+          <input id="index-minw" type="range" min="1" max="10" step="1" value="1" />
+          <span id="index-minw-val">1</span>
+        </label>
+        <label class="index-control">
+          <input id="index-labels" type="checkbox" checked />
+          <span>Labels</span>
+        </label>
+        <button id="index-fit" class="index-btn" type="button">Fit</button>
+        <button id="index-reset" class="index-btn" type="button">Reset</button>
+      </div>
+    </header>
+
+    <main class="index-main">
+      <aside class="index-sidebar">
+        <div class="index-card">
+          <div class="index-card-title">Status</div>
+          <div class="index-card-body">
+            <div><b>Datei:</b> <span id="index-fileinfo">–</span></div>
+            <div><b>Nodes:</b> <span id="index-stats-n">0</span></div>
+            <div><b>Edges:</b> <span id="index-stats-e">0</span></div>
+            <div><b>Variante:</b> <span id="index-stats-v">bipartite</span></div>
+          </div>
+        </div>
+        <div class="index-hint">
+          CSV braucht Spalten für Dokument und Werk. Autoload sucht bekannte Pfade.
+        </div>
+      </aside>
+
+      <section class="index-canvas-wrap">
+        <div id="index-cy" class="index-canvas" aria-label="Netzwerk"></div>
+      </section>
+    </main>
+
+    <footer class="index-footer">
+      <span>Layout: preset aus API. Projektionen via Umschalter.</span>
+    </footer>
+
+    <script src="/assets/index.js"></script>
+  </body>
+</html>
+

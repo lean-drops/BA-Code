@@ -1,0 +1,245 @@
+
+Usage: direkt ausführen (keine CLI-Args). Pfade via detect_project_dir/ENV.
+"""
+from __future__ import annotations
+
+import os
+import json
+import re
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from typing import Dict, List, Tuple, Optional
+
+from organizer.authors.authors_utils import (
+    Author, Mention, WorkMention, WorkSpec,
+    detect_project_dir, environment_report, iter_pdfs, extract_authors_from_filenames,
+    load_authors_canon, build_authors_from_canon, compile_filename_aliases, choose_src_from_filename,
+    load_works_canon, build_work_specs, compile_work_regex,
+    detect_bibliography_pages, extract_text_with_ocr, classify_section, strip_diacritics,
+    compile_patterns, quick_page_filter, find_author_mentions, make_context,
+    log_info, log_warn
+)
+
+
+def _pack_targets(authors: Dict[str, Author], aux: Dict[str, dict]) -> Dict[str, dict]:
+    """Serienfähige Struktur für Multiprocessing & Staging."""
+    out: Dict[str, dict] = {}
+    for tid, ta in authors.items():
+        out[tid] = {
+            "author_id": ta.author_id,
+            "display": ta.display,
+            "surnames": list(ta.surnames),
+            "pattern_strs": list(ta.pattern_strs),
+            "folded_surnames": list(ta.folded_surnames),
+            "negatives": list(aux.get(tid, {}).get("negatives", [])),
+        }
+    return out
+
+
+def _process_pdf(pdf_path: str,
+                 src_id: str,
+                 authors_plain: Dict[str, dict],
+                 work_bundle: Optional[Tuple[List[WorkSpec], Dict[str, List[re.Pattern]], Dict[str, List[re.Pattern]]]]
+                 ) -> Tuple[List[Mention], List[WorkMention]]:
+    mentions: List[Mention] = []
+    work_hits: List[WorkMention] = []
+
+    try:
+        import fitz  # lazy import in worker
+        doc = fitz.open(pdf_path)
+    except Exception as e:
+        log_warn(f"Konnte PDF nicht öffnen: {pdf_path} ({e})")
+        return mentions, work_hits
+
+    try:
+        bib_pages = detect_bibliography_pages(doc)
+        compiled_cache: Dict[str, List[re.Pattern]] = {}
+        negatives_cache: Dict[str, List[re.Pattern]] = {}
+
+        for pidx in range(doc.page_count):
+            page = doc.load_page(pidx)
+            txt = extract_text_with_ocr(page)
+            if not txt:
+                continue
+            section_bib = classify_section(pidx, bib_pages) == "bib"
+            txt_folded = strip_diacritics(txt).casefold()
+
+            # Ziel-Autor:innen
+            for tgt_id, a_dict in authors_plain.items():
+                folded_surnames = tuple(a_dict["folded_surnames"])
+                if not quick_page_filter(txt_folded, folded_surnames):
+                    continue
+                if tgt_id not in compiled_cache:
+                    compiled_cache[tgt_id] = compile_patterns(a_dict["pattern_strs"])
+                    negatives_cache[tgt_id] = [re.compile(n, re.IGNORECASE) for n in a_dict.get("negatives", []) or []]
+                raw_hits = find_author_mentions(txt, compiled_cache[tgt_id])
+                if not raw_hits:
+                    continue
+                seen = set()
+                for span, pat in raw_hits:
+                    if span in seen:
+                        continue
+                    seen.add(span)
+                    ctx = make_context(txt, span)
+                    if any(n.search(ctx) for n in negatives_cache.get(tgt_id, [])):
+                        continue
+                    mentions.append(Mention(
+                        src_id=src_id,
+                        tgt_id=tgt_id,
+                        pdf_path=pdf_path,
+                        page=pidx + 1,
+                        in_bib=section_bib,
+                        pattern=pat,
+                        context=ctx
+                    ))
+
+            # Werke/Serien/Generics
+            if work_bundle:
+                specs, pos_map, neg_map = work_bundle
+                for sp in specs:
+                    for rex in pos_map.get(sp.canonical, []):
+                        for m in rex.finditer(txt):
+                            span = m.span()
+                            ctx = make_context(txt, span)
+                            if any(n.search(ctx) for n in neg_map.get(sp.canonical, [])):
+                                continue
+                            work_hits.append(WorkMention(
+                                pdf_file=pdf_path,
+                                canonical=sp.canonical,
+                                kind=sp.kind,
+                                page=pidx + 1,
+                                in_bib=int(section_bib),
+                                pattern=rex.pattern,
+                                context=ctx,
+                                weight=float(sp.weight)
+                            ))
+    finally:
+        try:
+            doc.close()
+        except Exception:
+            pass
+    return mentions, work_hits
+
+
+def main() -> None:
+    environment_report()
+
+    project_dir = detect_project_dir()
+    base_pdf_dir = os.path.join(project_dir, "data", "test")
+    canon_json_path = os.path.join(project_dir, "config", "autoren_canon.json")
+    works_json_path = os.path.join(project_dir, "config", "works_canon.json")
+
+    staging_root = os.path.join(project_dir, "data", "authors_data", "_staging")
+    os.makedirs(staging_root, exist_ok=True)
+
+    pdfs = list(iter_pdfs(base_pdf_dir))
+    if not pdfs:
+        raise RuntimeError("Keine PDFs gefunden.")
+    log_info(f"PDFs gefunden: {len(pdfs)}")
+
+    heur_authors = extract_authors_from_filenames(pdfs)
+    canon = load_authors_canon(canon_json_path)
+    authors, aux, merge_map = build_authors_from_canon(canon, heur_authors)
+    log_info(f"Autoren erkannt: {len(authors)}")
+    for aid, a in authors.items():
+        print(f"   - {aid} → {a.display} | Nachnamen: {', '.join(a.surnames)}")
+
+    fname_rx = compile_filename_aliases(aux)
+
+    work_json = load_works_canon(works_json_path)
+    work_bundle = None
+    if work_json:
+        specs = build_work_specs(work_json)
+        work_bundle = compile_work_regex(specs)
+        log_info(f"Werk-Suche aktiv: Spezifikationen={len(specs)}")
+
+    # Quelle pro Datei bestimmen
+    file2author: Dict[str, str] = {}
+    for p in pdfs:
+        left = os.path.splitext(os.path.basename(p))[0].split("__")[0].replace("_", "-").strip("-")
+        chosen = choose_src_from_filename(p, fname_rx, left)
+        chosen = merge_map.get(chosen, chosen)
+        if not chosen or chosen not in authors:
+            log_warn(f"Kein gültiger Quell-Autor für {os.path.basename(p)} erkannt, heuristisch: {left}")
+            if left in authors:
+                chosen = left
+            else:
+                continue
+        file2author[p] = chosen
+
+    targets_all = _pack_targets(authors, aux)
+    tasks: List[Tuple[str, str]] = [(pdf, file2author[pdf]) for pdf in pdfs if pdf in file2author]
+
+    mentions_all: List[Mention] = []
+    work_hits_all: List[WorkMention] = []
+    if not tasks:
+        log_warn("Keine verarbeitbaren PDFs. Abbruch.")
+    else:
+        cpu = max(1, os.cpu_count() or 1)
+        log_info(f"Starte Parallelverarbeitung mit {cpu} Prozessen.")
+        with ProcessPoolExecutor(max_workers=cpu) as ex:
+            futs = {ex.submit(_process_pdf, pdf, src, targets_all, work_bundle): (pdf, src) for (pdf, src) in tasks}
+            done = 0; total = len(futs)
+            for fut in as_completed(futs):
+                done += 1
+                pdf, src = futs[fut]
+                try:
+                    a_hits, w_hits = fut.result()
+                    mentions_all.extend(a_hits)
+                    work_hits_all.extend(w_hits)
+                except Exception as e:
+                    log_warn(f"Fehler bei {pdf}: {e}")
+                if done % 1 == 0:
+                    log_info(f"Fortschritt: {done}/{total}")
+
+    # Staging-Dateien schreiben
+    def _dump_jsonl(path: str, rows: List[dict]) -> None:
+        with open(path, "w", encoding="utf-8") as f:
+            for r in rows:
+                f.write(json.dumps(r, ensure_ascii=False))
+                f.write("\n")
+
+    # targets
+    targets_path = os.path.join(staging_root, "targets_all.json")
+    with open(targets_path, "w", encoding="utf-8") as f:
+        json.dump(targets_all, f, ensure_ascii=False, indent=2)
+
+    # mapping
+    f2a_path = os.path.join(staging_root, "file2author.json")
+    with open(f2a_path, "w", encoding="utf-8") as f:
+        json.dump(file2author, f, ensure_ascii=False, indent=2)
+
+    # mentions
+    mentions_rows = [{
+        "src": m.src_id, "tgt": m.tgt_id, "pdf_file": m.pdf_path,
+        "page": m.page, "in_bib": int(m.in_bib), "pattern": m.pattern, "context": m.context
+    } for m in mentions_all]
+    mentions_path = os.path.join(staging_root, "mentions.jsonl")
+    _dump_jsonl(mentions_path, mentions_rows)
+
+    # works
+    works_rows = [{
+        "pdf_file": w.pdf_file, "canonical": w.canonical, "kind": w.kind,
+        "page": w.page, "in_bib": int(w.in_bib), "pattern": w.pattern,
+        "context": w.context, "weight": float(w.weight)
+    } for w in work_hits_all]
+    works_path = os.path.join(staging_root, "works_hits.jsonl")
+    _dump_jsonl(works_path, works_rows)
+
+    # meta
+    meta_path = os.path.join(staging_root, "staging_meta.json")
+    with open(meta_path, "w", encoding="utf-8") as f:
+        json.dump({
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "project_dir": project_dir,
+            "base_pdf_dir": base_pdf_dir,
+            "num_pdfs": len(pdfs)
+        }, f, ensure_ascii=False, indent=2)
+
+    log_info(f"Staging geschrieben: {staging_root}")
+    log_info(f"Mentions: {len(mentions_rows)} | Works: {len(works_rows)}")
+    log_info("Scrape fertig.")
+
+
+if __name__ == "__main__":
+    main()
+

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Autor↔Autor Referenznetz</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- Platzhalter wird in Python auf ../../config/authors_report_template gesetzt -->
+  <link rel="stylesheet" href="../../../config/authors_report_template/style.css">
+  <script defer src="../../../config/authors_report_template/script.js"></script>
+  <!--
+    Ersetze die Platzhalter serverseitig:
+      ../../../config/authors_report_template
+      15
+      6
+      <tr><td>Jucker, Michael</td><td>26</td></tr>   -> <tr><td>Autor</td><td>Score</td></tr>...
+      <tr><td>Jucker, Michael</td><td>12</td></tr>
+<tr><td>Niederhauser, Peter</td><td>4</td></tr>
+<tr><td>Stettler, Bernhard</td><td>4</td></tr>
+<tr><td>Zahnd, Urs Martin</td><td>3</td></tr>
+<tr><td>Speich, Heinrich</td><td>2</td></tr>
+<tr><td>Illi, Martin</td><td>1</td></tr>    -> <tr><td>Autor</td><td>Score</td></tr>...
+      <tr><td>Jucker, Michael</td><td>Jucker, Michael</td><td>12</td><td>0</td><td>12</td><td>Krieg als Innovationsfaktor für die Politik (1415-1460) Autor: Jucker, Michael DOI: https://doi.org/10.5169/seals-1045392 Nutzungsbedingunge | omatie Krieg als Innovationsfaktor für die Politik (1415-1460) Michael Jucker Einleitung Dass Krieg Veränderung hervorruft, scheint auf den | hrift für Historische Forschung 31 (2004), 489-527. 7 Vgl. nun Michael Jucker: Gesandte, Schreiber, Akten. Politische Kommunikation auf eidg</td></tr>
+<tr><td>Jucker, Michael</td><td>Niederhauser, Peter</td><td>4</td><td>0</td><td>4</td><td>eich, Regionen und Europa in Mittelalter und Neuzeit. Festschrift für Peter Moraw (Historische Forschungen 67), Berlin 2000,171-190. 5 Erwäh | : Reich und Eidgenossenschaft im 15. Jahrhundert, in: Peter Niederhäuser, Werner Fischer (Hg.): Vom «Freiheitskrieg» zum Geschichtsmythos. 5 | er (wie Anm. 25), bes. 24-26. Vgl. zu 1499 die Beiträge in: Niederhäuser, Fischer (wie Anm. 25); Gedenkschrift 500 Jahre Schlacht bei Dornac</td></tr>
+<tr><td>Jucker, Michael</td><td>Stettler, Bernhard</td><td>4</td><td>0</td><td>4</td><td>schen Ereignisse um den Alten Zürichkrieg, diese wurden bereits von Bernhard Stettier, Hans Berger, Alois Niederstätter und weiteren ausgewi | schen Praxis manifestierten und weitere Konsequenzen hatten. So hat Bernhard Stettier treffend festgestellt, dass nach dem Alten Zürichkrieg | chen Diplomatie in der werdenden Eidgenossenschaft bezeichnet werden. Bernhard Stettier hat unlängst gezeigt, dass sich die Eidgenossenschaf</td></tr>
+<tr><td>Jucker, Michael</td><td>Zahnd, Urs Martin</td><td>3</td><td>0</td><td>3</td><td>monde de la formation, in: traverse 9 (2002), Heft 3,45-54; Urs Martin Zahnd: Studium und Kanzlei. Der Bildungsweg von Stadt- und Ratsschrei | s du monde de la formation, in: traverse 9 (2002), Heft 3,45-54; Urs Martin Zahnd: Studium und Kanzlei. Der Bildungsweg von Stadt- und Ratss | u monde de la formation, in: traverse 9 (2002), Heft 3,45-54; Urs Martin Zahnd: Studium und Kanzlei. Der Bildungsweg von Stadt- und Ratsschr</td></tr>
+<tr><td>Jucker, Michael</td><td>Speich, Heinrich</td><td>2</td><td>0</td><td>2</td><td>s III. (1440-1493) nach Archiven und Bibliotheken geordnet, hg. von Heinrich Koller, Heft 6,Wien/Köln 1989,9-34. 12 Vgl. Niederstätter, Einl | ) nach Archiven und Bibliotheken geordnet, hg. von Heinrich Koller, Heft 6,Wien/Köln 1989,9-34. 12 Vgl. Niederstätter, Einleitung (wie Anm.</td></tr>
+<tr><td>Jucker, Michael</td><td>Illi, Martin</td><td>1</td><td>0</td><td>1</td><td>s du monde de la formation, in: traverse 9 (2002), Heft 3,45-54; Urs Martin Zahnd: Studium und Kanzlei. Der Bildungsweg von Stadt- und Ratss</td></tr>        -> <tr>
+                                 <td>Quelle</td><td>Ziel</td>
+                                 <td>total</td><td>bib_hits</td><td>text_hits</td>
+                                 <td>Beispiele</td>
+                               </tr>...
+  -->
+</head>
+<body class="authors_report-body">
+  <header class="authors_report-hero">
+    <div class="authors_report-frame"></div>
+    <h1 class="authors_report-title">Autor↔Autor Referenznetz</h1>
+    <p class="authors_report-sub">Kanten: <b id="edge-count">6</b> · Autoren: <b id="author-count">15</b></p>
+  </header>
+
+  <main class="authors_report-main">
+    <section class="authors_report-panels">
+      <article class="authors_report-card">
+        <h2 class="authors_report-h2">Top Zitierende</h2>
+        <table class="authors_report-table authors_report-sortable" id="authors_report-top-citers">
+          <thead><tr><th data-sort="text">Autor</th><th data-sort="num">Score</th></tr></thead>
+          <tbody>
+            <tr><td>Jucker, Michael</td><td>26</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="authors_report-card">
+        <h2 class="authors_report-h2">Top Zitierte</h2>
+        <table class="authors_report-table authors_report-sortable" id="authors_report-top-cited">
+          <thead><tr><th data-sort="text">Autor</th><th data-sort="num">Score</th></tr></thead>
+          <tbody>
+            <tr><td>Jucker, Michael</td><td>12</td></tr>
+<tr><td>Niederhauser, Peter</td><td>4</td></tr>
+<tr><td>Stettler, Bernhard</td><td>4</td></tr>
+<tr><td>Zahnd, Urs Martin</td><td>3</td></tr>
+<tr><td>Speich, Heinrich</td><td>2</td></tr>
+<tr><td>Illi, Martin</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="authors_report-card">
+      <div class="authors_report-toolbar">
+        <h2 class="authors_report-h2">Alle Kanten</h2>
+        <div class="authors_report-controls">
+          <label class="authors_report-field">
+            <span>Filter</span>
+            <input id="authors_report-filter" type="search" placeholder="Quelle, Ziel oder Beispiel">
+          </label>
+          <label class="authors_report-check"><input type="checkbox" id="authors_report-only-text"> nur Text</label>
+          <label class="authors_report-check"><input type="checkbox" id="authors_report-only-bib"> nur Bibliographie</label>
+          <button type="button" id="authors_report-reset" class="authors_report-btn">Zurücksetzen</button>
+        </div>
+      </div>
+
+      <div class="authors_report-tablewrap">
+        <table class="authors_report-table authors_report-sortable" id="authors_report-edges">
+          <thead>
+            <tr>
+              <th data-sort="text">Quelle</th>
+              <th data-sort="text">Ziel</th>
+              <th data-sort="num">Total</th>
+              <th data-sort="num">Bibliographie</th>
+              <th data-sort="num">Text</th>
+              <th data-sort="text">Beispiele</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Jucker, Michael</td><td>Jucker, Michael</td><td>12</td><td>0</td><td>12</td><td>Krieg als Innovationsfaktor für die Politik (1415-1460) Autor: Jucker, Michael DOI: https://doi.org/10.5169/seals-1045392 Nutzungsbedingunge | omatie Krieg als Innovationsfaktor für die Politik (1415-1460) Michael Jucker Einleitung Dass Krieg Veränderung hervorruft, scheint auf den | hrift für Historische Forschung 31 (2004), 489-527. 7 Vgl. nun Michael Jucker: Gesandte, Schreiber, Akten. Politische Kommunikation auf eidg</td></tr>
+<tr><td>Jucker, Michael</td><td>Niederhauser, Peter</td><td>4</td><td>0</td><td>4</td><td>eich, Regionen und Europa in Mittelalter und Neuzeit. Festschrift für Peter Moraw (Historische Forschungen 67), Berlin 2000,171-190. 5 Erwäh | : Reich und Eidgenossenschaft im 15. Jahrhundert, in: Peter Niederhäuser, Werner Fischer (Hg.): Vom «Freiheitskrieg» zum Geschichtsmythos. 5 | er (wie Anm. 25), bes. 24-26. Vgl. zu 1499 die Beiträge in: Niederhäuser, Fischer (wie Anm. 25); Gedenkschrift 500 Jahre Schlacht bei Dornac</td></tr>
+<tr><td>Jucker, Michael</td><td>Stettler, Bernhard</td><td>4</td><td>0</td><td>4</td><td>schen Ereignisse um den Alten Zürichkrieg, diese wurden bereits von Bernhard Stettier, Hans Berger, Alois Niederstätter und weiteren ausgewi | schen Praxis manifestierten und weitere Konsequenzen hatten. So hat Bernhard Stettier treffend festgestellt, dass nach dem Alten Zürichkrieg | chen Diplomatie in der werdenden Eidgenossenschaft bezeichnet werden. Bernhard Stettier hat unlängst gezeigt, dass sich die Eidgenossenschaf</td></tr>
+<tr><td>Jucker, Michael</td><td>Zahnd, Urs Martin</td><td>3</td><td>0</td><td>3</td><td>monde de la formation, in: traverse 9 (2002), Heft 3,45-54; Urs Martin Zahnd: Studium und Kanzlei. Der Bildungsweg von Stadt- und Ratsschrei | s du monde de la formation, in: traverse 9 (2002), Heft 3,45-54; Urs Martin Zahnd: Studium und Kanzlei. Der Bildungsweg von Stadt- und Ratss | u monde de la formation, in: traverse 9 (2002), Heft 3,45-54; Urs Martin Zahnd: Studium und Kanzlei. Der Bildungsweg von Stadt- und Ratsschr</td></tr>
+<tr><td>Jucker, Michael</td><td>Speich, Heinrich</td><td>2</td><td>0</td><td>2</td><td>s III. (1440-1493) nach Archiven und Bibliotheken geordnet, hg. von Heinrich Koller, Heft 6,Wien/Köln 1989,9-34. 12 Vgl. Niederstätter, Einl | ) nach Archiven und Bibliotheken geordnet, hg. von Heinrich Koller, Heft 6,Wien/Köln 1989,9-34. 12 Vgl. Niederstätter, Einleitung (wie Anm.</td></tr>
+<tr><td>Jucker, Michael</td><td>Illi, Martin</td><td>1</td><td>0</td><td>1</td><td>s du monde de la formation, in: traverse 9 (2002), Heft 3,45-54; Urs Martin Zahnd: Studium und Kanzlei. Der Bildungsweg von Stadt- und Ratss</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="authors_report-footnote">Klick auf Spaltenkopf sortiert. Filter wirkt live. “nur Text” zeigt Kanten mit Text&gt;0, “nur Bibliographie” mit Bib&gt;0.</p>
+    </section>
+  </main>
+
+  <button class="authors_report-top" id="authors_report-top" aria-label="Nach oben">▲</button>
+</body>
+</html>
+

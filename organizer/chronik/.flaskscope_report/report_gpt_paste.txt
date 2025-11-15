@@ -1,0 +1,1017 @@
+```json
+{
+  "meta": {
+    "generator": "flaskscope_report_plus",
+    "variant": "gpt-paste-v1",
+    "project_root": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik",
+    "entry_path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik-search.py",
+    "timestamp_utc": "2025-11-12T19:07:36.150364Z"
+  },
+  "summary": {
+    "counts": {
+      "python": 20,
+      "templates": 0,
+      "js": 0,
+      "css": 0,
+      "assets": 0
+    },
+    "used_totals": {
+      "python": 13,
+      "templates": 0,
+      "js": 0,
+      "css": 0,
+      "assets": 0
+    },
+    "unused_totals": {
+      "python": 7,
+      "templates": 0,
+      "js": 0,
+      "css": 0,
+      "assets": 0
+    },
+    "unused_functions_total": 54
+  },
+  "used": {
+    "python": [
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik-search.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/__init__.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/aggregate.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/cache.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/constants.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/env.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/models.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/output.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/paths.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/patterns.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/run.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/scan.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/text.py"
+    ],
+    "templates": [],
+    "js": [],
+    "css": [],
+    "assets": []
+  },
+  "unused": {
+    "python": [
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/__init__.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/ui.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py",
+      "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py"
+    ],
+    "templates": [],
+    "js": [],
+    "css": [],
+    "assets": []
+  },
+  "unused_functions": [
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "_build_chroniken_tab"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "_build_menu"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "_build_overview_tab"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "_build_settings_tab"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "_build_works_tab"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "_col_index"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "_selected_chronik_id"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "apply_filter"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "load_aliases_for_selected"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "open_selected_pdf"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "rebind_works_to_chroniken"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "register_new_pdf"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "reload_env"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "save_aliases_from_editor"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "save_env_key"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "scan_pdfs_and_update"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "show_missing_dialog"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+      "function": "suggest_aliases_for_selected"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/cache.py",
+      "function": "get"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/cache.py",
+      "function": "put"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/patterns.py",
+      "function": "repl"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/scan.py",
+      "function": "_worker_scan"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/ui.py",
+      "function": "pick_pdf_dir"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/ui.py",
+      "function": "print_env"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+      "function": "_build_ui"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+      "function": "_load_last_csv_if_available"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+      "function": "on_import_run"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+      "function": "on_labels_toggle"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+      "function": "on_layout_change"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+      "function": "on_search"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+      "function": "on_slider"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "_apply_glass_style"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "_apply_style"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "_build_html_report"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "_build_ui"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "_restore_last"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "columnCount"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "data"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "headerData"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "on_analyze"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "on_browse"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "on_export_matrix"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "on_export_pairs"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "on_html_report"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "open_dialog"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "populate_column_boxes"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "refresh_neighbors"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "rowCount"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+      "function": "update_info"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py",
+      "function": "_bipartite_ordered_layout"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py",
+      "function": "autoload"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py",
+      "function": "health"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py",
+      "function": "index"
+    },
+    {
+      "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py",
+      "function": "upload_csv"
+    }
+  ],
+  "conflicts": {
+    "python": {
+      "cycles": [],
+      "duplicate_routes": [],
+      "unused_imports": [
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik-search.py",
+          "imports": [
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/__init__.py",
+          "imports": [
+            "Hit",
+            "PatternEntry",
+            "annotations",
+            "run_finder"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/aggregate.py",
+          "imports": [
+            "Tuple",
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/cache.py",
+          "imports": [
+            "CACHE_REL_DIR",
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/constants.py",
+          "imports": [
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/env.py",
+          "imports": [
+            "annotations",
+            "fitz"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/models.py",
+          "imports": [
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/output.py",
+          "imports": [
+            "annotations",
+            "datetime",
+            "hashlib"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/paths.py",
+          "imports": [
+            "Iterable",
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/patterns.py",
+          "imports": [
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/run.py",
+          "imports": [
+            "Dict",
+            "Iterable",
+            "annotations",
+            "os"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/scan.py",
+          "imports": [
+            "Iterable",
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        },
+        {
+          "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/text.py",
+          "imports": [
+            "Iterable",
+            "Optional",
+            "annotations"
+          ],
+          "severity": "info",
+          "message": "Import-Aliase vermutlich unbenutzt."
+        }
+      ],
+      "missing_templates": [
+        {
+          "template": "index.html",
+          "severity": "warn",
+          "message": "Template referenziert, aber nicht gefunden (Namensauflösung per Basename)."
+        }
+      ],
+      "shadowed_functions": [
+        {
+          "function": "list_pdfs",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "normalize_text",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/text.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "canonical_key",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "tokenize",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "main",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik-search.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/output.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/paths.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/patterns.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/text.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "compile_aliases",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "__init__",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/cache.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "jaccard",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "debug",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        },
+        {
+          "function": "_build_ui",
+          "files": [
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+            "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py"
+          ],
+          "severity": "info",
+          "message": "Gleicher Funktionsname in mehreren Modulen (mögliche Überschattung)."
+        }
+      ]
+    },
+    "js": {
+      "duplicate_globals": [],
+      "multi_version_libs": []
+    },
+    "css": {
+      "contradicting_declarations": [],
+      "important_mismatch": [],
+      "maybe_unused_selectors": []
+    }
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": 1,
+        "label": "chronik_db_ui.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+        "used": false
+      },
+      {
+        "id": 2,
+        "label": "chronik_relation_gui.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+        "used": false
+      },
+      {
+        "id": 3,
+        "label": "chronik_gui.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+        "used": false
+      },
+      {
+        "id": 4,
+        "label": "__init__.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/__init__.py",
+        "used": false
+      },
+      {
+        "id": 5,
+        "label": "network.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py",
+        "used": false
+      },
+      {
+        "id": 6,
+        "label": "create_chronik_db.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py",
+        "used": false
+      },
+      {
+        "id": 7,
+        "label": "chronik-search.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik-search.py",
+        "used": true
+      },
+      {
+        "id": 8,
+        "label": "aggregate.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/aggregate.py",
+        "used": true
+      },
+      {
+        "id": 9,
+        "label": "run.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/run.py",
+        "used": true
+      },
+      {
+        "id": 10,
+        "label": "env.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/env.py",
+        "used": true
+      },
+      {
+        "id": 11,
+        "label": "patterns.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/patterns.py",
+        "used": true
+      },
+      {
+        "id": 12,
+        "label": "models.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/models.py",
+        "used": true
+      },
+      {
+        "id": 13,
+        "label": "paths.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/paths.py",
+        "used": true
+      },
+      {
+        "id": 14,
+        "label": "ui.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/ui.py",
+        "used": false
+      },
+      {
+        "id": 15,
+        "label": "constants.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/constants.py",
+        "used": true
+      },
+      {
+        "id": 16,
+        "label": "cache.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/cache.py",
+        "used": true
+      },
+      {
+        "id": 17,
+        "label": "__init__.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/__init__.py",
+        "used": true
+      },
+      {
+        "id": 18,
+        "label": "text.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/text.py",
+        "used": true
+      },
+      {
+        "id": 19,
+        "label": "scan.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/scan.py",
+        "used": true
+      },
+      {
+        "id": 20,
+        "label": "output.py",
+        "type": "python",
+        "path": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/output.py",
+        "used": true
+      }
+    ],
+    "edges": [
+      {
+        "from": 3,
+        "to": 5,
+        "type": "import"
+      },
+      {
+        "from": 3,
+        "to": 5,
+        "type": "calls"
+      },
+      {
+        "from": 3,
+        "to": 5,
+        "type": "calls"
+      },
+      {
+        "from": 3,
+        "to": 5,
+        "type": "calls"
+      },
+      {
+        "from": 3,
+        "to": 5,
+        "type": "calls"
+      },
+      {
+        "from": 3,
+        "to": 5,
+        "type": "calls"
+      },
+      {
+        "from": 3,
+        "to": 5,
+        "type": "calls"
+      },
+      {
+        "from": 7,
+        "to": 9,
+        "type": "import"
+      },
+      {
+        "from": 7,
+        "to": 9,
+        "type": "calls"
+      },
+      {
+        "from": 8,
+        "to": 10,
+        "type": "import"
+      },
+      {
+        "from": 9,
+        "to": 12,
+        "type": "import"
+      },
+      {
+        "from": 9,
+        "to": 20,
+        "type": "import"
+      },
+      {
+        "from": 9,
+        "to": 11,
+        "type": "import"
+      },
+      {
+        "from": 9,
+        "to": 19,
+        "type": "import"
+      },
+      {
+        "from": 9,
+        "to": 15,
+        "type": "import"
+      },
+      {
+        "from": 9,
+        "to": 8,
+        "type": "import"
+      },
+      {
+        "from": 9,
+        "to": 13,
+        "type": "import"
+      },
+      {
+        "from": 9,
+        "to": 20,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 8,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 20,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 13,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 19,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 13,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 13,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 20,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 20,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 20,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 11,
+        "type": "calls"
+      },
+      {
+        "from": 9,
+        "to": 13,
+        "type": "calls"
+      },
+      {
+        "from": 13,
+        "to": 15,
+        "type": "import"
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "type": "import"
+      },
+      {
+        "from": 11,
+        "to": 18,
+        "type": "import"
+      },
+      {
+        "from": 11,
+        "to": 15,
+        "type": "import"
+      },
+      {
+        "from": 11,
+        "to": 13,
+        "type": "import"
+      },
+      {
+        "from": 11,
+        "to": 13,
+        "type": "calls"
+      },
+      {
+        "from": 11,
+        "to": 13,
+        "type": "calls"
+      },
+      {
+        "from": 11,
+        "to": 18,
+        "type": "calls"
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "type": "calls"
+      },
+      {
+        "from": 14,
+        "to": 10,
+        "type": "import"
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "type": "import"
+      },
+      {
+        "from": 16,
+        "to": 15,
+        "type": "import"
+      },
+      {
+        "from": 16,
+        "to": 13,
+        "type": "import"
+      },
+      {
+        "from": 16,
+        "to": 13,
+        "type": "calls"
+      },
+      {
+        "from": 19,
+        "to": 12,
+        "type": "import"
+      },
+      {
+        "from": 19,
+        "to": 18,
+        "type": "import"
+      },
+      {
+        "from": 19,
+        "to": 11,
+        "type": "import"
+      },
+      {
+        "from": 19,
+        "to": 10,
+        "type": "import"
+      },
+      {
+        "from": 19,
+        "to": 15,
+        "type": "import"
+      },
+      {
+        "from": 19,
+        "to": 11,
+        "type": "calls"
+      },
+      {
+        "from": 19,
+        "to": 12,
+        "type": "calls"
+      },
+      {
+        "from": 19,
+        "to": 18,
+        "type": "calls"
+      },
+      {
+        "from": 19,
+        "to": 12,
+        "type": "calls"
+      },
+      {
+        "from": 17,
+        "to": 9,
+        "type": "import"
+      },
+      {
+        "from": 17,
+        "to": 12,
+        "type": "import"
+      },
+      {
+        "from": 18,
+        "to": 10,
+        "type": "import"
+      },
+      {
+        "from": 18,
+        "to": 16,
+        "type": "import"
+      },
+      {
+        "from": 18,
+        "to": 15,
+        "type": "import"
+      },
+      {
+        "from": 18,
+        "to": 16,
+        "type": "calls"
+      },
+      {
+        "from": 18,
+        "to": 10,
+        "type": "calls"
+      },
+      {
+        "from": 20,
+        "to": 10,
+        "type": "import"
+      },
+      {
+        "from": 20,
+        "to": 15,
+        "type": "import"
+      },
+      {
+        "from": 20,
+        "to": 8,
+        "type": "import"
+      },
+      {
+        "from": 20,
+        "to": 13,
+        "type": "import"
+      },
+      {
+        "from": 20,
+        "to": 8,
+        "type": "calls"
+      },
+      {
+        "from": 20,
+        "to": 13,
+        "type": "calls"
+      },
+      {
+        "from": 20,
+        "to": 13,
+        "type": "calls"
+      }
+    ]
+  },
+  "assistant_hints": [
+    "Identifiziere riskante Unused-Dateien/Funktionen, die evtl. doch indirekt genutzt werden.",
+    "Prüfe Konfliktbereiche (zirkuläre Importe, doppelte Routen, unbenutzte Imports).",
+    "Empfiehl sichere Refactoring-Schritte und automatische Checks (CI)."
+  ]
+}
+```

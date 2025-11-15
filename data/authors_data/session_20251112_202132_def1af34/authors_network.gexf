@@ -1,0 +1,299 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2025-11-12">
+    <creator>NetworkX 3.1</creator>
+  </meta>
+  <graph defaultedgetype="directed" mode="static" name="">
+    <attributes mode="static" class="edge">
+      <attribute id="0" title="total" type="long" />
+      <attribute id="1" title="bib" type="long" />
+      <attribute id="2" title="text" type="long" />
+    </attributes>
+    <nodes>
+      <node id="jucker-michael" label="Jucker, Michael" />
+      <node id="langmaier-konstantin-m" label="Langmaier, Konstantin M." />
+      <node id="landolt-oliver" label="Landolt, Oliver" />
+      <node id="sieber-christian" label="Sieber, Christian" />
+      <node id="bihrer-andreas" label="Bihrer, Andreas" />
+      <node id="bosshard-werner" label="Bosshard, Werner" />
+      <node id="sutter-pascale" label="Sutter, Pascale" />
+      <node id="stettler-bernhard" label="Stettler, Bernhard" />
+      <node id="frey-stefan" label="Frey, Stefan" />
+      <node id="illi-martin" label="Illi, Martin" />
+      <node id="rigendinger-fritz" label="Rigendinger, Fritz" />
+      <node id="speck-dieter" label="Speck, Dieter" />
+      <node id="zahnd-urs-martin" label="Zahnd, Urs Martin" />
+      <node id="niederhauser-peter" label="Niederhauser, Peter" />
+      <node id="heinrich-speich" label="Speich, Heinrich" />
+      <node id="Langmaier-konstantin" label="Konstantin, Langmaier" />
+    </nodes>
+    <edges>
+      <edge source="langmaier-konstantin-m" target="Langmaier-konstantin" id="0" weight="38.0">
+        <attvalues>
+          <attvalue for="0" value="38" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="38" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="bihrer-andreas" id="1" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="bosshard-werner" id="2" weight="8.0">
+        <attvalues>
+          <attvalue for="0" value="8" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="8" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="frey-stefan" id="3" weight="3.0">
+        <attvalues>
+          <attvalue for="0" value="3" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="heinrich-speich" id="4" weight="6.0">
+        <attvalues>
+          <attvalue for="0" value="6" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="6" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="illi-martin" id="5" weight="4.0">
+        <attvalues>
+          <attvalue for="0" value="4" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="jucker-michael" id="6" weight="7.0">
+        <attvalues>
+          <attvalue for="0" value="7" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="7" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="landolt-oliver" id="7" weight="5.0">
+        <attvalues>
+          <attvalue for="0" value="5" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="5" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="langmaier-konstantin-m" id="8" weight="64.0">
+        <attvalues>
+          <attvalue for="0" value="64" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="64" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="niederhauser-peter" id="9" weight="24.0">
+        <attvalues>
+          <attvalue for="0" value="24" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="24" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="sieber-christian" id="10" weight="9.0">
+        <attvalues>
+          <attvalue for="0" value="9" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="9" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="stettler-bernhard" id="11" weight="7.0">
+        <attvalues>
+          <attvalue for="0" value="7" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="7" />
+        </attvalues>
+      </edge>
+      <edge source="langmaier-konstantin-m" target="zahnd-urs-martin" id="12" weight="3.0">
+        <attvalues>
+          <attvalue for="0" value="3" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="bihrer-andreas" id="13" weight="6.0">
+        <attvalues>
+          <attvalue for="0" value="4" />
+          <attvalue for="1" value="2" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="bosshard-werner" id="14" weight="3.0">
+        <attvalues>
+          <attvalue for="0" value="3" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="heinrich-speich" id="15" weight="24.0">
+        <attvalues>
+          <attvalue for="0" value="22" />
+          <attvalue for="1" value="2" />
+          <attvalue for="2" value="20" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="illi-martin" id="16" weight="12.0">
+        <attvalues>
+          <attvalue for="0" value="9" />
+          <attvalue for="1" value="3" />
+          <attvalue for="2" value="6" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="jucker-michael" id="17" weight="6.0">
+        <attvalues>
+          <attvalue for="0" value="5" />
+          <attvalue for="1" value="1" />
+          <attvalue for="2" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="landolt-oliver" id="18" weight="28.0">
+        <attvalues>
+          <attvalue for="0" value="19" />
+          <attvalue for="1" value="9" />
+          <attvalue for="2" value="10" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="niederhauser-peter" id="19" weight="32.0">
+        <attvalues>
+          <attvalue for="0" value="24" />
+          <attvalue for="1" value="8" />
+          <attvalue for="2" value="16" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="rigendinger-fritz" id="20" weight="10.0">
+        <attvalues>
+          <attvalue for="0" value="6" />
+          <attvalue for="1" value="4" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="sieber-christian" id="21" weight="152.0">
+        <attvalues>
+          <attvalue for="0" value="102" />
+          <attvalue for="1" value="50" />
+          <attvalue for="2" value="52" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="stettler-bernhard" id="22" weight="136.0">
+        <attvalues>
+          <attvalue for="0" value="97" />
+          <attvalue for="1" value="39" />
+          <attvalue for="2" value="58" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="sutter-pascale" id="23" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="sieber-christian" target="zahnd-urs-martin" id="24" weight="12.0">
+        <attvalues>
+          <attvalue for="0" value="9" />
+          <attvalue for="1" value="3" />
+          <attvalue for="2" value="6" />
+        </attvalues>
+      </edge>
+      <edge source="bihrer-andreas" target="Langmaier-konstantin" id="25" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="bihrer-andreas" target="bihrer-andreas" id="26" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="bihrer-andreas" target="bosshard-werner" id="27" weight="2.0">
+        <attvalues>
+          <attvalue for="0" value="2" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="2" />
+        </attvalues>
+      </edge>
+      <edge source="bihrer-andreas" target="heinrich-speich" id="28" weight="42.0">
+        <attvalues>
+          <attvalue for="0" value="42" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="42" />
+        </attvalues>
+      </edge>
+      <edge source="bihrer-andreas" target="niederhauser-peter" id="29" weight="4.0">
+        <attvalues>
+          <attvalue for="0" value="4" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="4" />
+        </attvalues>
+      </edge>
+      <edge source="bihrer-andreas" target="speck-dieter" id="30" weight="5.0">
+        <attvalues>
+          <attvalue for="0" value="5" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="5" />
+        </attvalues>
+      </edge>
+      <edge source="bihrer-andreas" target="stettler-bernhard" id="31" weight="10.0">
+        <attvalues>
+          <attvalue for="0" value="10" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="10" />
+        </attvalues>
+      </edge>
+      <edge source="frey-stefan" target="bosshard-werner" id="32" weight="5.0">
+        <attvalues>
+          <attvalue for="0" value="5" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="5" />
+        </attvalues>
+      </edge>
+      <edge source="frey-stefan" target="frey-stefan" id="33" weight="3.0">
+        <attvalues>
+          <attvalue for="0" value="3" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="3" />
+        </attvalues>
+      </edge>
+      <edge source="frey-stefan" target="heinrich-speich" id="34" weight="7.0">
+        <attvalues>
+          <attvalue for="0" value="7" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="7" />
+        </attvalues>
+      </edge>
+      <edge source="frey-stefan" target="jucker-michael" id="35" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="frey-stefan" target="niederhauser-peter" id="36" weight="1.0">
+        <attvalues>
+          <attvalue for="0" value="1" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="1" />
+        </attvalues>
+      </edge>
+      <edge source="frey-stefan" target="stettler-bernhard" id="37" weight="4.0">
+        <attvalues>
+          <attvalue for="0" value="4" />
+          <attvalue for="1" value="0" />
+          <attvalue for="2" value="4" />
+        </attvalues>
+      </edge>
+    </edges>
+  </graph>
+</gexf>

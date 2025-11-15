@@ -1,0 +1,247 @@
+{
+  "python": {
+    "cycles": [],
+    "duplicate_routes": [],
+    "unused_imports": [
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik-search.py",
+        "imports": [
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/__init__.py",
+        "imports": [
+          "Hit",
+          "PatternEntry",
+          "annotations",
+          "run_finder"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/aggregate.py",
+        "imports": [
+          "Tuple",
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/cache.py",
+        "imports": [
+          "CACHE_REL_DIR",
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/constants.py",
+        "imports": [
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/env.py",
+        "imports": [
+          "annotations",
+          "fitz"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/models.py",
+        "imports": [
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/output.py",
+        "imports": [
+          "annotations",
+          "datetime",
+          "hashlib"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/paths.py",
+        "imports": [
+          "Iterable",
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/patterns.py",
+        "imports": [
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/run.py",
+        "imports": [
+          "Dict",
+          "Iterable",
+          "annotations",
+          "os"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/scan.py",
+        "imports": [
+          "Iterable",
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      },
+      {
+        "file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/text.py",
+        "imports": [
+          "Iterable",
+          "Optional",
+          "annotations"
+        ],
+        "severity": "info",
+        "message": "Import-Aliase vermutlich unbenutzt."
+      }
+    ],
+    "missing_templates": [
+      {
+        "template": "index.html",
+        "severity": "warn",
+        "message": "Template referenziert, aber nicht gefunden (Namensaufl\u00f6sung per Basename)."
+      }
+    ],
+    "shadowed_functions": [
+      {
+        "function": "list_pdfs",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "normalize_text",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/text.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "canonical_key",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "tokenize",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "main",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik-search.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/output.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/paths.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/patterns.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/text.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "compile_aliases",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "__init__",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_finder/cache.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "jaccard",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_db_ui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/create_chronik_db.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "debug",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/network.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      },
+      {
+        "function": "_build_ui",
+        "files": [
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_gui.py",
+          "/Users/programming/PycharmProjects/Find_Bibliography_NEw/organizer/chronik/chronik_relation_gui.py"
+        ],
+        "severity": "info",
+        "message": "Gleicher Funktionsname in mehreren Modulen (m\u00f6gliche \u00dcberschattung)."
+      }
+    ]
+  },
+  "js": {
+    "duplicate_globals": [],
+    "multi_version_libs": []
+  },
+  "css": {
+    "contradicting_declarations": [],
+    "important_mismatch": [],
+    "maybe_unused_selectors": []
+  }
+}

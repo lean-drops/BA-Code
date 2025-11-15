@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-11-14T00:11:27",
+  "project_root": "/Users/programming/PycharmProjects/Find_Bibliography_NEw",
+  "pdf_dir": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 21,
+  "pdfs": [
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/langmaier-konstantin-m__17.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/Alter Zürichkrige, Toggenburger Erbschaftskrieg (Illi, Martin).pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/landolt-oliver__30.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/sieber-christian__19.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/Krieg und Todesvorbereitung (Werner, Bosshard).pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/Sources for the 1446 Confederate Campaign in the Old Zurich War (Speich, Heinrich).pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/Rudolf Stüssi - ein tragischer Held? (Frey, Stefan).pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/sutter-pascale__3.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/stettler-bernhard__8.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/jucker-michael__9.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/Der Alte Zürichkrieg aus der regionalen Perspektive des Sarganserlands (Riegendinger, Fritz).pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/speck-dieter__6.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/Langmaier-konstantin__26.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/Hans-Ulrich-Bärchtold.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/zahnd-urs-martin__20.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/niederhauser-peter__4.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/konstantin-m-langmaier__28.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/niederhauser-peter__7.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/langmaier-konstantin-m__18.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/sieber-christian__11.pdf",
+    "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test/landolt-oliver__10.pdf"
+  ],
+  "config_file": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken.sqlite3",
+  "weights": {
+    "work": 1.0,
+    "series": 1.0,
+    "generic": 1.2
+  },
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}

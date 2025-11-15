@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-11-12T20:21:32",
+  "base_folder": "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/test",
+  "num_pdfs": 5,
+  "pdfs": [
+    "sieber-christian__19.pdf",
+    "bihrer-andreas__5.pdf",
+    "frey-stefan__13.pdf",
+    "Langmaier-konstantin__26.pdf",
+    "sieber-christian__11.pdf"
+  ],
+  "env": {
+    "pymupdf": true,
+    "pandas": true,
+    "pytesseract": true,
+    "networkx": true,
+    "ocr_threshold_chars": 120
+  }
+}
