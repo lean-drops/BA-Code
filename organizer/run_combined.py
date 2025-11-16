@@ -27,7 +27,7 @@ from organizer.authors.db_io import create_search_run
 
 def main() -> None:
     here = Path(__file__).resolve().parent
-    db_path = Path(r"/Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken.sqlite3")
+    db_path = Path(r"/Users/python/PycharmProjects/BA-Code/config/chroniken.sqlite3")
 
     if not db_path.exists():
         raise FileNotFoundError(f"DB nicht gefunden: {db_path}")

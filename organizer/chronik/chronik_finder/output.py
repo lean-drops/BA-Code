@@ -23,7 +23,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from .env import HAVE_NX, HAVE_PANDAS, nx, pd  # type: ignore
+import networkx as nx
+import pandas as pd
+
 from .constants import TEXT_MIN_LEN
 from .paths import project_root, data_base_dir
 
@@ -202,8 +204,7 @@ def write_html(out_dir: Path, df, agg) -> Path:
       {{JSON_LABELS_SORTED}}, {{DARK_CLASS}}
     Falls einzelne fehlen, werden CSS/JS/JSON robust injiziert.
     """
-    if not HAVE_PANDAS:
-        raise RuntimeError("pandas ist erforderlich, um den Report zu erstellen.")
+
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "chroniken_report.html"
 
@@ -333,9 +334,9 @@ def write_meta(out_dir: Path, root: Path, pdf_dir: Path, pdfs: List[Path], cfg_f
         "weights": {str(k): float(v) for k, v in weights.items()},
         "env": {
             "pymupdf": True,
-            "pandas": HAVE_PANDAS,
+            "pandas": True,
             "pytesseract": True,
-            "networkx": HAVE_NX,
+            "networkx": True,
             "ocr_threshold_chars": TEXT_MIN_LEN
         }
     }
@@ -347,8 +348,7 @@ def write_meta(out_dir: Path, root: Path, pdf_dir: Path, pdfs: List[Path], cfg_f
 
 
 def maybe_write_gexf(out_dir: Path, df) -> None:
-    if not HAVE_NX or df is None or len(df) == 0:
-        return
+
     G = None
     try:
         from .aggregate import build_co_mention_network
@@ -379,9 +379,7 @@ def _find_latest_session(base: Path) -> Optional[Path]:
 
 def main() -> None:
     """Testlauf: jüngste Session suchen und Report via Templates neu schreiben."""
-    if not HAVE_PANDAS:
-        print("[ERROR] pandas fehlt. Installiere mit: pip install pandas")
-        return
+
     root = project_root()
     data_base = data_base_dir(root)
     sess = _find_latest_session(data_base)

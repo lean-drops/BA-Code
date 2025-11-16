@@ -19,8 +19,9 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Iterable, List, Sequence, Tuple
 
+import fitz
+
 from .constants import DEFAULT_SKIP_BIBLIOGRAPHY, SNIPPET_LEN
-from .env import fitz
 from .models import Hit, PatternEntry
 from .patterns import detect_bibliography_pages
 from .text import extract_text

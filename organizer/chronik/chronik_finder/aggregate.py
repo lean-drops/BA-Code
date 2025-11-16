@@ -4,12 +4,11 @@ Aggregation, Gewichtung und Netzwerk.
 from __future__ import annotations
 
 from typing import Dict, Tuple, Any
+import networkx as nx
+import pandas as pd
 
-from .env import HAVE_NX, HAVE_PANDAS, nx, pd
 
 def aggregate(hits, weights: Dict[str, float]):
-    if not HAVE_PANDAS:
-        raise RuntimeError("pandas ist erforderlich. Installation: pip install pandas")
     rows = [{
         "pdf_file": h.pdf_path, "page": h.page, "group": h.group, "label": h.label,
         "pattern": h.pattern, "context": h.context
@@ -28,8 +27,6 @@ def aggregate(hits, weights: Dict[str, float]):
     return df, agg
 
 def build_co_mention_network(df: Any):
-    if not HAVE_NX or df is None or df.empty:
-        return None
     dfw = df[df["group"] == "work"].copy()
     if dfw.empty:
         return None

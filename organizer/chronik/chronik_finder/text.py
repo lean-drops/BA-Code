@@ -27,17 +27,10 @@ import math
 import unicodedata
 from typing import Any, List, Tuple
 
+import pytesseract
+
 from .constants import TEXT_MIN_LEN
-from .env import (
-    HAVE_PDFMINER,
-    HAVE_PDFPLUMBER,
-    HAVE_PYPDF,
-    HAVE_TESS,
-    pdfminer_extract_text,
-    pdfplumber,
-    pypdf,
-    pytesseract,
-)
+
 from .cache import get_page_cache
 
 

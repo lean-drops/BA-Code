@@ -1,84 +1,85 @@
+# organizer/chronik/chronik_finder/env.py
 """
-Umgebungs- und Abhängigkeitsmanagement.
-- PyMuPDF (fitz) ist zwingend.
-- pandas, pytesseract, networkx, tkinter, pdfplumber, pdfminer.six, pypdf sind optional.
+Umgebungs- und Library-Detection für chronik_finder.
+
+Stellt zur Verfügung:
+- fitz        (PyMuPDF)            + HAVE_FITZ
+- pandas als pd                    + HAVE_PANDAS
+- networkx als nx                  + HAVE_NX
+- pdfminer.six genutzt?            + HAVE_PDFMINER
 """
+
 from __future__ import annotations
 
-# Zwingend
-try:
-    import fitz  # type: ignore
-except Exception as e:  # pragma: no cover
-    raise RuntimeError("PyMuPDF (fitz) ist erforderlich. Installation: pip install pymupdf") from e
+import sys
 
-# Optional
+HAVE_FITZ = False
+HAVE_PANDAS = False
+HAVE_NX = False
+HAVE_PDFMINER = False
+
+fitz = None
+pd = None
+nx = None
+
+# -------------------- PyMuPDF / fitz --------------------
+
 try:
-    import pandas as pd  # type: ignore
+    import fitz as _fitz  # type: ignore
+
+    fitz = _fitz
+    HAVE_FITZ = True
+    print(f"[DEBUG] PyMuPDF (fitz) OK: {_fitz.__file__}", file=sys.stderr)
+except Exception as exc:  # pragma: no cover
+    print(f"[WARN] PyMuPDF (fitz) nicht verfügbar: {exc}", file=sys.stderr)
+    HAVE_FITZ = False
+
+# -------------------- pandas --------------------
+
+try:
+    import pandas as _pd  # type: ignore
+
+    pd = _pd
     HAVE_PANDAS = True
-except Exception:
-    pd = None  # type: ignore
-    HAVE_PANDAS = False
+    print(f"[DEBUG] pandas OK: {_pd.__file__}", file=sys.stderr)
+except Exception as exc:  # pragma: no cover
+    pd = None
+    HAVE_PANDAS = True
+    print(
+        f"[WARN] pandas nicht importierbar: {exc}. "
+        f"Installiere im aktiven venv mit: pip install --force-reinstall pandas",
+        file=sys.stderr,
+    )
+
+# -------------------- networkx --------------------
 
 try:
-    import pytesseract  # type: ignore
-    HAVE_TESS = True
-except Exception:
-    pytesseract = None  # type: ignore
-    HAVE_TESS = False
+    import networkx as _nx  # type: ignore
 
-try:
-    import networkx as nx  # type: ignore
+    nx = _nx
     HAVE_NX = True
-except Exception:
-    nx = None  # type: ignore
+    print(f"[DEBUG] networkx OK: {_nx.__file__}", file=sys.stderr)
+except Exception as exc:  # pragma: no cover
+    nx = None
     HAVE_NX = False
+    print(
+        f"[WARN] networkx nicht importierbar: {exc}. "
+        f"Installiere im aktiven venv mit: pip install networkx",
+        file=sys.stderr,
+    )
+
+# -------------------- pdfminer.six (optional) --------------------
 
 try:
-    import tkinter as tk  # type: ignore
-    from tkinter import filedialog  # type: ignore
-    HAVE_TK = True
-except Exception:
-    tk = None  # type: ignore
-    filedialog = None  # type: ignore
-    HAVE_TK = False
+    # je nach Projektstruktur evtl. anders, das hier ist die Standard-Variante
+    import pdfminer  # type: ignore
 
-try:
-    import pdfplumber  # type: ignore
-    HAVE_PDFPLUMBER = True
-except Exception:
-    pdfplumber = None  # type: ignore
-    HAVE_PDFPLUMBER = False
-
-try:
-    from pdfminer.high_level import extract_text as pdfminer_extract_text  # type: ignore
     HAVE_PDFMINER = True
-except Exception:
-    pdfminer_extract_text = None  # type: ignore
+    print(f"[DEBUG] pdfminer OK: {pdfminer.__file__}", file=sys.stderr)
+except Exception as exc:  # pragma: no cover
     HAVE_PDFMINER = False
-
-try:
-    import pypdf  # type: ignore
-    HAVE_PYPDF = True
-except Exception:
-    pypdf = None  # type: ignore
-    HAVE_PYPDF = False
-
-__all__ = [
-    "fitz",
-    "pd",
-    "pytesseract",
-    "nx",
-    "tk",
-    "filedialog",
-    "pdfplumber",
-    "pdfminer_extract_text",
-    "pypdf",
-    "HAVE_PANDAS",
-    "HAVE_TESS",
-    "HAVE_NX",
-    "HAVE_TK",
-    "HAVE_PDFPLUMBER",
-    "HAVE_PDFMINER",
-    "HAVE_PYPDF",
-]
-
+    print(
+        f"[WARN] pdfminer.six nicht importierbar: {exc}. "
+        f"OCR/Alttext wird dann nur über PyMuPDF erledigt.",
+        file=sys.stderr,
+    )

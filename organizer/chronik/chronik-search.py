@@ -28,6 +28,11 @@ Wichtige Tabellen:
 
 Nutzung:
   python chronik-search.py
+
+Gemeinsame Runs:
+  Wenn die Umgebungsvariable SEARCH_RUN_ID gesetzt ist, wird diese ID als
+  run_id verwendet (kein neuer Eintrag in search_runs). Andernfalls wird
+  via create_search_run ein neuer Lauf angelegt (kind='chronik_search').
 """
 from __future__ import annotations
 
@@ -386,8 +391,8 @@ def _process_df_to_db(df, db_path: Path, root: Path) -> int:
         - run_finder() liefert Trefferzeilen mit u. a.:
               pdf_file / pdf_path, label, group, page, context
         - Dieses Skript:
-            1. Erzeugt einen Eintrag in search_runs (kind='chronik_search') oder
-               nutzt einen externen SEARCH_RUN_ID.
+            1. Verwendet ggf. einen externen SEARCH_RUN_ID oder erzeugt
+               einen Eintrag in search_runs (kind='chronik_search').
             2. Stellt sicher:
                  - chroniken_texts ist gefüllt (Chronik ↔ Original-PDF / chr_*.txt).
                  - chroniken_canon_links ist gefüllt (Canon-Eintrag ↔ Chronik).
@@ -419,7 +424,6 @@ def _process_df_to_db(df, db_path: Path, root: Path) -> int:
     processed_rows = 0
 
     with sqlite3.connect(str(db_path)) as conn:
-        # Lauf-Id (für edges_cc): entweder extern (SEARCH_RUN_ID) oder neu
         env_run = os.environ.get("SEARCH_RUN_ID")
         if env_run:
             try:

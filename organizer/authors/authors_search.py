@@ -18,9 +18,14 @@ Outputs:
   - edges_aa in der SQLite-DB (Author→Author Kanten)
   - bibliography_works in der SQLite-DB (Verknüpfung PDF→Werk)
 
-Usage: direkt ausführen. Pfade im Kopf anpassen oder über environment
-variablen konfigurieren. Standardmäßig wird <PROJECT_DIR>/data/test als
+Usage: direkt ausführen. Pfade im Kopf anpassen oder über Environment-
+Variablen konfigurieren. Standardmäßig wird <PROJECT_DIR>/data/test als
 PDF-Ordner verwendet und <PROJECT_DIR>/config/chroniken.sqlite3 als DB.
+
+Gemeinsame Runs:
+  Wenn die Umgebungsvariable SEARCH_RUN_ID gesetzt ist, wird diese ID als
+  run_id verwendet (kein neuer Eintrag in search_runs). Andernfalls wird
+  via create_search_run ein neuer Lauf angelegt (kind='authors_search').
 """
 from __future__ import annotations
 
@@ -383,7 +388,6 @@ def run_on_folder(base: str) -> str:
 
     # Kanten in DB (edges_aa) und bibliography_works ergänzen
     with sqlite3.connect(db_path) as conn:
-        # Run-ID: entweder von außen (SEARCH_RUN_ID) oder neu anlegen
         env_run = os.environ.get("SEARCH_RUN_ID")
         if env_run:
             try:
