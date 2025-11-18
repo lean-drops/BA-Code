@@ -20,7 +20,6 @@
         "Juckerhof"
       ]
     },
-
     {
       "canonical_id": "langmaier-konstantin-m",
       "display": "Langmaier, Konstantin M.",
@@ -36,7 +35,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "landolt-oliver",
       "display": "Landolt, Oliver",
@@ -52,7 +50,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "sieber-christian",
       "display": "Sieber, Christian",
@@ -68,7 +65,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "bihrer-andreas",
       "display": "Bihrer, Andreas",
@@ -84,7 +80,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "bosshard-werner",
       "display": "Bosshard, Werner",
@@ -100,7 +95,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "sutter-pascale",
       "display": "Sutter, Pascale",
@@ -116,7 +110,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "stettler-bernhard",
       "display": "Stettler, Bernhard",
@@ -134,7 +127,6 @@
         "Michael\\s+Stettler"
       ]
     },
-
     {
       "canonical_id": "frey-stefan",
       "display": "Frey, Stefan",
@@ -150,7 +142,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "illi-martin",
       "display": "Illi, Martin",
@@ -166,7 +157,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "rigendinger-fritz",
       "display": "Rigendinger, Fritz",
@@ -182,7 +172,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "speck-dieter",
       "display": "Speck, Dieter",
@@ -201,7 +190,6 @@
         "Speckmesser"
       ]
     },
-
     {
       "canonical_id": "zahnd-urs-martin",
       "display": "Zahnd, Urs Martin",
@@ -217,7 +205,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "niederhauser-peter",
       "display": "Niederhauser, Peter",
@@ -233,7 +220,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "heinrich-speich",
       "display": "Speich, Heinrich",
@@ -249,7 +235,6 @@
       ],
       "negatives": []
     },
-
     {
       "canonical_id": "niederstaetter-alois",
       "display": "Niederstätter, Alois",
@@ -267,15 +252,109 @@
     },
 
     {
-  "canonical": "Hans Ulrich Bächtold: Heinrich Bullinger, Tigurinerchronik (Heinrich Bullinger Werke IV/1.1–1.3)",
-  "author": "Hans Ulrich Bächtold",
-  "aliases": [
-    "(?i)B[äa]chtold.*Tigurinerchronik",
-    "(?i)Hans[- ]?Ulrich\\s+B[äa]chtold.*Heinrich\\s+Bullinger\\s+Werke",
-    "(?i)Heinrich\\s+Bullinger\\s+Werke.*IV/1\\.1",
-    "(?i)Heinrich\\s+Bullinger\\s*Tigurinerchronik.*Teilband\\s*1\\.1",
-    "(?i)Hans[- ]?Ulrich[- ]?B[äa]rchtold\\.pdf"
-  ]
+      "canonical_id": "gurt-claudia",
+      "display": "Gurt, Claudia",
+      "filename_aliases": [
+        "(?:^|/)gurt[-_]+claudia\\b[^/]*\\.pdf$",
+        "(?:^|/)claudia[-_]+gurt\\b[^/]*\\.pdf$"
+      ],
+      "text_aliases": [
+        "\\bClaudia\\s+Gurt\\b",
+        "\\bGurt,\\s*Claudia\\b",
+        "\\bClaudius\\s+Gurt\\b",
+        "\\bGurt,\\s*Claudius\\b",
+        "\\bC\\.?\\s*Gurt\\b",
+        "\\bGurt\\b[^\\n]{0,30}\\b(1[4-9]\\d{2}|20\\d{2})\\b"
+      ],
+      "negatives": []
+    },
+    {
+      "canonical_id": "berger-hans",
+      "display": "Berger, Hans",
+      "filename_aliases": [
+        "(?:^|/)berger[-_]+hans\\b[^/]*\\.pdf$",
+        "(?:^|/)hans[-_]+berger\\b[^/]*\\.pdf$"
+      ],
+      "text_aliases": [
+        "\\bHans\\s+Berger\\b",
+        "\\bBerger,\\s*Hans\\b",
+        "\\bH\\.?\\s*Berger\\b",
+        "\\bBerger\\b[^\\n]{0,30}\\b(1[4-9]\\d{2}|20\\d{2})\\b"
+      ],
+      "negatives": []
+    },
+
+    {
+      "canonical_id": "Alter Zürichkrige, Toggenburger Erbschaftskrieg (Illi, Martin)",
+      "display": "Alter zürichkrige, toggenburger erbschaftskrieg (illi, martin)",
+      "filename_aliases": [],
+      "text_aliases": [],
+      "negatives": [],
+      "merge_into": "illi-martin"
+    },
+    {
+      "canonical_id": "Historisches, Lexikon (Claudius Gurt)",
+      "display": "Historisches, lexikon (claudius gurt)",
+      "filename_aliases": [],
+      "text_aliases": [],
+      "negatives": [],
+      "merge_into": "gurt-claudia"
+    },
+    {
+      "canonical_id": "Speich-Heinrich",
+      "display": "Heinrich, Speich",
+      "filename_aliases": [],
+      "text_aliases": [],
+      "negatives": [],
+      "merge_into": "heinrich-speich"
+    },
+    {
+      "canonical_id": "konstantin-m-langmaier",
+      "display": "Langmaier, M, Konstantin",
+      "filename_aliases": [],
+      "text_aliases": [],
+      "negatives": [],
+      "merge_into": "langmaier-konstantin-m"
+    },
+    {
+      "canonical_id": "Krieg und Todesvorbereitung (Werner, Bosshard)",
+      "display": "Krieg und todesvorbereitung (werner, bosshard)",
+      "filename_aliases": [],
+      "text_aliases": [],
+      "negatives": [],
+      "merge_into": "bosshard-werner"
+    },
+    {
+      "canonical_id": "Der Alte Zürichkrieg aus der regionalen Perspektive des Sarganserlands (Riegendinger, Fritz)",
+      "display": "Der alte zürichkrieg aus der regionalen perspektive des sarganserlands (riegendinger, fritz)",
+      "filename_aliases": [],
+      "text_aliases": [],
+      "negatives": [],
+      "merge_into": "rigendinger-fritz"
+    },
+    {
+      "canonical_id": "Rudolf Stüssi - ein tragischer Held? (Frey, Stefan)",
+      "display": "Rudolf stüssi - ein tragischer held? (frey, stefan)",
+      "filename_aliases": [],
+      "text_aliases": [],
+      "negatives": [],
+      "merge_into": "frey-stefan"
+    },
+
+    {
+  "canonical_id": "tomaszewski-marco",
+  "display": "Tomaszewski, Marco",
+  "filename_aliases": [
+    "(?:^|/)tomaszewski[-_]+marco\\b[^/]*\\.pdf$",
+    "(?:^|/)marco[-_]+tomaszewski\\b[^/]*\\.pdf$"
+  ],
+  "text_aliases": [
+    "\\bMarco\\s+Tomaszewski\\b",
+    "\\bTomaszewski,\\s*Marco\\b",
+    "\\bM\\.?\\s*Tomaszewski\\b",
+    "\\bTomaszewski\\b[^\\n]{0,30}\\b(1[4-9]\\d{2}|20\\d{2})\\b"
+  ],
+  "negatives": []
 }
   ],
   "weights": {

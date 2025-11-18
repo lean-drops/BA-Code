@@ -209,12 +209,35 @@ def ensure_bibliography_work(conn: sqlite3.Connection, bibliography_id: int, wor
                    VALUES (?, ?)""", (bibliography_id, wid))
     return wid
 
+
+# organizer/authors/db_io.py
 def create_search_run(conn: sqlite3.Connection, kind: str,
                       session_dir: Optional[str] = None, notes: Optional[str] = None) -> int:
+    """
+    Legt einen neuen Eintrag in search_runs an – außer es ist bereits eine
+    Run-ID über die Umgebungsvariable SEARCH_RUN_ID vorgegeben.
+
+    Falls SEARCH_RUN_ID gesetzt und gültig ist, wird diese ID zurückgegeben
+    und KEIN neuer Eintrag in search_runs erzeugt. So können mehrere Skripte
+    (authors_search, chronik-search, AC-Importer usw.) im selben Lauf
+    zusammengefasst werden (z. B. 'combined_search').
+    """
+    # 1) Falls von außen ein Run vorgegeben ist, diesen verwenden
+    env_run = os.environ.get("SEARCH_RUN_ID")
+    if env_run:
+        try:
+            return int(env_run)
+        except ValueError:
+            # Ungültige Umgebungsvariable → normalen Run anlegen
+            pass
+
+    # 2) Kein gültiger externer Run: neuen Eintrag in search_runs erzeugen
     cur = conn.cursor()
-    cur.execute("""INSERT INTO search_runs (kind, started_at, session_dir, notes)
-                   VALUES (?, ?, ?, ?)""",
-                (kind, datetime.now().isoformat(timespec="seconds"), session_dir, notes))
+    cur.execute(
+        """INSERT INTO search_runs (kind, started_at, session_dir, notes)
+           VALUES (?, ?, ?, ?)""",
+        (kind, datetime.now().isoformat(timespec="seconds"), session_dir, notes),
+    )
     return int(cur.lastrowid)
 
 # --------------------------- inserts: edges_aa ---------------------------

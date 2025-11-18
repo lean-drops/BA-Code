@@ -27,13 +27,17 @@ import math
 import unicodedata
 from typing import Any, List, Tuple
 
+import pdfplumber
+import pypdf
 import pytesseract
 
+from organizer.authors.authors_utils import HAVE_TESS
 from .constants import TEXT_MIN_LEN
 
 from .cache import get_page_cache
-
-
+HAVE_PDFMINER = True
+HAVE_PDFPLUMBER = True
+HAVE_PYPDF = True
 # ------------------------ Normalisierung ------------------------
 
 def normspace(s: str) -> str:
@@ -395,6 +399,49 @@ def _ocr_page(page: Any) -> str:
 
 
 # ------------------------ Extraktion mit Kaskade + Cache ------------------------
+def pdfminer_extract_text(pdf_path: str) -> str:
+    """
+    Sehr schneller Wrapper um pdfminer.six.extract_text.
+
+    Ziele:
+      - Lazy-Import (kein Overhead beim Import von text.py)
+      - Aggressives Caching pro Datei basierend auf mtime
+      - Deaktivierte Layout-Analyse (laparams=None) für maximale Geschwindigkeit
+    """
+    # pdfminer nur bei Bedarf laden
+    try:
+        from pdfminer.high_level import extract_text as _extract_text
+    except Exception:
+        # Kein pdfminer installiert → stilles Deaktivieren
+        return ""
+
+    # Funktionsinterner Cache: {pdf_path: (mtime, text)}
+    from typing import Dict, Tuple
+    cache: Dict[str, Tuple[float, str]]
+
+    if not hasattr(pdfminer_extract_text, "_cache"):
+        pdfminer_extract_text._cache = {}  # type: ignore[attr-defined]
+    cache = pdfminer_extract_text._cache  # type: ignore[attr-defined]
+
+    import os
+    try:
+        mtime = os.path.getmtime(pdf_path)
+    except OSError:
+        return ""
+
+    cached = cache.get(pdf_path)
+    if cached is not None and cached[0] == mtime:
+        return cached[1]
+
+    try:
+        # laparams=None → keine teure Layout-Analyse, deutlich schneller
+        text = _extract_text(pdf_path, laparams=None) or ""
+    except Exception:
+        text = ""
+
+    cache[pdf_path] = (mtime, text)
+    return text
+
 
 def extract_text(page: Any, pdf_path: str, page_index: int, pdf_mtime: float) -> str:
     """

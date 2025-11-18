@@ -446,13 +446,7 @@
         "sammlung\\s+schweizerischer\\s+rechtsquellen"
       ]
     },
-    {
-      "canonical": "MAGZ (Mitteilungen der Antiquarischen Gesellschaft in Zürich)",
-      "aliases": [
-        "\\bmagz\\b",
-        "mitteilungen\\s+der\\s+antiquarischen\\s+gesellschaft\\s+in\\s+z[üu]rich"
-      ]
-    },
+
     {
       "canonical": "ZsG (Zeitschrift für schweizerische Geschichte)",
       "aliases": [

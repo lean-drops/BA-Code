@@ -422,3 +422,22 @@ def insert_edges_cc(
 
     conn.commit()
     return inserted
+
+
+def fetch_work_authors(conn: sqlite3.Connection) -> Dict[str, List[str]]:
+    """
+    Liefert Mapping canonical -> [author_canonical_id, ...] aus works_canon.
+    Erwartet, dass works_canon.author die canonical_id(s) der Autoren enthält.
+    Mehrfachautoren können mit ';', ',' oder '|' getrennt werden.
+    """
+    cur = conn.cursor()
+    cur.execute("SELECT canonical, author FROM works_canon")
+    mapping: Dict[str, List[str]] = {}
+    for canonical, author_str in cur.fetchall():
+        if not canonical or not author_str:
+            continue
+        parts = re.split(r"[;,|]", author_str)
+        ids = [p.strip() for p in parts if p.strip()]
+        if ids:
+            mapping[canonical] = ids
+    return mapping

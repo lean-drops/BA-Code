@@ -343,7 +343,7 @@ def fill_chroniken_texts(conn: sqlite3.Connection) -> None:
 # main
 # ---------------------------------------------------------------------------
 
-def main() -> None:
+def main(DB_PATH=DB_PATH) -> None:
     if not DB_PATH.exists():
         raise FileNotFoundError(f"DB nicht gefunden: {DB_PATH}")
     conn = sqlite3.connect(str(DB_PATH))
