@@ -3,7 +3,7 @@
 Programme zum Markieren von belegpflichtigen Aussagen in geschichtswissenschaftlichen DOCX-Texten.
 
 Dependencies:
-    pip install python-docx openai vaderSentiment
+    pip install python-docx openai vaderSentiment python-dotenv
 
 Nutzung:
     1. OPENAI_API_KEY als Umgebungsvariable setzen.
@@ -15,20 +15,20 @@ Das Script:
     - Schickt Absätze an ein GPT-Modell, das Sätze als "belegpflichtig" / "nicht belegpflichtig" klassifiziert.
     - Nutzt zusätzlich Sentiment-Analyse (VADER), um sehr emotionale / wertende Sätze ebenfalls zu markieren.
     - Schreibt eine neue .docx-Datei mit markierten Sätzen und ein JSON-Log der Entscheidungen.
+    - Merkt sich die letzte Analyse im JSON und wertet bei Folgeläufen nur geänderte Sätze neu aus.
 """
 
 import os
 import json
 import re
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple, Optional
 
 from docx import Document
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-import os
 from openai import OpenAI
-
 import dotenv
 
+# .env laden und OpenAI-Client initialisieren
 dotenv.load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
@@ -41,13 +41,13 @@ client = OpenAI(api_key=api_key)
 # -------------------------
 
 # Pfad zur Eingabe-/Ausgabedatei
-INPUT_DOCX = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/doc/BA-Arbeit-Prototype.docx"
-OUTPUT_DOCX = "output_marked.docx"
-REPORT_JSON = "analysis_report.json"
+INPUT_DOCX = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/mark_quotable/BA-Arbeit-Prototype.docx"
+OUTPUT_DOCX = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/mark_quotable/BA-Arbeit-Prototype_output_marked.docx"
+REPORT_JSON = "analysis_report.json"  # dient gleichzeitig als Cache
 
 # OpenAI-Modell & Parameter
-OPENAI_MODEL = "gpt-4.1-mini"  # ggf. anpassen
-MAX_PARAGRAPH_CHARS = 2000     # zu lange Absätze werden abgebrochen/übersprungen
+OPENAI_MODEL = "gpt-5.1"              # stärkeres, zuverlässigeres Modell
+MAX_PARAGRAPH_CHARS = 8000           # zu lange Absätze werden abgebrochen/übersprungen
 
 # Schwellenwert für "emotionale" Sätze (VADER compound-score)
 SENTIMENT_THRESHOLD = 0.5
@@ -79,7 +79,7 @@ def split_into_sentences(text: str) -> List[str]:
     return sentences
 
 
-def build_gpt_prompt(sentences: List[str]) -> str:
+def build_gpt_prompt(sentences: List[str]) -> Tuple[str, str]:
     """
     Erstellt einen klaren System-/User-Prompt für die Klassifikation.
     Sprache: Deutsch, aber Modell kommt mit gemischten Texten zurecht.
@@ -118,11 +118,10 @@ def build_gpt_prompt(sentences: List[str]) -> str:
         "Klassifiziere bitte alle Sätze wie beschrieben."
     )
 
-    # Wir geben System/User getrennt an, aber bauen Text nur in der API-Funktion zusammen.
     return instructions, user
 
 
-def call_gpt_classification(client: OpenAI, sentences: List[str]) -> List[bool]:
+def call_gpt_classification(openai_client: OpenAI, sentences: List[str]) -> List[bool]:
     """
     Ruft das GPT-Modell auf und gibt pro Satz ein bool zurück: True = braucht Beleg.
     Bei Fehlern (API down etc.) wird konservativ 'False' für alle Sätze zurückgegeben.
@@ -133,7 +132,7 @@ def call_gpt_classification(client: OpenAI, sentences: List[str]) -> List[bool]:
     system_text, user_text = build_gpt_prompt(sentences)
 
     try:
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model=OPENAI_MODEL,
             messages=[
                 {"role": "system", "content": system_text},
@@ -206,6 +205,127 @@ def mark_sentences(
     return marked
 
 
+def load_previous_report(report_path: str) -> List[Dict[str, Any]]:
+    """
+    Lädt den letzten Analyse-Report (falls vorhanden), der als Cache dient.
+    """
+    if not os.path.exists(report_path):
+        return []
+    try:
+        with open(report_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, list):
+            return data
+        return []
+    except Exception as e:
+        print(f"[WARN] Konnte vorherigen Report nicht laden ({e}), starte ohne Cache.")
+        return []
+
+
+def build_previous_maps(
+    prev_report: List[Dict[str, Any]]
+) -> Tuple[Dict[int, Dict[str, Any]], Dict[str, List[Dict[str, Any]]]]:
+    """
+    Erzeugt zwei Maps:
+      - nach paragraph_index
+      - nach original_text
+
+    Damit können wir Absätze wiederfinden, auch wenn sich die Reihenfolge geändert hat.
+    """
+    by_index: Dict[int, Dict[str, Any]] = {}
+    by_text: Dict[str, List[Dict[str, Any]]] = {}
+
+    for entry in prev_report:
+        # Map nach Index
+        try:
+            idx = int(entry.get("paragraph_index"))
+            by_index[idx] = entry
+        except Exception:
+            pass
+
+        # Map nach Original-Text
+        original_text = entry.get("original_text", "")
+        if original_text:
+            by_text.setdefault(original_text, []).append(entry)
+
+    return by_index, by_text
+
+
+def compute_flags_with_cache(
+    openai_client: OpenAI,
+    analyzer: SentimentIntensityAnalyzer,
+    sentences: List[str],
+    prev_para_entry: Optional[Dict[str, Any]],
+) -> Tuple[List[bool], List[bool]]:
+    """
+    Nutzt (falls vorhanden) die vorherige Analyse eines Absatzes, um nur geänderte Sätze
+    neu zu scannen.
+
+    Strategie:
+      - Wenn kein vorheriger Eintrag: alle Sätze neu analysieren.
+      - Wenn es einen vorherigen Eintrag gibt:
+          * Baue Map text -> vorige Satzdaten.
+          * Für jeden aktuellen Satz:
+              - Wenn derselbe Satztext im Cache existiert: Flags übernehmen.
+              - Sonst: Satz in die Liste der "neuen" Sätze aufnehmen.
+          * Nur die neuen Sätze an GPT + Sentiment schicken.
+
+    Ergebnis:
+      - cite_flags und emo_flags enthalten für alle Sätze Werte,
+        entweder übernommen oder neu berechnet.
+    """
+    if not sentences:
+        return [], []
+
+    prev_records = None
+    if prev_para_entry:
+        prev_records = prev_para_entry.get("sentences") or []
+
+    # Kein Cache für diesen Absatz → alles neu analysieren
+    if not prev_records:
+        cite_flags = call_gpt_classification(openai_client, sentences)
+        emo_flags = sentiment_flags(analyzer, sentences)
+        return cite_flags, emo_flags
+
+    # Map: Satztext -> Liste vorheriger Satz-Einträge (für Duplikate)
+    prev_map: Dict[str, List[Dict[str, Any]]] = {}
+    for rec in prev_records:
+        text = rec.get("text", "")
+        if text:
+            prev_map.setdefault(text, []).append(rec)
+
+    cite_flags: List[bool] = [False] * len(sentences)
+    emo_flags: List[bool] = [False] * len(sentences)
+
+    to_analyze: List[str] = []
+    to_indices: List[int] = []
+
+    # Versuche zuerst, Flags für unveränderte Sätze aus dem Cache zu übernehmen
+    for i, s in enumerate(sentences):
+        bucket = prev_map.get(s)
+        if bucket:
+            prev_rec = bucket.pop(0)
+            cite_flags[i] = bool(prev_rec.get("needs_citation", False))
+            emo_flags[i] = bool(prev_rec.get("sentiment_flag", False))
+        else:
+            # Neuer oder geänderter Satz → muss neu analysiert werden
+            to_analyze.append(s)
+            to_indices.append(i)
+
+    # Nur geänderte Sätze an GPT + VADER schicken
+    if to_analyze:
+        new_cite = call_gpt_classification(openai_client, to_analyze)
+        new_emo = sentiment_flags(analyzer, to_analyze)
+
+        for local_idx, sent_idx in enumerate(to_indices):
+            if local_idx < len(new_cite):
+                cite_flags[sent_idx] = new_cite[local_idx]
+            if local_idx < len(new_emo):
+                emo_flags[sent_idx] = new_emo[local_idx]
+
+    return cite_flags, emo_flags
+
+
 # -------------------------
 # Hauptlogik
 # -------------------------
@@ -218,20 +338,20 @@ def process_docx(
     """
     Kernpipeline:
         - DOCX laden
+        - Vorherigen Report (Cache) laden
         - Absätze iterieren
-        - GPT + Sentiment
+            * nur relevante Absätze/Sätze analysieren
+            * soweit möglich Cache nutzen
         - Text neu setzen
-        - Report schreiben
+        - neuen Report schreiben
     """
     if not os.path.exists(input_path):
         raise FileNotFoundError(f"Eingabedatei nicht gefunden: {input_path}")
 
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY ist nicht gesetzt (Umgebungsvariable).")
-
-    client = OpenAI(api_key=api_key)
+    # Sentiment-Analyzer und Cache vorbereiten
     analyzer = SentimentIntensityAnalyzer()
+    prev_report = load_previous_report(report_path)
+    prev_by_index, prev_by_text = build_previous_maps(prev_report)
 
     doc = Document(input_path)
 
@@ -254,8 +374,23 @@ def process_docx(
         if not sentences:
             continue
 
-        cite_flags = call_gpt_classification(client, sentences)
-        emo_flags = sentiment_flags(analyzer, sentences)
+        # Versuche, vorherige Analyse für diesen Absatz zu finden
+        prev_entry: Optional[Dict[str, Any]] = prev_by_index.get(p_idx)
+
+        # Falls sich die Absatz-Position geändert hat, aber der Text identisch ist,
+        # nimm einen Eintrag mit demselben original_text aus der Text-Map.
+        if prev_entry is None:
+            same_text_entries = prev_by_text.get(original_text)
+            if same_text_entries:
+                prev_entry = same_text_entries.pop(0)
+
+        # Flags entweder vollständig aus Cache oder nur für geänderte Sätze neu berechnen
+        cite_flags, emo_flags = compute_flags_with_cache(
+            client,
+            analyzer,
+            sentences,
+            prev_entry,
+        )
 
         marked_sentences = mark_sentences(sentences, cite_flags, emo_flags)
         new_text = " ".join(marked_sentences)
@@ -263,7 +398,7 @@ def process_docx(
         para.text = new_text
 
         # Für die Nachvollziehbarkeit im JSON-Report speichern
-        para_entry = {
+        para_entry: Dict[str, Any] = {
             "paragraph_index": p_idx,
             "original_text": original_text,
             "sentences": [],
@@ -286,10 +421,10 @@ def process_docx(
     doc.save(output_path)
     print(f"[OK] Markierte DOCX geschrieben nach: {output_path}")
 
-    # JSON-Report speichern
+    # JSON-Report (Cache) speichern
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
-    print(f"[OK] Analyse-Report geschrieben nach: {report_path}")
+    print(f"[OK] Analyse-Report (inkl. Cache) geschrieben nach: {report_path}")
 
 
 if __name__ == "__main__":

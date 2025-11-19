@@ -14,8 +14,8 @@ import json
 from pathlib import Path
 
 # Konfiguration
-ANALYSIS_REPORT = Path("analysis_report.json")
-TEMPLATE_JSON = Path("citations_template.json")
+ANALYSIS_REPORT = Path("data/analysis_report.json")
+TEMPLATE_JSON = Path("data/citations_template.json")
 
 
 def build_template():
