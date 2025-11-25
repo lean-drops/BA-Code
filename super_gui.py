@@ -9,7 +9,7 @@ Repariert das Frontend für das Autoren/Werke-Netz:
 
 Usage:
     python fix_network_frontend.py
-Ann.: Template-Ordner: /Users/programming/PycharmProjects/Find_Bibliography_NEw/config/authors_report_template
+Ann.: Template-Ordner: /Users/programming/PycharmProjects/BA-Codes/config/authors_report_template
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-TEMPLATE_DIR = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw/config/authors_report_template")
+TEMPLATE_DIR = Path("/Users/programming/PycharmProjects/BA-Codes/config/authors_report_template")
 INDEX_JS = TEMPLATE_DIR / "index.js"
 INDEX_HTML = TEMPLATE_DIR / "index.html"
 CY_LOCAL = TEMPLATE_DIR / "cytoscape.min.js"  # optional, falls vorhanden wird Fallback gesetzt

@@ -1,24 +1,30 @@
+# chronik_gui.py
 #!/usr/bin/env python3
 """
 chronik_gui.py
 PySide6-GUI zur Analyse von Ähnlichkeiten zwischen Chroniken über Werke/PDFs.
-- CSV laden, Spalten zuordnen, Gewichtung wählen, Analyse starten.
+- Daten werden direkt aus der SQLite-DB gelesen (keine CSV-/JSON-Inputs).
 - Cosinus-Ähnlichkeiten, Top-Paare, Nachbarn je Chronik.
 - Export: Paare-CSV, Similarity-Matrix-CSV, HTML-Report.
-- UI: Dark/Glas-Style, merkt letzte CSV und Spalten in ~/.chronik_gui_config.json.
-- Anzeige: PDF nur als Dateiname (optional ohne .pdf).
+- UI: Dark/Glas-Style.
 
 Abhängigkeiten:
     pip install PySide6 pandas numpy
 
 Start:
     python chronik_gui.py
+
+Wichtig:
+    - Es wird eine SQLite-DB unter DB_PATH erwartet.
+    - Die Tabelle/VIEW DB_TABLE muss existieren und Spalten
+      (run_id, chronik, werk, intensity) bereitstellen.
+    - Falls dein Schema anders ist, passe DB_TABLE und DB_SQL unten an.
 """
 from __future__ import annotations
 
-import json
 import math
 import os
+import sqlite3
 import sys
 import webbrowser
 from dataclasses import dataclass
@@ -36,52 +42,47 @@ def debug(msg: str) -> None:
     print(f"[DEBUG] {msg}", flush=True)
 
 
-# ---------------------- Persistenz ----------------------
+# ---------------------- DB-Konfiguration ----------------------
 
-CONFIG_PATH = Path.home() / ".chronik_gui_config.json"
+# Pfad zur SQLite-DB
+DB_PATH = Path(r"/Users/programming/PycharmProjects/BA-Codes/config/chroniken.sqlite3")
 
+# Tabelle oder VIEW, aus der die Chronik-Werk-Daten kommen.
+# Erwartete Spalten:
+#   run_id   INTEGER
+#   chronik  TEXT   (z.B. Pfad/Label der Chronik-PDF)
+#   werk     TEXT   (z.B. Pfad/Label des Werkes/PDFs)
+#   intensity REAL/INTEGER (Gewicht)
+DB_TABLE = "chronik_werk_intensity"
 
-@dataclass
-class AppConfig:
-    last_csv: str = ""
-    chronik_col: str = ""
-    werk_col: str = ""
-    intensity_col: str = ""
-
-    def save(self) -> None:
-        try:
-            CONFIG_PATH.write_text(json.dumps(self.__dict__, ensure_ascii=False, indent=2))
-            debug(f"Konfiguration gespeichert: {CONFIG_PATH}")
-        except Exception as e:
-            debug(f"Konfiguration konnte nicht gespeichert werden: {e}")
-
-    @staticmethod
-    def load() -> "AppConfig":
-        try:
-            if CONFIG_PATH.exists():
-                data = json.loads(CONFIG_PATH.read_text())
-                debug(f"Konfiguration geladen: {CONFIG_PATH}")
-                return AppConfig(**{k: data.get(k, "") for k in AppConfig().__dict__.keys()})
-        except Exception as e:
-            debug(f"Konfiguration konnte nicht geladen werden: {e}")
-        return AppConfig()
+# Basis-SQL, kann bei Bedarf an das eigene Schema angepasst werden.
+DB_SQL = f"""
+    SELECT
+        chronik AS chronik,
+        werk AS werk,
+        intensity AS intensity
+    FROM {DB_TABLE}
+    WHERE run_id = :run_id
+"""
 
 
-# ---------------------- CSV Utilities ----------------------
+def load_chronik_df_from_db(run_id: int) -> pd.DataFrame:
+    """
+    Lädt die Chronik-Werk-Daten zu einem gegebenen run_id aus der DB.
 
-def read_csv_auto(path: str) -> pd.DataFrame:
-    if not os.path.isfile(path):
-        raise FileNotFoundError(f"CSV nicht gefunden: {path}")
-    try:
-        debug("Lese CSV mit sep=';' …")
-        return pd.read_csv(path, sep=';', engine='python')
-    except Exception as e:
-        debug(f"sep=';' scheiterte: {e}. Versuche sep=',' …")
-        try:
-            return pd.read_csv(path, sep=',', engine='python')
-        except Exception as e2:
-            debug(f"sep=',' scheiterte: {e2}. Versuche Sniffer …")
-            return pd.read_csv(path, sep=None, engine='python')
+    Erwartet eine Tabelle/VIEW DB_TABLE mit Spalten (run_id, chronik, werk, intensity).
+    """
+    if run_id <= 0:
+        raise ValueError(f"Ungültiger run_id: {run_id}")
+    if not DB_PATH.is_file():
+        raise FileNotFoundError(f"DB nicht gefunden: {DB_PATH}")
+
+    debug(f"Lese Daten aus DB {DB_PATH} für run_id={run_id} …")
+    with sqlite3.connect(str(DB_PATH)) as conn:
+        df = pd.read_sql_query(DB_SQL, conn, params={"run_id": run_id})
+
+    debug(f"Aus DB geladen: {len(df)} Zeilen, {len(df.columns)} Spalten.")
+    return df
 
 
 def guess_column(df: pd.DataFrame, candidates: List[str]) -> Optional[str]:
@@ -257,10 +258,11 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
         self._werke: List[str] = []
         self._mat: Optional[np.ndarray] = None
         self._sim_matrix: Optional[np.ndarray] = None
-        self._config = AppConfig.load()
+        self._df_run_id: Optional[int] = None
+        self._current_source_desc: str = ""
 
         self._build_ui()
-        self._restore_last()
+        self.load_runs()
 
     # ---- UI ----
 
@@ -275,15 +277,20 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
 
         lay = QtWidgets.QVBoxLayout(container)
 
-        # Datei & Spalten
+        # DB & Run-Auswahl
         file_lay = QtWidgets.QHBoxLayout()
-        self.le_path = QtWidgets.QLineEdit()
-        self.btn_browse = QtWidgets.QPushButton("CSV laden…")
-        self.btn_browse.clicked.connect(self.on_browse)
-        file_lay.addWidget(self.le_path, 1)
-        file_lay.addWidget(self.btn_browse)
+        self.lbl_db = QtWidgets.QLabel(f"DB: {DB_PATH}")
+        self.lbl_db.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.cb_run = QtWidgets.QComboBox()
+        self.btn_reload_runs = QtWidgets.QPushButton("Runs neu laden")
+        self.btn_reload_runs.clicked.connect(self.load_runs)
+        file_lay.addWidget(self.lbl_db, 2)
+        file_lay.addWidget(QtWidgets.QLabel("search_run:"), 0)
+        file_lay.addWidget(self.cb_run, 1)
+        file_lay.addWidget(self.btn_reload_runs, 0)
         lay.addLayout(file_lay)
 
+        # Spalten-Mapping
         cols_lay = QtWidgets.QHBoxLayout()
         self.cb_chronik = QtWidgets.QComboBox()
         self.cb_werk = QtWidgets.QComboBox()
@@ -422,40 +429,69 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             QTableView { background: rgba(24,24,28,200); alternate-background-color: rgba(32,32,36,200); gridline-color: rgba(120,120,130,120); }
         """)
 
-    # ---- Restore ----
+    # ---- DB-Helfer ----
 
-    def _restore_last(self) -> None:
-        if self._config.last_csv and Path(self._config.last_csv).exists():
-            self.le_path.setText(self._config.last_csv)
-            try:
-                self._df = read_csv_auto(self._config.last_csv)
-                self.populate_column_boxes()
-                # Restore column picks if present
-                for cb, val in ((self.cb_chronik, self._config.chronik_col),
-                                (self.cb_werk, self._config.werk_col),
-                                (self.cb_intensity, self._config.intensity_col or "— keine —")):
-                    if val and cb.findText(val) >= 0:
-                        cb.setCurrentIndex(cb.findText(val))
-                debug("Letzte CSV automatisch geladen.")
-            except Exception as e:
-                debug(f"Auto-Laden der letzten CSV scheiterte: {e}")
+    def load_runs(self) -> None:
+        """
+        Lädt die verfügbaren search_runs aus der DB in die Run-ComboBox.
+        Erwartet eine Tabelle 'search_runs' mit mindestens 'id' und optional 'kind'.
+        """
+        self.cb_run.clear()
+        try:
+            if not DB_PATH.is_file():
+                QtWidgets.QMessageBox.critical(self, "Fehler", f"DB nicht gefunden:\n{DB_PATH}")
+                return
+            with sqlite3.connect(str(DB_PATH)) as conn:
+                cur = conn.cursor()
+                try:
+                    cur.execute("SELECT id, kind FROM search_runs ORDER BY id DESC")
+                    rows = cur.fetchall()
+                except sqlite3.OperationalError:
+                    # Fallback: nur id
+                    cur.execute("SELECT id FROM search_runs ORDER BY id DESC")
+                    rows = [(r[0], "") for r in cur.fetchall()]
+
+            if not rows:
+                self.cb_run.addItem("(keine Runs gefunden)", -1)
+                debug("Keine Runs in search_runs gefunden.")
+            else:
+                for run_id, kind in rows:
+                    label = f"{run_id} – {kind}" if kind else str(run_id)
+                    self.cb_run.addItem(label, int(run_id))
+                debug(f"{len(rows)} Runs geladen.")
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Fehler", f"Runs konnten nicht geladen werden:\n{e}")
+            debug(f"Runs konnten nicht geladen werden: {e}")
+
+    def load_df_for_selected_run(self) -> bool:
+        """
+        Lädt die Daten (Chronik-Werk-Zeilen) aus der DB für den aktuell gewählten Run.
+        """
+        if self.cb_run.count() == 0:
+            QtWidgets.QMessageBox.warning(self, "Hinweis", "Bitte zuerst Runs laden.")
+            return False
+        run_id = self.cb_run.currentData()
+        if run_id is None or run_id < 0:
+            QtWidgets.QMessageBox.warning(self, "Hinweis", "Bitte zuerst einen gültigen Run wählen.")
+            return False
+
+        try:
+            df = load_chronik_df_from_db(int(run_id))
+            if df.empty:
+                QtWidgets.QMessageBox.information(self, "Hinweis", f"Keine Daten für run_id={run_id} gefunden.")
+                return False
+            self._df = df
+            self._df_run_id = int(run_id)
+            self._current_source_desc = f"{DB_PATH} (run_id={run_id})"
+            self.populate_column_boxes()
+            debug(f"Daten für run_id={run_id} erfolgreich geladen.")
+            return True
+        except Exception as e:
+            QtWidgets.QMessageBox.critical(self, "Fehler", f"Daten konnten nicht geladen werden:\n{e}")
+            debug(f"Daten konnten nicht geladen werden: {e}")
+            return False
 
     # ---------- Slots ----------
-
-    def on_browse(self):
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "CSV wählen", "", "CSV (*.csv);;Alle Dateien (*)")
-        if not path:
-            return
-        try:
-            df = read_csv_auto(path)
-            debug(f"CSV gelesen: {path} mit {len(df)} Zeilen und {len(df.columns)} Spalten.")
-            self._df = df
-            self.le_path.setText(path)
-            self._config.last_csv = path
-            self._config.save()
-            self.populate_column_boxes()
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Fehler", f"CSV konnte nicht geladen werden:\n{e}")
 
     def populate_column_boxes(self):
         if self._df is None:
@@ -481,9 +517,19 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             self.cb_intensity.setCurrentIndex(self.cb_intensity.findText(i_guess))
 
     def on_analyze(self):
-        if self._df is None:
-            QtWidgets.QMessageBox.warning(self, "Hinweis", "Bitte zuerst eine CSV laden.")
+        # Sicherstellen, dass Daten aus DB geladen sind
+        current_run = self.cb_run.currentData()
+        if current_run is None or current_run < 0:
+            QtWidgets.QMessageBox.warning(self, "Hinweis", "Bitte zuerst einen gültigen Run wählen.")
             return
+        if self._df is None or self._df_run_id != int(current_run):
+            if not self.load_df_for_selected_run():
+                return
+
+        if self._df is None:
+            QtWidgets.QMessageBox.warning(self, "Hinweis", "Keine Daten vorhanden.")
+            return
+
         chronik_col = self.cb_chronik.currentText()
         werk_col = self.cb_werk.currentText()
         intensity_col = self.cb_intensity.currentText()
@@ -521,20 +567,17 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             self.refresh_neighbors()
             self.update_info(mat, agg)
 
-            # Speichern der Spaltenwahl
-            self._config.chronik_col = chronik_col
-            self._config.werk_col = werk_col
-            self._config.intensity_col = intensity_col or ""
-            self._config.save()
-
             debug(f"Analyse fertig: {len(chroniken)} Chroniken, {len(werke)} Werke, {len(df_pairs)} Paare.")
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Fehler", f"Analyse fehlgeschlagen:\n{e}")
+            debug(f"Analyse fehlgeschlagen: {e}")
 
     def refresh_neighbors(self):
-        if self._sim_matrix is None or not self._chroniken:
+        if self._sim_matrix is None or not self._chroniken or self._mat is None:
             return
-        # Index der gewählten Chronik finden, auch wenn Anzeige gekürzt ist
+        if self.cb_chronik_pick.count() == 0:
+            return
+
         shown = self.cb_chronik_pick.currentText()
         if self.chk_show_basename.isChecked():
             # map basename->index
@@ -542,7 +585,10 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             mapping = {basename_only(c, drop_ext): i for i, c in enumerate(self._chroniken)}
             i = mapping.get(shown, 0)
         else:
-            i = self._chroniken.index(shown)
+            try:
+                i = self._chroniken.index(shown)
+            except ValueError:
+                i = 0
 
         sims = self._sim_matrix[i, :]
         order = np.argsort(-sims)
@@ -582,6 +628,7 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             debug(f"Paare exportiert: {path}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Fehler", f"Konnte nicht exportieren:\n{e}")
+            debug(f"Konnte Paare nicht exportieren: {e}")
 
     def on_export_matrix(self):
         if self._sim_matrix is None or not self._chroniken:
@@ -592,7 +639,6 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
         if not path:
             return
         try:
-            # Optional Anzeige-Namen auch als Index verwenden
             idx = [basename_only(c, self.chk_drop_ext.isChecked()) if self.chk_show_basename.isChecked() else c
                    for c in self._chroniken]
             df = pd.DataFrame(self._sim_matrix, index=idx, columns=idx)
@@ -600,6 +646,7 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             debug(f"Matrix exportiert: {path}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Fehler", f"Konnte nicht exportieren:\n{e}")
+            debug(f"Konnte Matrix nicht exportieren: {e}")
 
     def on_html_report(self):
         if self.model_pairs._df is None or self.model_pairs._df.empty:
@@ -611,7 +658,6 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             return
         try:
             top_pairs = self.model_pairs._df.copy()
-            # kleine Kürzung für Bericht
             top_pairs = top_pairs.head(200)
             html = self._build_html_report(top_pairs)
             Path(path).write_text(html, encoding="utf-8")
@@ -619,6 +665,7 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             webbrowser.open(f"file://{Path(path).absolute()}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Fehler", f"Report konnte nicht erstellt werden:\n{e}")
+            debug(f"Report konnte nicht erstellt werden: {e}")
 
     def _build_html_report(self, top_pairs: pd.DataFrame) -> str:
         drop_ext = self.chk_drop_ext.isChecked()
@@ -629,22 +676,22 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
         # Nachbarn für die ersten 15 Chroniken
         neighbor_sections = []
         n_each = 10
-        for idx, c in enumerate(self._chroniken[:15]):
-            sims = self._sim_matrix[idx, :]
-            order = np.argsort(-sims)
-            rows = []
-            for j in order:
-                if j == idx:
-                    continue
-                name = self._chroniken[j]
-                if show_base:
-                    name = basename_only(name, drop_ext)
-                rows.append((name, float(sims[j])))
-            rows = rows[:n_each]
-            cname = basename_only(c, drop_ext) if show_base else c
-            neighbor_sections.append((cname, rows))
+        if self._sim_matrix is not None and self._chroniken:
+            for idx, c in enumerate(self._chroniken[:15]):
+                sims = self._sim_matrix[idx, :]
+                order = np.argsort(-sims)
+                rows = []
+                for j in order:
+                    if j == idx:
+                        continue
+                    name = self._chroniken[j]
+                    if show_base:
+                        name = basename_only(name, drop_ext)
+                    rows.append((name, float(sims[j])))
+                rows = rows[:n_each]
+                cname = basename_only(c, drop_ext) if show_base else c
+                neighbor_sections.append((cname, rows))
 
-        # HTML
         def esc(s: str) -> str:
             return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
 
@@ -663,6 +710,8 @@ class ChronicleSimilarityDialog(QtWidgets.QDialog):
             </table>
             """
 
+        src = self._current_source_desc or f"{DB_PATH}"
+
         return f"""<!doctype html>
 <html lang="de">
 <head>
@@ -680,7 +729,7 @@ h1,h2,h3 {{ color: #cfe2ff; }}
 </head>
 <body>
 <h1>Chronik-Ähnlichkeiten</h1>
-<p class="small">Datei: <span class="code">{esc(self.le_path.text())}</span></p>
+<p class="small">Quelle: <span class="code">{esc(str(src))}</span></p>
 
 <h2>Top-Paare</h2>
 <table class="t">
@@ -696,19 +745,20 @@ h1,h2,h3 {{ color: #cfe2ff; }}
 </body>
 </html>"""
 
+
 # ---------------------- Main-Fenster ----------------------
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Chronik-Analyse")
+        self.setWindowTitle("Chronik-Analyse (DB)")
         self.resize(1024, 280)
 
         central = QtWidgets.QWidget()
         self.setCentralWidget(central)
         lay = QtWidgets.QVBoxLayout(central)
 
-        info = QtWidgets.QLabel("Analyse von Ähnlichkeiten zwischen Chroniken über Werke/PDFs.")
+        info = QtWidgets.QLabel("Analyse von Ähnlichkeiten zwischen Chroniken über Werke/PDFs (Daten aus SQLite).")
         info.setAlignment(QtCore.Qt.AlignCenter)
         info.setObjectName("heroLabel")
         lay.addWidget(info)
@@ -748,8 +798,7 @@ class MainWindow(QtWidgets.QMainWindow):
 # ---------------------- main ----------------------
 
 def main() -> None:
-    debug("Starte Chronik-Ähnlichkeits-GUI …")
-    # Hohe DPI
+    debug("Starte Chronik-Ähnlichkeits-GUI (DB) …")
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
     app = QtWidgets.QApplication(sys.argv)
     win = MainWindow()

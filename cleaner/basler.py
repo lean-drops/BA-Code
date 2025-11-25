@@ -45,8 +45,8 @@ class CleaningError(Exception):
 
 # --------------------------- Pfade ---------------------------
 
-INPUT_PATH = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/cleaner/Basler Chroniken.txt"
-OUTPUT_DIR = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/azk_library/test"
+INPUT_PATH = "/Users/programming/PycharmProjects/BA-Codes/cleaner/Basler Chroniken.txt"
+OUTPUT_DIR = "/Users/programming/PycharmProjects/BA-Codes/data/azk_library/test"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "roeteler_chronik_clean.txt")
 
 

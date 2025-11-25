@@ -30,7 +30,7 @@ from organizer.chronik.create_chronik_db import list_pdfs, compile_aliases, inse
 # Feste Pfade
 # ---------------------------------------------------------------------------
 
-PROJECT = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw")
+PROJECT = Path("/Users/programming/PycharmProjects/BA-Codes")
 CONFIG_DIR = PROJECT / "config"
 
 # Chroniken
@@ -448,6 +448,7 @@ def ensure_schema(conn: sqlite3.Connection, csv_fieldnames: List[str]) -> Dict[s
     - works_canon_config, works_canon
     - bibliography, bibliography_authors, bibliography_works
     - search_runs, edges_ac, edges_aa, edges_cc
+    - chronik_werk_intensity (VIEW für die GUI)
     """
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys=ON;")
@@ -655,9 +656,28 @@ def ensure_schema(conn: sqlite3.Connection, csv_fieldnames: List[str]) -> Dict[s
     )
     cur.execute("CREATE INDEX idx_edges_cc ON edges_cc(run_id);")
 
+    # --- VIEW: chronik_werk_intensity (für die GUI) ---
+    #   - run_id      : aus edges_ac
+    #   - chronik     : Dateiname der Chronik-PDF (chroniken.pdf_filename)
+    #   - werk        : kanonischer Werktitel (works_canon.canonical)
+    #   - intensity   : COALESCE(weight, 1.0)
+    cur.execute(
+        """
+        CREATE VIEW chronik_werk_intensity AS
+        SELECT
+            e.run_id            AS run_id,
+            c.pdf_filename      AS chronik,
+            w.canonical         AS werk,
+            COALESCE(e.weight, 1.0) AS intensity
+        FROM edges_ac AS e
+        JOIN chroniken        AS c  ON c.id  = e.chronik_id
+        JOIN bibliography_works AS bw ON bw.bibliography_id = e.bibliography_id
+        JOIN works_canon      AS w  ON w.id  = bw.work_id;
+        """
+    )
+
     conn.commit()
     return csv_to_sql
-
 
 # ---------------------------------------------------------------------------
 # Insert: Works Canon (aus works_canon.json)

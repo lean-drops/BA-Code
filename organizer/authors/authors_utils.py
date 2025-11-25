@@ -66,7 +66,7 @@ BIB_HEADINGS = [
 LOG_TS_FMT = "%H:%M:%S"
 
 # Projekt-Defaults (werden durch detect_project_dir übersteuert)
-PROJECT_DIR_DEFAULT = "/Users/programming/PycharmProjects/Find_Bibliography_NEw"
+PROJECT_DIR_DEFAULT = "/Users/programming/PycharmProjects/BA-Codes"
 TEMPLATE_SUBDIR = os.path.join("config", "authors_report_template")
 DATA_SUBDIR = os.path.join("data", "authors_data")
 
@@ -236,20 +236,55 @@ def detect_bibliography_pages(doc: "fitz.Document") -> Set[int]:
     return bib_pages
 
 def extract_text_with_ocr(page: "fitz.Page") -> str:
+    """
+    Liefert Text einer Seite, mit leichtgewichtigem OCR-Fallback.
+
+    Strategie:
+      - Erst normalen Textmodus von PyMuPDF nutzen.
+      - Nur wenn sehr wenig Text gefunden wird (TEXT_MIN_LEN-Schwelle) und
+        Tesseract verfügbar ist, wird ein OCR-Lauf durchgeführt.
+      - Der OCR-Lauf arbeitet mit reduzierter Auflösung und Grayscale-Bild,
+        sowie einer festen Tesseract-Konfiguration für mehr Geschwindigkeit.
+    """
+    # 1) Standard-Text-Extraktion
     txt = page.get_text("text") or ""
-    if len(txt) >= TEXT_MIN_LEN:
-        return txt
-    if not HAVE_TESS:
-        return txt
-    try:
-        pix = page.get_pixmap(dpi=300)
-        from PIL import Image  # pillow
-        img = Image.open(io.BytesIO(pix.tobytes("png")))
-        ocr = pytesseract.image_to_string(img, lang="deu+eng")
-        return ocr or txt
-    except Exception:
+    if len(txt.strip()) >= TEXT_MIN_LEN:
         return txt
 
+    # 2) Kein Tesseract installiert → kein OCR
+    if not HAVE_TESS:
+        return txt
+
+    try:
+        # 3) Leichtgewichtige Rasterisierung
+        #    200 dpi ist meist ein guter Kompromiss aus Qualität und Geschwindigkeit.
+        pix = page.get_pixmap(dpi=200)
+
+        from PIL import Image  # pillow
+
+        img = Image.open(io.BytesIO(pix.tobytes("png")))
+        # Grayscale reduziert Datenmenge und beschleunigt Tesseract
+        img = img.convert("L")
+
+        # 4) Tesseract-Aufruf:
+        #    psm 6: "Assume a single uniform block of text"
+        ocr = pytesseract.image_to_string(
+            img,
+            lang="deu+eng",
+            config="--psm 6",
+        )
+
+        ocr = (ocr or "").strip()
+
+        # 5) Falls OCR signifikant mehr Text liefert, bevorzugen wir das Ergebnis.
+        #    Ansonsten behalten wir den ursprünglichen (evtl. kurzen) Text.
+        if len(ocr) > len(txt):
+            return ocr
+        return txt or ocr
+    except Exception:
+        # Bei allen Fehlern lieber Fallback auf vorhandenen Text,
+        # statt den Lauf ganz zu unterbrechen.
+        return txt
 
 def classify_section(page_index: int, bib_pages: Set[int]) -> str:
     return "bib" if page_index in bib_pages else "text"

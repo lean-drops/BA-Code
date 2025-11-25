@@ -26,7 +26,7 @@ except Exception as e:
 
 
 # ---- Projektpfade (anpassen falls nötig) -------------------------------------
-BASE_DIR = "/Users/programming/PycharmProjects/Find_Bibliography_NEw"
+BASE_DIR = "/Users/programming/PycharmProjects/BA-Codes"
 TEMPLATE_DIR = os.path.join(BASE_DIR, "config", "authors_report_template")
 DATA_DIR = os.path.join(BASE_DIR, "data", "authors_data")
 

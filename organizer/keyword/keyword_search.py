@@ -4,10 +4,10 @@ GUI-Tool: Friedens-/Kriegsbeendigungs-Signale in Sekundärliteratur finden und a
 Zweck
 ------
 Scannt Sekundärliteratur (PDF/TXT optional DOCX) in:
-    /Users/programming/PycharmProjects/Find_Bibliography_NEw/data/azk_library
+    /Users/programming/PycharmProjects/BA-Codes/data/azk_library
 und ignoriert jeden Unterordner "chroniken" (case-insensitive).
 Speichert Ergebnisse in einem neuen Session-Ordner unter:
-    /Users/programming/PycharmProjects/Find_Bibliography_NEw/data/keyword_data/<SESSION_NAME>/
+    /Users/programming/PycharmProjects/BA-Codes/data/keyword_data/<SESSION_NAME>/
 
 Erfasst werden: Trefferzahlen pro Datei, Kategorien, Term-Hits, KWIC-Beispiele, Fehler.
 Ambige Terme (z. B. "Abschied", "Bund", "Stillstand") zählen nur bei Kontexttreffern.
@@ -93,8 +93,8 @@ class FileResult:
 
 # ----------------------------- Config ----------------------------- #
 
-DEFAULT_LIBRARY = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/azk_library"
-DEFAULT_OUTPUT_BASE = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/keyword_data"
+DEFAULT_LIBRARY = "/Users/programming/PycharmProjects/BA-Codes/data/azk_library"
+DEFAULT_OUTPUT_BASE = "/Users/programming/PycharmProjects/BA-Codes/data/keyword_data"
 
 CATEGORIES = [
     "core_peace",            # Frieden, pax, concord-

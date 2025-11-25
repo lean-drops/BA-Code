@@ -1,4 +1,4 @@
-# /Users/programming/PycharmProjects/Find_Bibliography_NEw/check_pdfs_and_zotero.py
+# /Users/programming/PycharmProjects/BA-Codes/check_pdfs_and_zotero.py
 """
 Prüft PDFs im AZK-Verzeichnis und (optional) gleicht sie mit Zotero ab.
 
@@ -49,7 +49,7 @@ DO_ZOTERO_API = True
 # Konfiguration
 # ---------------------------------------------------------------------------
 
-PROJECT_ROOT = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw")
+PROJECT_ROOT = Path("/Users/programming/PycharmProjects/BA-Codes")
 
 # Dein AZK-Verzeichnis mit PDFs
 PDF_BASE_DIR = PROJECT_ROOT / "data" / "azk_library"

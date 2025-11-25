@@ -1,4 +1,4 @@
-# /Users/programming/PycharmProjects/Find_Bibliography_NEw/create_citation_template.py
+# /Users/programming/PycharmProjects/BA-Codes/create_citation_template.py
 """
 Erzeugt aus analysis_report.json ein Template (citations_template.json),
 in dem du für jeden belegpflichtigen Satz eine Fussnote eintragen kannst.

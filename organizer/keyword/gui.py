@@ -36,8 +36,8 @@ import search_term
 import keyword_utils
 import html_report
 
-DEFAULT_LIBRARY = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/azk_library"
-DEFAULT_OUTPUT_BASE = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/keyword_data"
+DEFAULT_LIBRARY = "/Users/programming/PycharmProjects/BA-Codes/data/azk_library"
+DEFAULT_OUTPUT_BASE = "/Users/programming/PycharmProjects/BA-Codes/data/keyword_data"
 
 
 @dataclass

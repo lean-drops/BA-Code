@@ -1,4 +1,4 @@
-# /Users/programming/PycharmProjects/Find_Bibliography_NEw/summarize_azk_report.py
+# /Users/programming/PycharmProjects/BA-Codes/summarize_azk_report.py
 """
 Liest azk_pdf_report.json und gibt kompakte Übersichten aus:
 
@@ -10,7 +10,7 @@ Liest azk_pdf_report.json und gibt kompakte Übersichten aus:
 from pathlib import Path
 import json
 
-PROJECT_ROOT = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw")
+PROJECT_ROOT = Path("/Users/programming/PycharmProjects/BA-Codes")
 REPORT_JSON = PROJECT_ROOT / "azk_pdf_report.json"
 
 

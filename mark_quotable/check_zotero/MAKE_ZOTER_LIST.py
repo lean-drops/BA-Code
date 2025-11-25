@@ -1,4 +1,4 @@
-# /Users/programming/PycharmProjects/Find_Bibliography_NEw/zotero_export_ba_azk.py
+# /Users/programming/PycharmProjects/BA-Codes/zotero_export_ba_azk.py
 """
 Exportiert alle Items aus der Zotero-Collection "BA-AZK" in eine JSON-Datei mit:
     - key
@@ -34,7 +34,7 @@ except Exception as e:  # pragma: no cover
 # Konfiguration
 # ---------------------------------------------------------------------------
 
-PROJECT_ROOT = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw")
+PROJECT_ROOT = Path("/Users/programming/PycharmProjects/BA-Codes")
 
 # .env laden
 load_dotenv(dotenv_path=PROJECT_ROOT / ".env")

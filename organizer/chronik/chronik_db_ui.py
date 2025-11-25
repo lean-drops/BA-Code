@@ -9,9 +9,9 @@ PySide6-GUI für die Verwaltung der Chroniken-DB.
 
 Voraussetzungen:
 - PySide6, sqlite3, Python 3.9+
-- DB erwartet unter: /Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken.sqlite3
-- PDF-Ordner:       /Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf
-- .env mit OPENAI_API_KEY unter: /Users/programming/PycharmProjects/Find_Bibliography_NEw/.env
+- DB erwartet unter: /Users/programming/PycharmProjects/BA-Codes/config/chroniken.sqlite3
+- PDF-Ordner:       /Users/programming/PycharmProjects/BA-Codes/data/chroniken_library/pdf
+- .env mit OPENAI_API_KEY unter: /Users/programming/PycharmProjects/BA-Codes/.env
 
 Usage:
 - Datei starten. Debug-Logs erscheinen in der Konsole.
@@ -41,7 +41,7 @@ from PySide6.QtWidgets import (
 
 # ------------------------ Feste Pfade ------------------------
 
-PROJECT = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw")
+PROJECT = Path("/Users/programming/PycharmProjects/BA-Codes")
 CONFIG_DIR = PROJECT / "config"
 DB_PATH = CONFIG_DIR / "chroniken.sqlite3"
 PDF_DIR = PROJECT / "data" / "chroniken_library" / "pdf"

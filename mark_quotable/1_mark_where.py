@@ -41,8 +41,8 @@ client = OpenAI(api_key=api_key)
 # -------------------------
 
 # Pfad zur Eingabe-/Ausgabedatei
-INPUT_DOCX = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/mark_quotable/BA-Arbeit-Prototype.docx"
-OUTPUT_DOCX = "/Users/programming/PycharmProjects/Find_Bibliography_NEw/mark_quotable/BA-Arbeit-Prototype_output_marked.docx"
+INPUT_DOCX = "/Users/programming/PycharmProjects/BA-Codes/mark_quotable/BA-Arbeit-Prototype.docx"
+OUTPUT_DOCX = "/Users/programming/PycharmProjects/BA-Codes/mark_quotable/BA-Arbeit-Prototype_output_marked.docx"
 REPORT_JSON = "analysis_report.json"  # dient gleichzeitig als Cache
 
 # OpenAI-Modell & Parameter

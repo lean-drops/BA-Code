@@ -3,7 +3,7 @@
 organizer.chronik.network — Flask-Webapp für Chroniken↔Werke
 
 Templates/Assets:
-  /Users/programming/PycharmProjects/Find_Bibliography_NEw/config/network_template
+  /Users/programming/PycharmProjects/BA-Codes/config/network_template
   (index.html, chroniken.css, chroniken.js)
 
 Start:
@@ -158,7 +158,7 @@ def _bipartite_ordered_layout(G: nx.Graph, scale: float = 320.0, row_step: float
 # ------------------------ Flask ------------------------
 
 PROJECT_ROOT: Path = Path(__file__).resolve().parents[2]
-ABS_TEMPLATE_DIR = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw/config/network_template")
+ABS_TEMPLATE_DIR = Path("/Users/programming/PycharmProjects/BA-Codes/config/network_template")
 REL_TEMPLATE_DIR = PROJECT_ROOT / "config" / "network_template"
 ENV_TEMPLATE_DIR = Path(os.environ["NETWORK_TEMPLATE_DIR"]).expanduser().resolve() if "NETWORK_TEMPLATE_DIR" in os.environ else None
 

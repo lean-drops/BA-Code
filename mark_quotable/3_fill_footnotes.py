@@ -1,4 +1,4 @@
-# /Users/programming/PycharmProjects/Find_Bibliography_NEw/build_infoclio_docx.py
+# /Users/programming/PycharmProjects/BA-Codes/build_infoclio_docx.py
 """
 Erzeugt aus citations_template.json ein Markdown mit Pandoc-Zitaten und optional
 ein DOCX mit InfoClio-Fussnoten (über pandoc + CSL).
@@ -29,7 +29,7 @@ from typing import List, Dict, Any, Optional
 # Konfiguration
 # ---------------------------------------------------------------------------
 
-PROJECT_ROOT = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw")
+PROJECT_ROOT = Path("/Users/programming/PycharmProjects/BA-Codes")
 DATA_DIR = PROJECT_ROOT / "mark_quotable" / "data"
 
 CITATIONS_TEMPLATE_PATH = DATA_DIR / "citations_template.json"

@@ -3,10 +3,10 @@
 create_chroniken_db.py
 
 Erzeugt eine frische SQLite-Datenbank aus:
-- CSV:  /Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken_canon.csv
-- JSON: /Users/programming/PycharmProjects/Find_Bibliography_NEw/config/chroniken_canon.json
+- CSV:  /Users/programming/PycharmProjects/BA-Codes/config/chroniken_canon.csv
+- JSON: /Users/programming/PycharmProjects/BA-Codes/config/chroniken_canon.json
 und markiert, ob passende PDFs im Verzeichnis
-/Users/programming/PycharmProjects/Find_Bibliography_NEw/data/chroniken_library/pdf vorhanden sind.
+/Users/programming/PycharmProjects/BA-Codes/data/chroniken_library/pdf vorhanden sind.
 
 Fixes gegenüber älteren Versionen:
 - CSV-Vorreinigung: typographische Anführungszeichen („ “ ‘ ’ « ») ⇒ normale ".
@@ -38,7 +38,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Iterable, Set
 
 # ---------- Feste Pfade ----------
-PROJECT = Path("/Users/programming/PycharmProjects/Find_Bibliography_NEw")
+PROJECT = Path("/Users/programming/PycharmProjects/BA-Codes")
 CONFIG_DIR = PROJECT / "config"
 CSV_PATH = CONFIG_DIR / "chroniken_canon.csv"
 JSON_PATH = CONFIG_DIR / "chroniken_canon.json"
